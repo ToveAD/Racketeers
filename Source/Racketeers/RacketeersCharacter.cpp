@@ -6,9 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
-#include "MPProjectile.h"
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -21,10 +19,6 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 ARacketeersCharacter::ARacketeersCharacter()
 {
-
-	//Initialize the player's Health
-	MaxHealth = 100.0f;
-	CurrentHealth = MaxHealth;
 	
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -61,11 +55,6 @@ ARacketeersCharacter::ARacketeersCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	
-	//Initialize projectile class
-	ProjectileClass = AMPProjectile::StaticClass();
-	//Initialize fire rate
-	FireRate = 0.25f;
-	bIsFiringWeapon = false;
 }
 
 void ARacketeersCharacter::BeginPlay()
@@ -74,94 +63,7 @@ void ARacketeersCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Tutorial Code
 
-void ARacketeersCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	//Replicate current health.
-	DOREPLIFETIME(ARacketeersCharacter, CurrentHealth);
-}
-
-void ARacketeersCharacter::OnHealthUpdate()
-{
-	//Client-specific functionality
-	if (IsLocallyControlled())
-	{
-		FString healthMessage = FString::Printf(TEXT("You now have %f health remaining."), CurrentHealth);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
-
-		if (CurrentHealth <= 0)
-		{
-			FString deathMessage = FString::Printf(TEXT("You have been killed."));
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, deathMessage);
-		}
-	}
-
-	//Server-specific functionality
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		FString healthMessage = FString::Printf(TEXT("%s now has %f health remaining."), *GetFName().ToString(), CurrentHealth);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, healthMessage);
-		
-	}
-
-	//Functions that occur on all machines.
-	/*
-		Any special functionality that should occur as a result of damage or death should be placed here.
-	*/
-}
-
-void ARacketeersCharacter::OnRep_CurrentHealth()
-{
-	OnHealthUpdate();
-}
-
-void ARacketeersCharacter::SetCurrentHealth(float healthValue)
-{
-	if (GetLocalRole() == ROLE_Authority)
-	{
-		CurrentHealth = FMath::Clamp(healthValue, 0.f, MaxHealth);
-		OnHealthUpdate();
-	}
-}
-
-float ARacketeersCharacter::TakeDamage(float DamageTaken, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-	float damageApplied = CurrentHealth - DamageTaken;
-	SetCurrentHealth(damageApplied);
-	return damageApplied;
-}
-
-void ARacketeersCharacter::StartFire()
-{
-	if (!bIsFiringWeapon)
-	{
-		bIsFiringWeapon = true;
-		UWorld* World = GetWorld();
-		World->GetTimerManager().SetTimer(FiringTimer, this, &ARacketeersCharacter::StopFire, FireRate, false);
-		HandleFire();
-	}
-}
-
-void ARacketeersCharacter::StopFire()
-{
-	bIsFiringWeapon = false;
-}
-
-void ARacketeersCharacter::HandleFire_Implementation()
-{
-	FVector spawnLocation = GetActorLocation() + ( GetActorRotation().Vector()  * 100.0f ) + (GetActorUpVector() * 50.0f);
-	FRotator spawnRotation = GetActorRotation();
-
-	FActorSpawnParameters spawnParameters;
-	spawnParameters.Instigator = GetInstigator();
-	spawnParameters.Owner = this;
-
-	AMPProjectile* spawnedProjectile = GetWorld()->SpawnActor<AMPProjectile>(spawnLocation, spawnRotation, spawnParameters);
-}
 
 
 
@@ -177,8 +79,7 @@ void ARacketeersCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
-		// Handle firing projectiles
-		PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ARacketeersCharacter::StartFire);
+
 	}
 	
 	// Set up action bindings
