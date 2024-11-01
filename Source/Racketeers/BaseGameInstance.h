@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/GameInstance.h"
-#include "GI_Base.generated.h"
+#include "AdvancedFriendsGameInstance.h"
+#include "BaseGameInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RACKETEERS_API UGI_Base : public UGameInstance
+class RACKETEERS_API UBaseGameInstance : public UAdvancedFriendsGameInstance
 {
 	GENERATED_BODY()
 	
