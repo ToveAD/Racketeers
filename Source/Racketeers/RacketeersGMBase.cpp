@@ -1,10 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GM_Base.h"
-
-#include "GS_Base.h"
-#include "Kismet/GameplayStatics.h"
+#include "RacketeersGMBase.h"
 
 
 /*
@@ -28,13 +25,12 @@
  *
  */
 
-/*
-AGM_Base::AGM_Base()
+ARacketeersGMBase::ARacketeersGMBase()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::AGM_Base"));
 }
 
-void AGM_Base::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::Initiate Game"));
@@ -42,7 +38,7 @@ void AGM_Base::InitGame(const FString& MapName, const FString& Options, FString&
 }
 
 
-void AGM_Base::BeginPlay()
+void ARacketeersGMBase::BeginPlay()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::BeginPlay"));
 	
@@ -73,7 +69,7 @@ void AGM_Base::BeginPlay()
 	
 }
 
-void AGM_Base::SetMaterial(const FResources& Materials, Teams Team)
+void ARacketeersGMBase::SetMaterial(const FResources& Materials, Teams Team)
 {
 	if(Team == Teams::TEAM_A)
 	{
@@ -83,7 +79,7 @@ void AGM_Base::SetMaterial(const FResources& Materials, Teams Team)
 	
 }
 
-FResources AGM_Base::GetResources(Teams Team)
+FResources ARacketeersGMBase::GetResources(Teams Team)
 {
 	if(Team == Teams::TEAM_A)
 	{
@@ -93,10 +89,10 @@ FResources AGM_Base::GetResources(Teams Team)
 	
 }
 
-void AGM_Base::Tick(float DeltaSeconds)
+void ARacketeersGMBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
+	
 	if(CurrentPhase == nullptr)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Returned NullPtr"));
@@ -105,12 +101,12 @@ void AGM_Base::Tick(float DeltaSeconds)
 	if(CurrentTime >= CurrentPhase->TimeLimit)
 	{
 		CurrentTime = 0;
-		RestartGame();
+		//RestartGame();
 		UE_LOG(LogTemp, Display, TEXT("Restarting Game Phase"));
-		/*
-		Condition();
-		SwitchState();
-		Transition();
+	
+		//Condition();
+		//SwitchState();
+		//Transition();
 		
 	}else
 	{
@@ -118,13 +114,14 @@ void AGM_Base::Tick(float DeltaSeconds)
 		CurrentTime++;
 	}
 	
+	
 }
-void AGM_Base::Condition()
+void ARacketeersGMBase::Condition()
 {
 	CurrentPhase->ConditionExecutuion();
 }
 
-void AGM_Base::SwitchState()
+void ARacketeersGMBase::SwitchState()
 {
 	if(CurrentPhase->State == FPhaseState::Phase_3)
 	{
@@ -136,36 +133,30 @@ void AGM_Base::SwitchState()
 }
 
 
-void AGM_Base::Transition()
+void ARacketeersGMBase::Transition()
 {
 	//UGameplayStatics::LoadStreamLevel(GetWorld(), TEXT("Phase2_GamePlay"));
 	//Spawn the players to the positions
 	//Load The Necassary 
 }
 
-void AGM_Base::Respawn_Implementation()
+void ARacketeersGMBase::Respawn_Implementation()
 {
 	//Respawn the player at valid spawn location
 }
 
-bool AGM_Base::Respawn_Validate()
+bool ARacketeersGMBase::Respawn_Validate()
 {
 	return true;
 }
 
-void AGM_Base::SpawnTeams_Implementation()
+void ARacketeersGMBase::SpawnTeams_Implementation()
 {
 	RestartGame();
 	//Spawn the entier team at there valid locations
 }
 
-bool AGM_Base::SpawnTeams_Validate()
+bool ARacketeersGMBase::SpawnTeams_Validate()
 {
 	return true;
 }
-
-*/
-
-
-
-

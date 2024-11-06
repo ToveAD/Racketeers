@@ -26,6 +26,8 @@ struct FTeam
 	UPROPERTY(BlueprintReadWrite)
 	int32 RoundsWon;
 	UPROPERTY(BlueprintReadWrite)
+	float BoatHealth;
+	UPROPERTY(BlueprintReadWrite)
 	FString Name;
 };
 

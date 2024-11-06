@@ -1,10 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameModeStructs.h"
+#include "Phase.Generated.h"
 
-	/*
+/*
 	 *	Fases class
 	 *
 	 *
@@ -19,19 +20,38 @@
 	 *
 	 */
 
-class RACKETEERS_API Phase
+enum FPhaseState
+{
+	Phase_1,
+	Phase_2,
+	Phase_3
+};
+
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class RACKETEERS_API UPhase : public UActorComponent
 {
 public:
-	Phase();
-	~Phase();
+	GENERATED_BODY()
+	 UPhase();
+	 UPhase(float P_TimeLimit, FPhaseState P_State);
 
-	UPROPERTY(BlueprintReadWrite)
+	virtual void BeginPlay() override;
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UPROPERTY()
 	float TimeLimit;
-
-	//Team_A Struct
-	//Team_B Struct
 	
-	void LoseCondition();
-	void WinCondition();
+	FPhaseState State;
+
+	//TArray<FTransform> SpawnsTeamA;
+	//TArray<FTransform> SpawnsTeamB;
+	
+	//PlayerSpawns
+	void ConditionExecutuion();
+	bool LoseCondition(FTeam TeamA, FTeam TeamB);
+	bool WinCondition(FTeam TeamA, FTeam TeamB);
+
+	
 	
 };
