@@ -30,6 +30,6 @@ public:
 	void StartInteract(AActor* Instigator);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-	void StopInteract();
+	void StopInteract(AActor* Instigator);
 	
 };
