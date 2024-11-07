@@ -56,9 +56,9 @@ public:
 	ARacketeersGMBase();
 
 	UFUNCTION(BlueprintCallable)
-	void SetMaterial(const FResources& Materials, Teams team);
+	void SetMaterial(const FResources& Materials, ETeams team);
 	UFUNCTION(BlueprintCallable)
-	FResources GetResources(Teams team);
+	FResources GetResources(ETeams team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Respawn();
