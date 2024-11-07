@@ -8,16 +8,6 @@
 #include "Net/UnrealNetwork.h"
 #include "PS_Base.generated.h"
 
-/**
- * 
- */
-UCLASS()
-class RACKETEERS_API APS_Base : public APlayerState
-{
-	GENERATED_BODY()
-	
-};
-
 USTRUCT(BlueprintType)
 struct FPlayerInfo
 {
@@ -40,5 +30,35 @@ struct FPlayerInfo
 
 	UPROPERTY(BlueprintReadWrite, Category = "PlayerInfo")
 	int TeamPlayerID;
+
+	FPlayerInfo()
+	{
+		PlayerController = nullptr;
+		PlayerName = FText::FromString("Player");
+		bIsReady = false;
+		PlayerState = nullptr;
+		Team = ETeams::Team_Racoon;
+		TeamPlayerID = -1;
+	}
 	
 };
+
+
+UCLASS()
+class RACKETEERS_API APS_Base : public APlayerState
+{
+	GENERATED_BODY()
+
+public:
+
+	APS_Base();
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
+	FPlayerInfo PlayerInfo;
+
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+};
+
+
