@@ -21,7 +21,7 @@ void UBoatMovement::BeginPlay()
     {
         BoatMesh->SetSimulatePhysics(true);  // Ensure that physics simulation is enabled
         BoatMesh->SetIsReplicated(true); // Enable replication for the boat mesh
-        BoatMesh->Setre(true); // Enable movement replication
+        BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
     }
 
     // Load input mapping contexts during BeginPlay, once assets are properly initialized
