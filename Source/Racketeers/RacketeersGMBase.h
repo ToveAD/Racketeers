@@ -3,23 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameModeStructs.h"
-#include "Phase.h"
-#include "GameFramework/GameMode.h"
-#include "GM_Base.generated.h"
+#include "GM_Base.h"
+#include "RacketeersGMBase.generated.h"
 
 /**
  * 
  */
-
-
-
-
 UCLASS()
-class RACKETEERS_API AGM_Base : public AGameMode
+class RACKETEERS_API ARacketeersGMBase : public AGM_Base
 {
 	GENERATED_BODY()
 
+	
 
 
 	
@@ -54,11 +49,11 @@ class RACKETEERS_API AGM_Base : public AGameMode
 	 *
 	 *
 	 *			 
-	
+	 */
 
 public:
 
-	AGM_Base();
+	ARacketeersGMBase();
 
 	UFUNCTION(BlueprintCallable)
 	void SetMaterial(const FResources& Materials, Teams team);
@@ -101,6 +96,8 @@ private:
 	class AGS_Base* GameState;
 
 
+	int GetNextPhaseNumber();
+
 
 	
 
@@ -108,5 +105,5 @@ private:
 	void SwitchState();
 	void Transition();
 	void Condition();
-	*/
+	
 };
