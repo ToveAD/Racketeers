@@ -27,6 +27,9 @@ public:
 	bool CanInteract();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
-	void Interact(AActor* Instigator);
+	void StartInteract(AActor* Instigator);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void StopInteract(AActor* Instigator);
+	
 };
