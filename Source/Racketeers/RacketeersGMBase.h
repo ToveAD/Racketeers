@@ -96,6 +96,8 @@ private:
 	class AGS_Base* GameState;
 
 
+	int GetNextPhaseNumber();
+
 
 	
 

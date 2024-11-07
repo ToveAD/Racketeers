@@ -43,6 +43,7 @@ public:
 	float TimeLimit;
 	
 	FPhaseState State;
+	FString LevelToLoad;
 
 	//TArray<FTransform> SpawnsTeamA;
 	//TArray<FTransform> SpawnsTeamB;
