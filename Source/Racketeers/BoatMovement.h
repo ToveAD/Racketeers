@@ -2,12 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "UObject/SoftObjectPtr.h"
 #include "BoatMovement.generated.h"
 
 // Forward declarations
-class UPrimitiveComponent;
+class APlayerController;
+class UEnhancedInputLocalPlayerSubsystem;
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RACKETEERS_API UBoatMovement : public UActorComponent
 {
 	GENERATED_BODY()
@@ -15,6 +19,14 @@ class RACKETEERS_API UBoatMovement : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UBoatMovement();
+
+	// Direct reference to the InputMappingContext assets
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputMappingContext* IMC_Boat;
+
+	// Default InputMappingContext asset reference
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UInputMappingContext* IMC_Default;
 
 protected:
 	// Called when the game starts
@@ -24,15 +36,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	// Method to accelerate the boat
+	// Movement functions
 	UFUNCTION(BlueprintCallable, Category="BoatMovement")
 	void Accelerate(float Value);
 
-	// Method to steer the boat
 	UFUNCTION(BlueprintCallable, Category="BoatMovement")
 	void Steer(float Value);
 
-	// Server-side methods to handle movement in multiplayer
+	// Server function declarations
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerAccelerate(float Value);
 	void ServerAccelerate_Implementation(float Value);
@@ -43,19 +54,23 @@ public:
 	void ServerSteer_Implementation(float Value);
 	bool ServerSteer_Validate(float Value);
 
-	// Teleport the boat to a new location (with teleport flag)
-	UFUNCTION(BlueprintCallable)
+
+	// Teleport the boat
 	void TeleportBoat(const FVector& NewLocation);
 
+	// Switch to boat-specific input mapping context
+	UFUNCTION(BlueprintCallable, Category="BoatMovement")
+	void SwitchToBoatInputMapping();
+
 private:
-	// The mesh of the boat (used for physics)
-	UPROPERTY(VisibleAnywhere)
+	// Boat mesh (or any other component you use for physics)
+	UPROPERTY()
 	UPrimitiveComponent* BoatMesh;
 
-	// Boat's speed and steering multipliers (can be adjusted in the editor)
-	UPROPERTY(EditAnywhere, Category = "Movement")
+	// Boat movement properties (for example, speed and steering)
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
 	float BoatSpeed = 1000.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Movement")
-	float SteeringSpeed = 50.0f;
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float SteeringSpeed = 100.0f;
 };
