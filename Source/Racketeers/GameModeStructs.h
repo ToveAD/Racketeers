@@ -15,6 +15,9 @@ struct FResources
 	int32 Fiber;
 	UPROPERTY(BlueprintReadWrite)
 	int32 Metal;
+
+	FResources()
+		: Wood(0), Fiber(0), Metal(0) {}
 };
 
 USTRUCT(BlueprintType)
@@ -29,6 +32,9 @@ struct FTeam
 	float BoatHealth;
 	UPROPERTY(BlueprintReadWrite)
 	FString Name;
+
+	FTeam()
+	: Resources(), RoundsWon(0), BoatHealth(100.0f), Name(TEXT("Unnamed")) {}
 };
 
 
