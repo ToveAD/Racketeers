@@ -21,7 +21,7 @@ void UBoatMovement::BeginPlay()
     {
         BoatMesh->SetSimulatePhysics(true);  // Ensure that physics simulation is enabled
         BoatMesh->SetIsReplicated(true); // Enable replication for the boat mesh
-        BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
+        //BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
     }
 
     // Load input mapping contexts during BeginPlay, once assets are properly initialized
@@ -117,7 +117,7 @@ void UBoatMovement::TeleportBoat(const FVector& NewLocation)
 }
 
 // Function to switch input mappings to "IMC_Boat" when the boat is entered
-void UBoatMovement::SwitchToBoatInputMapping()
+void UBoatMovement::SwitchToBoatInputMapping(bool IsAttaching)
 {
     // Get the local player controller
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
@@ -131,13 +131,27 @@ void UBoatMovement::SwitchToBoatInputMapping()
         {
             if (IMC_Boat)  // Check if IMC_Boat is valid
             {
-                // Remove the default input mapping context
-                InputSubsystem->RemoveMappingContext(IMC_Default);
+                if(IsAttaching)
+                {
+                    // Remove the default input mapping context
+                    InputSubsystem->RemoveMappingContext(IMC_Default);
 
-                // Add the boat-specific input mapping context
-                InputSubsystem->AddMappingContext(IMC_Boat, 0);  // You can set priority if needed (0 is default)
+                    // Add the boat-specific input mapping context
+                    InputSubsystem->AddMappingContext(IMC_Boat, 1);  // You can set priority if needed (0 is default)
 
-                UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
+                    UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
+                    
+                }else if(!IsAttaching)
+                {
+                    // Remove the default input mapping context
+                    InputSubsystem->RemoveMappingContext(IMC_Boat);
+
+                    // Add the boat-specific input mapping context
+                    InputSubsystem->AddMappingContext(IMC_Default, 1);  // You can set priority if needed (0 is default)
+
+                    UE_LOG(LogTemp, Log, TEXT("Switched to Player input mapping context: IMC_Default"));
+                }
+               
             }
             else
             {

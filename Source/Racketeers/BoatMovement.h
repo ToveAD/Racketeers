@@ -60,7 +60,7 @@ public:
 
 	// Switch to boat-specific input mapping context
 	UFUNCTION(BlueprintCallable, Category="BoatMovement")
-	void SwitchToBoatInputMapping();
+	void SwitchToBoatInputMapping(bool IsAttaching);
 
 private:
 	// Boat mesh (or any other component you use for physics)
