@@ -46,6 +46,8 @@ class RACKETEERS_API ARacketeersGMBase : public AGM_Base
 	 *			
 	 *
 	 *
+	 * Transitions scenes inom varje phase som vissar score, 
+	 * Kunna Bestäma I lobby om olika settings i lobby om vad det ska vara  best av 3 eller 5. 
 	 *
 	 *
 	 *			 

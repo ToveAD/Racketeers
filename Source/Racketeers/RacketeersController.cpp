@@ -3,6 +3,9 @@
 
 #include "RacketeersController.h"
 
+#include "RacketeersGameStateBase.h"
+#include "Kismet/GameplayStatics.h"
+
 void ARacketeersController::Call_Interact_Implementation(const FString &string)
 {
 	//Change Player Enum Trough out Servers and send it
@@ -13,6 +16,119 @@ void ARacketeersController::Call_Interact_Implementation(const FString &string)
 }
 
 bool ARacketeersController::Call_Interact_Validate(const FString &string)
+{
+	return true;
+}
+
+void ARacketeersController::AddToWood_Implementation(int Amount, Teams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could Not Add Wood in ARacketeersController"));
+		return;
+	}
+	State->AddToWood(Amount, Team);
+}
+
+bool ARacketeersController::AddToWood_Validate(int Amount, Teams Team)
+{
+	return true;
+}
+
+void ARacketeersController::AddToFiber_Implementation(int Amount, Teams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could Not Add Fiber in ARacketeersController"));
+		return;
+	}
+	State->AddToFiber(Amount, Team);
+}
+
+bool ARacketeersController::AddToFiber_Validate(int Amount, Teams Team)
+{
+	return true;
+}
+
+void ARacketeersController::AddToMetal_Implementation(int Amount, Teams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could Not Add Metal in ARacketeersController"));
+		return;
+	}
+	State->AddToMetal(Amount, Team);
+}
+
+bool ARacketeersController::AddToMetal_Validate(int Amount, Teams Team)
+{
+	return true;
+}
+
+void ARacketeersController::RemoveWood_Implementation(int Amount, Teams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could Not Remove Wood in ARacketeersController"));
+		return;
+	}
+	State->RemoveWood(Amount, Team);
+}
+
+bool ARacketeersController::RemoveWood_Validate(int Amount, Teams Team)
+{
+	return true;
+}
+
+void ARacketeersController::RemoveFiber_Implementation(int Amount, Teams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could Not Remove Fiber in ARacketeersController"));
+		return;
+	}
+	State->RemoveFiber(Amount, Team);
+}
+
+bool ARacketeersController::RemoveFiber_Validate(int Amount, Teams Team)
+{
+	return true;
+}
+
+void ARacketeersController::RemoveMetal_Implementation(int Amount, Teams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could Not Remove Metal in ARacketeersController"));
+		return;
+	}
+	State->RemoveMetal(Amount, Team);
+}
+
+bool ARacketeersController::RemoveMetal_Validate(int Amount, Teams Team)
+{
+	return true;
+}
+
+void ARacketeersController::DamageBoat_Implementation(int Amount, Teams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could Not DamageBoat in ARacketeersController"));
+		return;
+	}
+	State->DamageBoat(Amount, Team);
+}
+
+bool ARacketeersController::DamageBoat_Validate(int Amount, Teams Team)
 {
 	return true;
 }

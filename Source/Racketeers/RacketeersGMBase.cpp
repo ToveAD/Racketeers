@@ -169,12 +169,14 @@ void ARacketeersGMBase::LoadLevel()
 
 void ARacketeersGMBase::RespawnPlayers()
 {
-	UE_LOG(LogTemp, Warning, TEXT("RespawnPlayers"));
+
 	for (APlayerState* Player : UGameplayStatics::GetGameState(GetWorld())->PlayerArray)
 	{
 		AActor* PlayerStart = FindPlayerStart(Player->GetPlayerController(), Phases[GetNextPhaseNumber()]->StartPhaseName);
 		Player->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
+	
 	}
+	UE_LOG(LogTemp, Warning, TEXT("RespawnPlayers"));
 	SwitchState();
 }
 
