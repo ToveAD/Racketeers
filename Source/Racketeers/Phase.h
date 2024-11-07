@@ -44,6 +44,7 @@ public:
 	
 	FPhaseState State;
 	FString LevelToLoad;
+	FString StartPhaseName;
 
 	//TArray<FTransform> SpawnsTeamA;
 	//TArray<FTransform> SpawnsTeamB;

@@ -7,7 +7,7 @@
 #include "RacketeersGMBase.generated.h"
 
 /**
- * 
+ * Varje Start måste ha rätt phase tag, sen kan det också behövas att de olika starts får ett id för spelare och team. 
  */
 UCLASS()
 class RACKETEERS_API ARacketeersGMBase : public AGM_Base
@@ -55,10 +55,6 @@ public:
 
 	ARacketeersGMBase();
 
-	UFUNCTION(BlueprintCallable)
-	void SetMaterial(const FResources& Materials, Teams team);
-	UFUNCTION(BlueprintCallable)
-	FResources GetResources(Teams team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Respawn();
@@ -79,7 +75,15 @@ public:
 	UPhase* Phase_2;
 	UPROPERTY(BlueprintReadWrite)
 	UPhase* Phase_3;
+
+	UFUNCTION(BlueprintCallable)
+	void LoadLevel();
+	UFUNCTION(BlueprintCallable)
+	void UnloadLevel(FName name, FLatentActionInfo& ActionInfo);
 	
+	UFUNCTION(BlueprintCallable)
+	void RespawnPlayers();
+
 private:
 
 	UPROPERTY()
@@ -90,8 +94,6 @@ private:
 	
 
 	float CurrentTime;
-	FResources Team_A_Materials;
-	FResources Team_B_Materials;
 
 	class AGS_Base* GameState;
 
@@ -99,11 +101,6 @@ private:
 	int GetNextPhaseNumber();
 
 
-	void UnloadLevel(FName name, FLatentActionInfo& ActionInfo);
-	void LoadLevel(FName name, FLatentActionInfo& ActionInfo);
-
-
-	void RespawnPlayers();
 
 	
 
