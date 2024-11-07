@@ -99,11 +99,18 @@ private:
 	int GetNextPhaseNumber();
 
 
+	void UnloadLevel(FName name, FLatentActionInfo& ActionInfo);
+	void LoadLevel(FName name, FLatentActionInfo& ActionInfo);
+
+
+	void RespawnPlayers();
+
 	
 
 
 	void SwitchState();
 	void Transition();
 	void Condition();
+	
 	
 };

@@ -3,6 +3,8 @@
 
 #include "RacketeersGMBase.h"
 
+#include "GameFramework/GameStateBase.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -56,7 +58,7 @@ void ARacketeersGMBase::BeginPlay()
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
 	Phase_1->TimeLimit = 10.0f;
-	Phase_1->LevelToLoad = "Level1_GamePlay";
+	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	
 	Phase_2->State = FPhaseState::Phase_2;
 	Phase_2->TimeLimit = 10.0f;
@@ -73,6 +75,14 @@ void ARacketeersGMBase::BeginPlay()
 	CurrentPhase = Phases[0];
 
 	CurrentTime = 0;
+	
+	ULevelStreaming* Level2 = UGameplayStatics::GetStreamingLevel(GetWorld(), TEXT("Phase2_GamePlay"));
+	ULevelStreaming* Level3 = UGameplayStatics::GetStreamingLevel(GetWorld(), TEXT("Phase3_GamePlay"));
+	Level2->SetShouldBeLoaded(false);
+	Level3->SetShouldBeLoaded(false);
+	UE_LOG(LogTemp, Warning, TEXT("Unload: %s"), *Level2->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Unload: %s"), *Level3->GetName());
+	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
 	
 }
 
@@ -108,11 +118,12 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 	if(CurrentTime >= CurrentPhase->TimeLimit)
 	{
 		CurrentTime = 0;
-		UE_LOG(LogTemp, Display, TEXT("Restarting Game Phase"));
+		UE_LOG(LogTemp, Warning, TEXT("Restarting Game Phase"));
 	
-		Condition();
-		SwitchState();
+		//Condition();
 		Transition();
+		SwitchState();
+		
 		
 	}else
 	{
@@ -143,14 +154,36 @@ void ARacketeersGMBase::Transition()
 {
 
 	FLatentActionInfo ActionInfo;
+	FLatentActionInfo LoadActionInfo;
+	ActionInfo.CallbackTarget = this;
+	ActionInfo.ExecutionFunction = TEXT("LoadLevel");
+	ActionInfo.UUID = GetUniqueID();	
+	
 	//UGameplayStatics::UnloadStreamLevel(GetWorld(), (TEXT("%s"), *CurrentPhase->LevelToLoad))
 
 	//Step 1 - Unload And Load
-	UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *CurrentPhase->LevelToLoad))->SetShouldBeLoaded(false);
-	UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
+	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
+	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *CurrentPhase->LevelToLoad))->SetShouldBeLoaded(false);
 
+	UE_LOG(LogTemp, Warning, TEXT("Unload Level"));
+	
+
+	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
+	
+	LoadLevel((TEXT("%s"),  (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad)), LoadActionInfo);
+
+	//UGameplayStatics::LoadStreamLevel(GetWorld(),(TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad),true, false, ActionInfo);
 	//Step 2 - Respawn the players
-	RestartGame();	
+
+	
+	UE_LOG(LogTemp, Warning, TEXT("Reset Players"));
+	for(APlayerState* player : GetGameState<AGameStateBase>()->PlayerArray)
+	{
+		RestartPlayer(player->GetPlayerController());
+	}
+	
+	
+	//RestartGame();	
 	
 
 	//UGameplayStatics::LoadStreamLevel(GetWorld(), TEXT("Phase2_GamePlay"));
@@ -168,6 +201,16 @@ int ARacketeersGMBase::GetNextPhaseNumber()
 	{
 		return CurrentPhase->State+1;
 	}
+}
+
+void ARacketeersGMBase::UnloadLevel(FName name, FLatentActionInfo& ActionInfo)
+{
+	UGameplayStatics::UnloadStreamLevel(GetWorld(), name, ActionInfo, false);
+}
+
+void ARacketeersGMBase::LoadLevel(FName name, FLatentActionInfo& ActionInfo)
+{
+	UGameplayStatics::LoadStreamLevel(GetWorld(), name, true , false, ActionInfo);
 }
 
 
