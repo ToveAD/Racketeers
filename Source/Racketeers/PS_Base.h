@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
 #include "GameFramework/PlayerState.h"
-#include "Net/UnrealNetwork.h"
 #include "PS_Base.generated.h"
 
 USTRUCT(BlueprintType)
