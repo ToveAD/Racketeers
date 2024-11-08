@@ -9,6 +9,12 @@
 /**
  * Varje Start måste ha rätt phase tag, sen kan det också behövas att de olika starts får ett id för spelare och team. 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLoadWidget);
+
+
+#define MAXTOTALROUNDS 8
+
 UCLASS()
 class RACKETEERS_API ARacketeersGMBase : public AGM_Base
 {
@@ -58,6 +64,9 @@ public:
 	ARacketeersGMBase();
 
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnLoadWidget OnLoadWidget;
+
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Respawn();
 
@@ -86,30 +95,37 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RespawnPlayers();
 
-private:
+	UFUNCTION(BlueprintCallable)
+	void IncreaseTotalRounds();
+	UFUNCTION(BlueprintCallable)
+	void DecreaseTotalRounds();
+	UFUNCTION(BlueprintCallable)
+	void RoundCompletion();
+	
+	int8 GetTotalRounds();
+	
 
+private:
 	UPROPERTY()
 	UPhase* CurrentPhase;
-	
 	UPROPERTY()
 	TArray<UPhase*> Phases;
+	UPROPERTY()
+	int8 TotalRounds;
 	
-
 	float CurrentTime;
 
-	class AGS_Base* GameState;
-
-
 	int GetNextPhaseNumber();
-
-
-
 	
+	//methods for progressing trough phases
 
-
+	bool CheckIfGameIsOver();
+	bool LoadTransitionStats();
+	bool CheckWinnerOfRound();
+	bool EndGame();
 	void SwitchState();
 	void Transition();
-	void Condition();
 	
 	
 };
+

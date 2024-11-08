@@ -3,9 +3,15 @@
 
 #include "RacketeersGMBase.h"
 
+#include "RacketeersGameStateBase.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+
+
+//Göra ett event som en klass får som senare aktiverar widgeten.
+
+
 
 
 /*
@@ -18,12 +24,6 @@
 	 *	SpawnPointSystem - Decides Where players Should Spawn
 	 *	TeamSpawnPoints - The SpawnPoints To use
 	 *	SpawnPoints - Get Local Player Move To The Location
- *
- *
- *
- *
- *
- *
  *	[GameMode] - Server Only
  *		
  *
@@ -87,6 +87,7 @@ void ARacketeersGMBase::BeginPlay()
 void ARacketeersGMBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
 	
 	if(CurrentPhase == nullptr)
 	{
@@ -95,23 +96,68 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 	}
 	if(CurrentTime >= CurrentPhase->TimeLimit)
 	{
-		CurrentTime = 0;
-		UE_LOG(LogTemp, Warning, TEXT("Restarting Game Phase"));
-	
-		Condition();
-		Transition();
-		
+		RoundCompletion();
 	}else
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Current Time: %f"), CurrentTime);
 		CurrentTime += DeltaSeconds;
 	}
-	
-	
 }
-void ARacketeersGMBase::Condition()
+
+void ARacketeersGMBase::RoundCompletion()
 {
-	CurrentPhase->ConditionExecutuion();
+	//CheckIfGameIsOver
+	//EndGame
+
+	//CheckWinnerOfRound
+	//LoadTransitionScreen (Eller en Level) - Show Scores, Everyone Press button to continue
+		
+	//Unload, Loads And Reset Players
+
+	CurrentTime = 0;
+
+
+	
+	UE_LOG(LogTemp, Warning, TEXT("Check If Game Is Over"));
+	if(CheckIfGameIsOver())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EndGame"));
+		EndGame();
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("CheckWinner Of Round"));
+	CheckWinnerOfRound();
+
+	UE_LOG(LogTemp, Warning, TEXT("Load Transition Stats"));
+	LoadTransitionStats();
+
+	UE_LOG(LogTemp, Warning, TEXT("Transition"));
+	Transition();
+}
+
+bool ARacketeersGMBase::CheckWinnerOfRound()
+{
+
+	if(CurrentPhase->State == FPhaseState::Phase_1)
+	{
+		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+		if(GS == nullptr) return false;
+		if(GS->RacconsBoatHealth > GS->RedPandasBoatHealth)
+		{
+			GS->RacconsRoundsWon++;
+			return true;
+		}
+		if(GS->RedPandasBoatHealth > GS->RacconsBoatHealth)
+		{
+			GS->RedPandasBoatHealth++;
+			return true;
+		}
+		
+		GS->RacconsRoundsWon++;
+		GS->RedPandasBoatHealth++;
+	}
+	
+	return true;
 }
 
 void ARacketeersGMBase::SwitchState()
@@ -148,6 +194,61 @@ int ARacketeersGMBase::GetNextPhaseNumber()
 	{
 		return CurrentPhase->State+1;
 	}
+}
+
+
+
+bool ARacketeersGMBase::CheckIfGameIsOver()
+{
+	ARacketeersGameStateBase* GS = this->GetGameState<ARacketeersGameStateBase>();
+	
+	if(CurrentPhase->State == FPhaseState::Phase_3)
+	{
+		int8 RoundsPlayed = GS->RacconsRoundsWon + GS->RedPandasRoundsWon;
+		if(RoundsPlayed == GetTotalRounds() )
+		{
+			return true; 
+		}
+	}
+	return false;
+}
+
+bool ARacketeersGMBase::LoadTransitionStats()
+{
+
+	OnLoadWidget.Broadcast();
+	return true;
+}
+
+bool ARacketeersGMBase::EndGame()
+{
+	ProcessServerTravel("Lobby");
+	return true;
+}
+
+void ARacketeersGMBase::IncreaseTotalRounds()
+{
+	if(TotalRounds + 1 > MAXTOTALROUNDS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reached Max Total Rounds"));
+		return;
+	}
+	TotalRounds++;
+}
+
+void ARacketeersGMBase::DecreaseTotalRounds()
+{
+	if(TotalRounds - 1 < 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reached under valid Total Rounds "));
+		return;
+	}
+	TotalRounds--;
+}
+
+int8 ARacketeersGMBase::GetTotalRounds()
+{
+	return TotalRounds;
 }
 
 void ARacketeersGMBase::UnloadLevel(FName name, FLatentActionInfo& ActionInfo)

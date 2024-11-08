@@ -3,7 +3,10 @@
 
 #include "RacketeersController.h"
 
+#include <string>
+#include "Blueprint/UserWidget.h"
 #include "RacketeersGameStateBase.h"
+
 #include "Kismet/GameplayStatics.h"
 
 void ARacketeersController::Call_Interact_Implementation(const FString &string)
@@ -20,7 +23,7 @@ bool ARacketeersController::Call_Interact_Validate(const FString &string)
 	return true;
 }
 
-void ARacketeersController::AddToWood_Implementation(int Amount, Teams Team)
+void ARacketeersController::AddToWood_Implementation(int Amount, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	if(State == nullptr)
@@ -31,12 +34,12 @@ void ARacketeersController::AddToWood_Implementation(int Amount, Teams Team)
 	State->AddToWood(Amount, Team);
 }
 
-bool ARacketeersController::AddToWood_Validate(int Amount, Teams Team)
+bool ARacketeersController::AddToWood_Validate(int Amount, ETeams Team)
 {
 	return true;
 }
 
-void ARacketeersController::AddToFiber_Implementation(int Amount, Teams Team)
+void ARacketeersController::AddToFiber_Implementation(int Amount, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	if(State == nullptr)
@@ -47,12 +50,12 @@ void ARacketeersController::AddToFiber_Implementation(int Amount, Teams Team)
 	State->AddToFiber(Amount, Team);
 }
 
-bool ARacketeersController::AddToFiber_Validate(int Amount, Teams Team)
+bool ARacketeersController::AddToFiber_Validate(int Amount, ETeams Team)
 {
 	return true;
 }
 
-void ARacketeersController::AddToMetal_Implementation(int Amount, Teams Team)
+void ARacketeersController::AddToMetal_Implementation(int Amount, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	if(State == nullptr)
@@ -63,12 +66,12 @@ void ARacketeersController::AddToMetal_Implementation(int Amount, Teams Team)
 	State->AddToMetal(Amount, Team);
 }
 
-bool ARacketeersController::AddToMetal_Validate(int Amount, Teams Team)
+bool ARacketeersController::AddToMetal_Validate(int Amount, ETeams Team)
 {
 	return true;
 }
 
-void ARacketeersController::RemoveWood_Implementation(int Amount, Teams Team)
+void ARacketeersController::RemoveWood_Implementation(int Amount, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 
@@ -80,12 +83,12 @@ void ARacketeersController::RemoveWood_Implementation(int Amount, Teams Team)
 	State->RemoveWood(Amount, Team);
 }
 
-bool ARacketeersController::RemoveWood_Validate(int Amount, Teams Team)
+bool ARacketeersController::RemoveWood_Validate(int Amount, ETeams Team)
 {
 	return true;
 }
 
-void ARacketeersController::RemoveFiber_Implementation(int Amount, Teams Team)
+void ARacketeersController::RemoveFiber_Implementation(int Amount, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	if(State == nullptr)
@@ -96,12 +99,12 @@ void ARacketeersController::RemoveFiber_Implementation(int Amount, Teams Team)
 	State->RemoveFiber(Amount, Team);
 }
 
-bool ARacketeersController::RemoveFiber_Validate(int Amount, Teams Team)
+bool ARacketeersController::RemoveFiber_Validate(int Amount, ETeams Team)
 {
 	return true;
 }
 
-void ARacketeersController::RemoveMetal_Implementation(int Amount, Teams Team)
+void ARacketeersController::RemoveMetal_Implementation(int Amount, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	if(State == nullptr)
@@ -112,12 +115,12 @@ void ARacketeersController::RemoveMetal_Implementation(int Amount, Teams Team)
 	State->RemoveMetal(Amount, Team);
 }
 
-bool ARacketeersController::RemoveMetal_Validate(int Amount, Teams Team)
+bool ARacketeersController::RemoveMetal_Validate(int Amount, ETeams Team)
 {
 	return true;
 }
 
-void ARacketeersController::DamageBoat_Implementation(int Amount, Teams Team)
+void ARacketeersController::DamageBoat_Implementation(int Amount, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	if(State == nullptr)
@@ -128,7 +131,34 @@ void ARacketeersController::DamageBoat_Implementation(int Amount, Teams Team)
 	State->DamageBoat(Amount, Team);
 }
 
-bool ARacketeersController::DamageBoat_Validate(int Amount, Teams Team)
+bool ARacketeersController::DamageBoat_Validate(int Amount, ETeams Team)
 {
 	return true;
 }
+
+void ARacketeersController::ActivateWidget_Implementation(UUserWidget* Widget)
+{
+	int32 s = GetUniqueID();
+	FString String = FString::FromInt(s);
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
+	if(Widget == nullptr)
+	{
+		return;
+	}
+	Widget->AddToViewport(9999);
+}
+
+void ARacketeersController::RemoveWidget_Implementation(UUserWidget* Widget)
+{
+	int32 s = GetUniqueID();
+	FString String = FString::FromInt(s);
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
+	if(Widget == nullptr)
+	{
+		return;
+	}
+	Widget->RemoveFromParent();
+}
+

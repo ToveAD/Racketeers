@@ -50,9 +50,7 @@ public:
 	//TArray<FTransform> SpawnsTeamB;
 	
 	//PlayerSpawns
-	void ConditionExecutuion();
-	bool LoseCondition(FTeam TeamA, FTeam TeamB);
-	bool WinCondition(FTeam TeamA, FTeam TeamB);
+
 
 	
 	

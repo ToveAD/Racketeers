@@ -19,27 +19,27 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 
 	//Methods for adding and removing to gathering score
-	UFUNCTION()
-	void AddToWood(int Amount, Teams Team);
+	UFUNCTION(BlueprintCallable)
+	void AddToWood(int Amount, ETeams Team);
 
-	UFUNCTION()
-	void AddToFiber(int Amount, Teams Team);
+	UFUNCTION(BlueprintCallable)
+	void AddToFiber(int Amount, ETeams Team);
 
-	UFUNCTION()
-	void AddToMetal(int Amount, Teams Team);
+	UFUNCTION(BlueprintCallable)
+	void AddToMetal(int Amount, ETeams Team);
 
-	UFUNCTION()
-	void RemoveWood(int Amount, Teams Team);
+	UFUNCTION(BlueprintCallable)
+	void RemoveWood(int Amount, ETeams Team);
 
-	UFUNCTION()
-	void RemoveFiber(int Amount, Teams Team);
+	UFUNCTION(BlueprintCallable)
+	void RemoveFiber(int Amount, ETeams Team);
 
-	UFUNCTION()
-	void RemoveMetal(int Amount, Teams Team);
+	UFUNCTION(BlueprintCallable)
+	void RemoveMetal(int Amount, ETeams Team);
 	// -- End of Methods
 
-	UFUNCTION()
-	void DamageBoat(int Amount, Teams Team);
+	UFUNCTION(BlueprintCallable)
+	void DamageBoat(int Amount, ETeams Team);
 
 	
 
@@ -50,6 +50,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RacconsMetal;
 	UPROPERTY(Replicated, BlueprintReadWrite)
+	int32 RacconsRoundsWon;
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	float RacconsBoatHealth; 
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
@@ -58,6 +60,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	int32 RedPandasFiber;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RedPandasMetal;
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	int32 RedPandasRoundsWon;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float RedPandasBoatHealth; 
 	

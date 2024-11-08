@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "GameModeStructs.h"
+
 #include "RacketeersController.generated.h"
 
 
@@ -16,6 +17,9 @@
 	 *		-	-
 	 *		- 
 	 */
+
+
+class UUserWidget;
 
 
 UCLASS()
@@ -30,27 +34,31 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	void Call_Interact(const FString &string);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void AddToWood(int Amount, Teams Team);
+	void AddToWood(int Amount, ETeams Team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void AddToFiber(int Amount, Teams Team);
+	void AddToFiber(int Amount, ETeams Team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void AddToMetal(int Amount, Teams Team);
+	void AddToMetal(int Amount, ETeams Team);
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void RemoveWood(int Amount, Teams Team);
+	void RemoveWood(int Amount, ETeams Team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void RemoveFiber(int Amount, Teams Team);
+	void RemoveFiber(int Amount, ETeams Team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void RemoveMetal(int Amount, Teams Team);
+	void RemoveMetal(int Amount, ETeams Team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void DamageBoat(int Amount, Teams Team);
-	
+	void DamageBoat(int Amount, ETeams Team);
 
+	UFUNCTION(CLient, Reliable, BlueprintCallable)
+	void ActivateWidget(UUserWidget* Widget);
+
+	UFUNCTION(CLient, Reliable, BlueprintCallable)
+	void RemoveWidget(UUserWidget* Widget);
 
 	
 };
