@@ -76,9 +76,9 @@ void ARacketeersGMBase::BeginPlay()
 	
 }
 
-void ARacketeersGMBase::SetMaterial(const FResources& Materials, Teams Team)
+void ARacketeersGMBase::SetMaterial(const FResources& Materials, ETeams Team)
 {
-	if(Team == Teams::TEAM_A)
+	if(Team == ETeams::Team_Racoon)
 	{
 		Team_A_Materials = Materials;
 	}
@@ -86,9 +86,9 @@ void ARacketeersGMBase::SetMaterial(const FResources& Materials, Teams Team)
 	
 }
 
-FResources ARacketeersGMBase::GetResources(Teams Team)
+FResources ARacketeersGMBase::GetResources(ETeams Team)
 {
-	if(Team == Teams::TEAM_A)
+	if(Team == ETeams::Team_Racoon)
 	{
 		return  Team_A_Materials;
 	}
