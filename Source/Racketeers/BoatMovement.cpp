@@ -120,28 +120,6 @@ void UBoatMovement::TeleportBoat(const FVector& NewLocation)
 // Function to switch input mappings to "IMC_Boat" when the boat is entered
 void UBoatMovement::SwitchInputMapping(bool IsAttaching)
 {
-    // Check if this is running on the server
-    if (GetOwner()->HasAuthority())
-    {
-        // Get the interacting player (or determine which player is interacting with the boat)
-        APlayerController* InteractingPlayerController = GetWorld()->GetFirstPlayerController();  // Replace with logic to get the actual interacting player
-
-        if (InteractingPlayerController)
-        {
-            // Call the client function on the interacting player's client
-            ClientSwitchInputMapping(InteractingPlayerController, IsAttaching);
-        }
-    }
-    else
-    {
-        // If this is running on the client, apply the input mapping directly
-        ApplyInputMapping(IsAttaching);
-    }
-}
-
-// Separate function to actually apply the input mappings on the client
-void UBoatMovement::ApplyInputMapping(bool IsAttaching)
-{
     // Get the local player controller
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 
@@ -152,28 +130,33 @@ void UBoatMovement::ApplyInputMapping(bool IsAttaching)
 
         if (InputSubsystem)
         {
-            if (IMC_Boat && IMC_Default)  // Check if both IMC_Boat and IMC_Default are valid
+            if (IMC_Boat)  // Check if IMC_Boat is valid
             {
-                if (IsAttaching)
+                if(IsAttaching)
                 {
-                    // Switch to boat input mapping
+                    // Remove the default input mapping context
                     InputSubsystem->RemoveMappingContext(IMC_Default);
-                    InputSubsystem->AddMappingContext(IMC_Boat, 1);
+
+                    // Add the boat-specific input mapping context
+                    InputSubsystem->AddMappingContext(IMC_Boat, 1);  // You can set priority if needed (0 is default)
 
                     UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
-                }
-                else
+                    
+                }else if(!IsAttaching)
                 {
-                    // Switch back to default input mapping
+                    // Remove the default input mapping context
                     InputSubsystem->RemoveMappingContext(IMC_Boat);
-                    InputSubsystem->AddMappingContext(IMC_Default, 1);
 
-                    UE_LOG(LogTemp, Log, TEXT("Switched to player input mapping context: IMC_Default"));
+                    // Add the boat-specific input mapping context
+                    InputSubsystem->AddMappingContext(IMC_Default, 1);  // You can set priority if needed (0 is default)
+
+                    UE_LOG(LogTemp, Log, TEXT("Switched to Player input mapping context: IMC_Default"));
                 }
+               
             }
             else
             {
-                UE_LOG(LogTemp, Warning, TEXT("IMC_Boat or IMC_Default is null!"));
+                UE_LOG(LogTemp, Warning, TEXT("IMC_Boat is null!"));
             }
         }
         else
@@ -188,10 +171,13 @@ void UBoatMovement::ApplyInputMapping(bool IsAttaching)
 }
 
 // Function to switch input mappings to "IMC_Boat" when the boat is entered
-void UBoatMovement::ClientSwitchInputMapping_Implementation(APlayerController* PlayerController, bool IsAttaching)
+void UBoatMovement::ClientSwitchInputMapping_Implementation(bool IsAttaching)
 {
-    if (PlayerController == GetWorld()->GetFirstPlayerController())  // Check if this is the correct player
-    {
-        ApplyInputMapping(IsAttaching);
-    }
+    SwitchInputMapping(IsAttaching);
+}
+
+// Function to switch input mappings to "IMC_Boat" when the boat is entered
+void UBoatMovement::ServerSwitchInputMapping_Implementation(bool IsAttaching)
+{
+    SwitchInputMapping(IsAttaching);
 }
