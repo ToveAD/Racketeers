@@ -40,11 +40,11 @@ struct FTeam
 
 
 
-UENUM()
-enum Teams
+UENUM(BlueprintType)
+enum class ETeams : uint8
 {
-	TEAM_A,
-	TEAM_B,
+	Team_Racoon,
+	Team_Panda,
 };
 
 
