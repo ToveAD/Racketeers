@@ -7,8 +7,14 @@
 #include "RacketeersGMBase.generated.h"
 
 /**
- * 
+ * Varje Start måste ha rätt phase tag, sen kan det också behövas att de olika starts får ett id för spelare och team. 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLoadWidget);
+
+
+#define MAXTOTALROUNDS 8
+
 UCLASS()
 class RACKETEERS_API ARacketeersGMBase : public AGM_Base
 {
@@ -46,6 +52,8 @@ class RACKETEERS_API ARacketeersGMBase : public AGM_Base
 	 *			
 	 *
 	 *
+	 * Transitions scenes inom varje phase som vissar score, 
+	 * Kunna Bestäma I lobby om olika settings i lobby om vad det ska vara  best av 3 eller 5. 
 	 *
 	 *
 	 *			 
@@ -55,10 +63,9 @@ public:
 
 	ARacketeersGMBase();
 
-	UFUNCTION(BlueprintCallable)
-	void SetMaterial(const FResources& Materials, ETeams team);
-	UFUNCTION(BlueprintCallable)
-	FResources GetResources(ETeams team);
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnLoadWidget OnLoadWidget;
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Respawn();
@@ -79,31 +86,46 @@ public:
 	UPhase* Phase_2;
 	UPROPERTY(BlueprintReadWrite)
 	UPhase* Phase_3;
-	
-private:
 
+	UFUNCTION(BlueprintCallable)
+	void LoadLevel();
+	UFUNCTION(BlueprintCallable)
+	void UnloadLevel(FName name, FLatentActionInfo& ActionInfo);
+	
+	UFUNCTION(BlueprintCallable)
+	void RespawnPlayers();
+
+	UFUNCTION(BlueprintCallable)
+	void IncreaseTotalRounds();
+	UFUNCTION(BlueprintCallable)
+	void DecreaseTotalRounds();
+	UFUNCTION(BlueprintCallable)
+	void RoundCompletion();
+	
+	int8 GetTotalRounds();
+	
+
+private:
 	UPROPERTY()
 	UPhase* CurrentPhase;
-	
 	UPROPERTY()
 	TArray<UPhase*> Phases;
+	UPROPERTY()
+	int8 TotalRounds;
 	
-
 	float CurrentTime;
-	FResources Team_A_Materials;
-	FResources Team_B_Materials;
-
-	class AGS_Base* GameState;
-
 
 	int GetNextPhaseNumber();
-
-
 	
+	//methods for progressing trough phases
 
-
+	bool CheckIfGameIsOver();
+	bool LoadTransitionStats();
+	bool CheckWinnerOfRound();
+	bool EndGame();
 	void SwitchState();
 	void Transition();
-	void Condition();
+	
 	
 };
+
