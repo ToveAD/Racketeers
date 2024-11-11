@@ -25,7 +25,7 @@ struct FPlayerInfo
 	APlayerState* PlayerState;
 
 	UPROPERTY(BlueprintReadWrite, Category = "PlayerInfo")
-	ETeams Team;
+	ETeams Teams;
 
 	UPROPERTY(BlueprintReadWrite, Category = "PlayerInfo")
 	int TeamPlayerID;
