@@ -3,7 +3,15 @@
 
 #include "RacketeersGMBase.h"
 
+#include "RacketeersGameStateBase.h"
+#include "GameFramework/GameStateBase.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+
+
+//Göra ett event som en klass får som senare aktiverar widgeten.
+
+
 
 
 /*
@@ -16,12 +24,6 @@
 	 *	SpawnPointSystem - Decides Where players Should Spawn
 	 *	TeamSpawnPoints - The SpawnPoints To use
 	 *	SpawnPoints - Get Local Player Move To The Location
- *
- *
- *
- *
- *
- *
  *	[GameMode] - Server Only
  *		
  *
@@ -55,16 +57,19 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
-	Phase_1->TimeLimit = 10.0f;
-	Phase_1->LevelToLoad = "Level1_GamePlay";
+	Phase_1->TimeLimit = 15.0f;
+	Phase_1->LevelToLoad = "Phase1_GamePlay";
+	Phase_1->StartPhaseName = "P1";
 	
 	Phase_2->State = FPhaseState::Phase_2;
-	Phase_2->TimeLimit = 10.0f;
-	Phase_2->LevelToLoad = "Phase2_GamePlay";	
+	Phase_2->TimeLimit = 15.0f;
+	Phase_2->LevelToLoad = "Phase2_GamePlay";
+	Phase_2->StartPhaseName = "P2";
 	
 	Phase_3->State = FPhaseState::Phase_3;
-	Phase_3->TimeLimit = 10.0f;
-	Phase_3->LevelToLoad = "Phase3_GamePlay";	
+	Phase_3->TimeLimit = 15.0f;
+	Phase_3->LevelToLoad = "Phase3_GamePlay";
+	Phase_3->StartPhaseName = "P3";
 
 	Phases.Push(Phase_1);
 	Phases.Push(Phase_2);
@@ -73,32 +78,16 @@ void ARacketeersGMBase::BeginPlay()
 	CurrentPhase = Phases[0];
 
 	CurrentTime = 0;
+	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
 	
 }
 
-void ARacketeersGMBase::SetMaterial(const FResources& Materials, ETeams Team)
-{
-	if(Team == ETeams::Team_Racoon)
-	{
-		Team_A_Materials = Materials;
-	}
-	Team_B_Materials = Materials;
-	
-}
 
-FResources ARacketeersGMBase::GetResources(ETeams Team)
-{
-	if(Team == ETeams::Team_Racoon)
-	{
-		return  Team_A_Materials;
-	}
-	return  Team_B_Materials;
-	
-}
 
 void ARacketeersGMBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
 	
 	if(CurrentPhase == nullptr)
 	{
@@ -107,24 +96,68 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 	}
 	if(CurrentTime >= CurrentPhase->TimeLimit)
 	{
-		CurrentTime = 0;
-		UE_LOG(LogTemp, Display, TEXT("Restarting Game Phase"));
-	
-		Condition();
-		SwitchState();
-		Transition();
-		
+		RoundCompletion();
 	}else
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Current Time: %f"), CurrentTime);
 		CurrentTime += DeltaSeconds;
 	}
-	
-	
 }
-void ARacketeersGMBase::Condition()
+
+void ARacketeersGMBase::RoundCompletion()
 {
-	CurrentPhase->ConditionExecutuion();
+	//CheckIfGameIsOver
+	//EndGame
+
+	//CheckWinnerOfRound
+	//LoadTransitionScreen (Eller en Level) - Show Scores, Everyone Press button to continue
+		
+	//Unload, Loads And Reset Players
+
+	CurrentTime = 0;
+
+
+	
+	UE_LOG(LogTemp, Warning, TEXT("Check If Game Is Over"));
+	if(CheckIfGameIsOver())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EndGame"));
+		EndGame();
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("CheckWinner Of Round"));
+	CheckWinnerOfRound();
+
+	UE_LOG(LogTemp, Warning, TEXT("Load Transition Stats"));
+	LoadTransitionStats();
+
+	UE_LOG(LogTemp, Warning, TEXT("Transition"));
+	Transition();
+}
+
+bool ARacketeersGMBase::CheckWinnerOfRound()
+{
+
+	if(CurrentPhase->State == FPhaseState::Phase_1)
+	{
+		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+		if(GS == nullptr) return false;
+		if(GS->RacconsBoatHealth > GS->RedPandasBoatHealth)
+		{
+			GS->RacconsRoundsWon++;
+			return true;
+		}
+		if(GS->RedPandasBoatHealth > GS->RacconsBoatHealth)
+		{
+			GS->RedPandasBoatHealth++;
+			return true;
+		}
+		
+		GS->RacconsRoundsWon++;
+		GS->RedPandasBoatHealth++;
+	}
+	
+	return true;
 }
 
 void ARacketeersGMBase::SwitchState()
@@ -141,21 +174,14 @@ void ARacketeersGMBase::SwitchState()
 
 void ARacketeersGMBase::Transition()
 {
-
 	FLatentActionInfo ActionInfo;
-	//UGameplayStatics::UnloadStreamLevel(GetWorld(), (TEXT("%s"), *CurrentPhase->LevelToLoad))
+	ActionInfo.Linkage = 0;
+	ActionInfo.CallbackTarget = this;
+	ActionInfo.ExecutionFunction = TEXT("LoadLevel");
+	ActionInfo.UUID = GetUniqueID();	
 
-	//Step 1 - Unload And Load
-	UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *CurrentPhase->LevelToLoad))->SetShouldBeLoaded(false);
-	UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
-
-	//Step 2 - Respawn the players
-	RestartGame();	
-	
-
-	//UGameplayStatics::LoadStreamLevel(GetWorld(), TEXT("Phase2_GamePlay"));
-	//Spawn the players to the positions
-	//Load The Necassary 
+	UE_LOG(LogTemp, Warning, TEXT("Unload Level"))
+	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
 }
 
 int ARacketeersGMBase::GetNextPhaseNumber()
@@ -168,6 +194,90 @@ int ARacketeersGMBase::GetNextPhaseNumber()
 	{
 		return CurrentPhase->State+1;
 	}
+}
+
+
+
+bool ARacketeersGMBase::CheckIfGameIsOver()
+{
+	ARacketeersGameStateBase* GS = this->GetGameState<ARacketeersGameStateBase>();
+	
+	if(CurrentPhase->State == FPhaseState::Phase_3)
+	{
+		int8 RoundsPlayed = GS->RacconsRoundsWon + GS->RedPandasRoundsWon;
+		if(RoundsPlayed == GetTotalRounds() )
+		{
+			return true; 
+		}
+	}
+	return false;
+}
+
+bool ARacketeersGMBase::LoadTransitionStats()
+{
+
+	OnLoadWidget.Broadcast();
+	return true;
+}
+
+bool ARacketeersGMBase::EndGame()
+{
+	ProcessServerTravel("Lobby");
+	return true;
+}
+
+void ARacketeersGMBase::IncreaseTotalRounds()
+{
+	if(TotalRounds + 1 > MAXTOTALROUNDS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reached Max Total Rounds"));
+		return;
+	}
+	TotalRounds++;
+}
+
+void ARacketeersGMBase::DecreaseTotalRounds()
+{
+	if(TotalRounds - 1 < 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reached under valid Total Rounds "));
+		return;
+	}
+	TotalRounds--;
+}
+
+int8 ARacketeersGMBase::GetTotalRounds()
+{
+	return TotalRounds;
+}
+
+void ARacketeersGMBase::UnloadLevel(FName name, FLatentActionInfo& ActionInfo)
+{
+	UGameplayStatics::UnloadStreamLevel(GetWorld(), name, ActionInfo, false);
+}
+
+void ARacketeersGMBase::LoadLevel()
+{
+	FLatentActionInfo LoadActionInfo;
+	
+	LoadActionInfo.Linkage = 0;
+	LoadActionInfo.CallbackTarget = this;
+	LoadActionInfo.ExecutionFunction = TEXT("RespawnPlayers");
+	LoadActionInfo.UUID = GetUniqueID();
+	
+	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true , false, LoadActionInfo);
+}
+
+void ARacketeersGMBase::RespawnPlayers()
+{
+
+	for (APlayerState* Player : UGameplayStatics::GetGameState(GetWorld())->PlayerArray)
+	{
+		AActor* PlayerStart = FindPlayerStart(Player->GetPlayerController(), Phases[GetNextPhaseNumber()]->StartPhaseName);
+		Player->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
+	}
+	UE_LOG(LogTemp, Warning, TEXT("RespawnPlayers"));
+	SwitchState();
 }
 
 

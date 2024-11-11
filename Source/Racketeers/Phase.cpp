@@ -3,6 +3,10 @@
 
 #include "Phase.h"
 
+#include "RacketeersGameStateBase.h"
+#include "RacketeersGMBase.h"
+#include "Kismet/GameplayStatics.h"
+
 UPhase::UPhase()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -17,7 +21,6 @@ UPhase::UPhase(float P_TimeLimit, FPhaseState P_State)
 	
 }
 
-
 void UPhase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -28,27 +31,4 @@ void UPhase::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
-
-
-
-
-bool UPhase::LoseCondition(FTeam TeamA, FTeam TeamB)
-{
-	
-	
-	return true;
-}
-bool UPhase::WinCondition(FTeam TeamA, FTeam TeamB)
-{
-
-	
-	return true;
-}
-
-void UPhase::ConditionExecutuion()
-{
-	
-}
-
-
 

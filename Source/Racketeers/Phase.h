@@ -44,14 +44,13 @@ public:
 	
 	FPhaseState State;
 	FString LevelToLoad;
+	FString StartPhaseName;
 
 	//TArray<FTransform> SpawnsTeamA;
 	//TArray<FTransform> SpawnsTeamB;
 	
 	//PlayerSpawns
-	void ConditionExecutuion();
-	bool LoseCondition(FTeam TeamA, FTeam TeamB);
-	bool WinCondition(FTeam TeamA, FTeam TeamB);
+
 
 	
 	
