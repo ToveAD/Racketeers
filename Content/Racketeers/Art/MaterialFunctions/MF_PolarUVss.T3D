@@ -1,0 +1,461 @@
+Begin Object Class=/Script/Engine.MaterialFunction Name="MF_PolarUVss" ExportPath="/Script/Engine.MaterialFunction'/Game/Grass/MF_PolarUVss.MF_PolarUVss'"
+   Begin Object Class=/Script/Engine.MaterialFunctionEditorOnlyData Name="MF_PolarUVssEditorOnlyData" ExportPath="/Script/Engine.MaterialFunctionEditorOnlyData'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MF_PolarUVssEditorOnlyData'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAdd Name="MaterialExpressionAdd_0" ExportPath="/Script/Engine.MaterialExpressionAdd'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionAdd_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_3" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_3'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_4" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_4'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAdd Name="MaterialExpressionAdd_1" ExportPath="/Script/Engine.MaterialExpressionAdd'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionAdd_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_0" ExportPath="/Script/Engine.MaterialExpressionTextureSample'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionTextureSample_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionOneMinus Name="MaterialExpressionOneMinus_0" ExportPath="/Script/Engine.MaterialExpressionOneMinus'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionOneMinus_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAppendVector Name="MaterialExpressionAppendVector_0" ExportPath="/Script/Engine.MaterialExpressionAppendVector'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionAppendVector_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_1" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionMultiply_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSmoothStep Name="MaterialExpressionSmoothStep_0" ExportPath="/Script/Engine.MaterialExpressionSmoothStep'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionSmoothStep_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionAppendVector Name="MaterialExpressionAppendVector_1" ExportPath="/Script/Engine.MaterialExpressionAppendVector'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionAppendVector_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_9" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_9'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_10" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_10'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionArctangent2 Name="MaterialExpressionArctangent2_0" ExportPath="/Script/Engine.MaterialExpressionArctangent2'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionArctangent2_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_0" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_1" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_0" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionSubtract_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_2" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionMultiply_2'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionComponentMask Name="MaterialExpressionComponentMask_5" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_5'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionDivide Name="MaterialExpressionDivide_0" ExportPath="/Script/Engine.MaterialExpressionDivide'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionDivide_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_1" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionConstant_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_2" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionConstant_2'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionDDX Name="MaterialExpressionDDX_0" ExportPath="/Script/Engine.MaterialExpressionDDX'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionDDX_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionReroute Name="MaterialExpressionReroute_0" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionReroute_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionDDY Name="MaterialExpressionDDY_0" ExportPath="/Script/Engine.MaterialExpressionDDY'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionDDY_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_1" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionMaterialFunctionCall_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionDivide Name="MaterialExpressionDivide_6" ExportPath="/Script/Engine.MaterialExpressionDivide'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionDivide_6'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_4" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_4'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_1" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFrac Name="MaterialExpressionFrac_0" ExportPath="/Script/Engine.MaterialExpressionFrac'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFrac_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_0" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureCoordinate Name="MaterialExpressionTextureCoordinate_0" ExportPath="/Script/Engine.MaterialExpressionTextureCoordinate'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionTextureCoordinate_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_3" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_3'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureObject Name="MaterialExpressionTextureObject_0" ExportPath="/Script/Engine.MaterialExpressionTextureObject'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionTextureObject_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_5" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_5'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionOutput Name="MaterialExpressionFunctionOutput_0" ExportPath="/Script/Engine.MaterialExpressionFunctionOutput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionOutput_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionStep Name="MaterialExpressionStep_1" ExportPath="/Script/Engine.MaterialExpressionStep'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionStep_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionOutput Name="MaterialExpressionFunctionOutput_1" ExportPath="/Script/Engine.MaterialExpressionFunctionOutput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionOutput_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionReroute Name="MaterialExpressionReroute_2" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionReroute_2'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionReroute Name="MaterialExpressionReroute_1" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionReroute_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_3" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionSubtract_3'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSquareRoot Name="MaterialExpressionSquareRoot_0" ExportPath="/Script/Engine.MaterialExpressionSquareRoot'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionSquareRoot_0'"
+   End Object
+   Begin Object Class=/Script/Engine.Material Name="Material_0" ExportPath="/Script/Engine.Material'/Game/Grass/MF_PolarUVss.MF_PolarUVss:Material_0'"
+      Begin Object Class=/Script/Engine.MaterialEditorOnlyData Name="Material_0EditorOnlyData" ExportPath="/Script/Engine.MaterialEditorOnlyData'/Game/Grass/MF_PolarUVss.MF_PolarUVss:Material_0.Material_0EditorOnlyData'"
+      End Object
+   End Object
+   Begin Object Name="MF_PolarUVssEditorOnlyData" ExportPath="/Script/Engine.MaterialFunctionEditorOnlyData'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MF_PolarUVssEditorOnlyData'"
+      ExpressionCollection=(Expressions=("/Script/Engine.MaterialExpressionFunctionOutput'MF_PolarUVss:MaterialExpressionFunctionOutput_0'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_0'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_1'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_3'","/Script/Engine.MaterialExpressionTextureObject'MF_PolarUVss:MaterialExpressionTextureObject_0'","/Script/Engine.MaterialExpressionConstant'MF_PolarUVss:MaterialExpressionConstant_1'","/Script/Engine.MaterialExpressionTextureCoordinate'MF_PolarUVss:MaterialExpressionTextureCoordinate_0'","/Script/Engine.MaterialExpressionTextureSample'MF_PolarUVss:MaterialExpressionTextureSample_0'","/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_0'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_0'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_1'","/Script/Engine.MaterialExpressionArctangent2'MF_PolarUVss:MaterialExpressionArctangent2_0'","/Script/Engine.MaterialExpressionDivide'MF_PolarUVss:MaterialExpressionDivide_0'","/Script/Engine.MaterialExpressionMaterialFunctionCall'MF_PolarUVss:MaterialExpressionMaterialFunctionCall_1'","/Script/Engine.MaterialExpressionConstant'MF_PolarUVss:MaterialExpressionConstant_2'","/Script/Engine.MaterialExpressionFrac'MF_PolarUVss:MaterialExpressionFrac_0'","/Script/Engine.MaterialExpressionMultiply'MF_PolarUVss:MaterialExpressionMultiply_1'","/Script/Engine.MaterialExpressionAppendVector'MF_PolarUVss:MaterialExpressionAppendVector_0'","/Script/Engine.MaterialExpressionDDX'MF_PolarUVss:MaterialExpressionDDX_0'","/Script/Engine.MaterialExpressionDDY'MF_PolarUVss:MaterialExpressionDDY_0'","/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_0'","/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_1'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_3'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_4'","/Script/Engine.MaterialExpressionMultiply'MF_PolarUVss:MaterialExpressionMultiply_2'","/Script/Engine.MaterialExpressionAdd'MF_PolarUVss:MaterialExpressionAdd_0'","/Script/Engine.MaterialExpressionSquareRoot'MF_PolarUVss:MaterialExpressionSquareRoot_0'","/Script/Engine.MaterialExpressionSmoothStep'MF_PolarUVss:MaterialExpressionSmoothStep_0'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_4'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_5'","/Script/Engine.MaterialExpressionFunctionOutput'MF_PolarUVss:MaterialExpressionFunctionOutput_1'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_9'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_10'","/Script/Engine.MaterialExpressionAppendVector'MF_PolarUVss:MaterialExpressionAppendVector_1'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_5'","/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_3'","/Script/Engine.MaterialExpressionDivide'MF_PolarUVss:MaterialExpressionDivide_6'","/Script/Engine.MaterialExpressionStep'MF_PolarUVss:MaterialExpressionStep_1'","/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_2'","/Script/Engine.MaterialExpressionAdd'MF_PolarUVss:MaterialExpressionAdd_1'","/Script/Engine.MaterialExpressionOneMinus'MF_PolarUVss:MaterialExpressionOneMinus_0'"))
+   End Object
+   Begin Object Name="MaterialExpressionAdd_0" ExportPath="/Script/Engine.MaterialExpressionAdd'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionAdd_0'"
+      A=(Expression="/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_3'")
+      B=(Expression="/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_4'")
+      MaterialExpressionEditorX=-861
+      MaterialExpressionEditorY=401
+      MaterialExpressionGuid=D03FE99B564FCA04BE2B56B096B65981
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_3" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_3'"
+      Input=(Expression="/Script/Engine.MaterialExpressionMultiply'MF_PolarUVss:MaterialExpressionMultiply_2'")
+      R=True
+      MaterialExpressionEditorX=-1037
+      MaterialExpressionEditorY=400
+      MaterialExpressionGuid=065288617E4860EA0F5F8E90475B221E
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_4" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_4'"
+      Input=(Expression="/Script/Engine.MaterialExpressionMultiply'MF_PolarUVss:MaterialExpressionMultiply_2'")
+      G=True
+      MaterialExpressionEditorX=-1037
+      MaterialExpressionEditorY=481
+      MaterialExpressionGuid=26E5D40F07499ED70ACFB29C10A67A49
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionAdd_1" ExportPath="/Script/Engine.MaterialExpressionAdd'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionAdd_1'"
+      A=(Expression="/Script/Engine.MaterialExpressionTextureSample'MF_PolarUVss:MaterialExpressionTextureSample_0'",Mask=1,MaskR=1,MaskG=1,MaskB=1)
+      B=(Expression="/Script/Engine.MaterialExpressionOneMinus'MF_PolarUVss:MaterialExpressionOneMinus_0'")
+      ConstB=0.000000
+      MaterialExpressionEditorX=1616
+      MaterialExpressionEditorY=336
+      MaterialExpressionGuid=711CF8AE9C4D5519FF4386A55A255C13
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_0" ExportPath="/Script/Engine.MaterialExpressionTextureSample'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionTextureSample_0'"
+      Coordinates=(Expression="/Script/Engine.MaterialExpressionAppendVector'MF_PolarUVss:MaterialExpressionAppendVector_0'")
+      TextureObject=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_3'")
+      CoordinatesDX=(Expression="/Script/Engine.MaterialExpressionDDX'MF_PolarUVss:MaterialExpressionDDX_0'")
+      CoordinatesDY=(Expression="/Script/Engine.MaterialExpressionDDY'MF_PolarUVss:MaterialExpressionDDY_0'")
+      MipValueMode=TMVM_Derivative
+      SamplerSource=SSM_Wrap_WorldGroupSettings
+      MaterialExpressionEditorX=1167
+      MaterialExpressionEditorY=224
+      MaterialExpressionGuid=E1CA8609D2432F6118858CBA1EF1479A
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionOneMinus_0" ExportPath="/Script/Engine.MaterialExpressionOneMinus'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionOneMinus_0'"
+      Input=(Expression="/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_2'")
+      MaterialExpressionEditorX=1536
+      MaterialExpressionEditorY=464
+      MaterialExpressionGuid=AEC60B0762403FE0AB54AC9D043926C0
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionAppendVector_0" ExportPath="/Script/Engine.MaterialExpressionAppendVector'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionAppendVector_0'"
+      A=(Expression="/Script/Engine.MaterialExpressionMultiply'MF_PolarUVss:MaterialExpressionMultiply_1'")
+      B=(Expression="/Script/Engine.MaterialExpressionSmoothStep'MF_PolarUVss:MaterialExpressionSmoothStep_0'")
+      MaterialExpressionEditorX=512
+      MaterialExpressionEditorY=128
+      MaterialExpressionGuid=9C88D729054240DBDDB3C2B301AD34BE
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_1" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionMultiply_1'"
+      A=(Expression="/Script/Engine.MaterialExpressionFrac'MF_PolarUVss:MaterialExpressionFrac_0'")
+      B=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_1'")
+      MaterialExpressionEditorX=-240
+      MaterialExpressionEditorY=-15
+      MaterialExpressionGuid=3A091573854416E1196BECAFFB4189AC
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionSmoothStep_0" ExportPath="/Script/Engine.MaterialExpressionSmoothStep'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionSmoothStep_0'"
+      Min=(Expression="/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_3'")
+      Max=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_5'")
+      Value=(Expression="/Script/Engine.MaterialExpressionSquareRoot'MF_PolarUVss:MaterialExpressionSquareRoot_0'")
+      MaterialExpressionEditorX=272
+      MaterialExpressionEditorY=336
+      MaterialExpressionGuid=9E9EE850CE4987B2D438A5BE81FC9CE4
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionAppendVector_1" ExportPath="/Script/Engine.MaterialExpressionAppendVector'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionAppendVector_1'"
+      A=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_9'")
+      B=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_10'")
+      MaterialExpressionEditorX=-1936
+      MaterialExpressionEditorY=432
+      MaterialExpressionGuid=C0A6D8E93C4942D55B138B90EA058770
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_9" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_9'"
+      InputName="Center Offset X"
+      Id=42150F01E04DBC04227192BBE7032E15
+      InputType=FunctionInput_Scalar
+      PreviewValue=(X=0.500000,Y=0.000000,Z=0.000000,W=1.000000)
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=-2176
+      MaterialExpressionEditorY=432
+      MaterialExpressionGuid=CD8D6DF9814FAFAAC75B9FA8CD086A17
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_10" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_10'"
+      InputName="Center Offset Y"
+      Id=221D86F39B4407EB5E9C8C8CC6E33C14
+      InputType=FunctionInput_Scalar
+      PreviewValue=(X=0.500000,Y=0.000000,Z=0.000000,W=1.000000)
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=-2176
+      MaterialExpressionEditorY=496
+      MaterialExpressionGuid=D9CC431E9A48D3F6B2D9D89F51C52063
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionArctangent2_0" ExportPath="/Script/Engine.MaterialExpressionArctangent2'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionArctangent2_0'"
+      Y=(Expression="/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_0'")
+      X=(Expression="/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_1'")
+      MaterialExpressionEditorX=-1168
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=56E755C5BD49401DCA0114968F6366F6
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_0" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_0'"
+      Input=(Expression="/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_0'")
+      R=True
+      MaterialExpressionEditorX=-1424
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=C63E3198FB4623A89536E8B70F666817
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_1" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_1'"
+      Input=(Expression="/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_0'")
+      G=True
+      MaterialExpressionEditorX=-1425
+      MaterialExpressionEditorY=66
+      MaterialExpressionGuid=D26E9247D84F0063939E87B0108358BA
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_0" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionSubtract_0'"
+      A=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_0'")
+      B=(Expression="/Script/Engine.MaterialExpressionAppendVector'MF_PolarUVss:MaterialExpressionAppendVector_1'")
+      ConstB=0.500000
+      MaterialExpressionEditorX=-1776
+      MaterialExpressionEditorY=208
+      MaterialExpressionGuid=E348E0A5C246F729794A2B8D313C35A4
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_2" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionMultiply_2'"
+      A=(Expression="/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_0'")
+      B=(Expression="/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_0'")
+      MaterialExpressionEditorX=-1232
+      MaterialExpressionEditorY=400
+      MaterialExpressionGuid=2A49E43BDE49F7503DFDD98E49CA3B40
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionComponentMask_5" ExportPath="/Script/Engine.MaterialExpressionComponentMask'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionComponentMask_5'"
+      Input=(Expression="/Script/Engine.MaterialExpressionDivide'MF_PolarUVss:MaterialExpressionDivide_0'")
+      R=True
+      MaterialExpressionEditorX=-688
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=48C16F739F478405C0CF83BB9E3A9BA7
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionDivide_0" ExportPath="/Script/Engine.MaterialExpressionDivide'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionDivide_0'"
+      A=(Expression="/Script/Engine.MaterialExpressionArctangent2'MF_PolarUVss:MaterialExpressionArctangent2_0'")
+      B=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'MF_PolarUVss:MaterialExpressionMaterialFunctionCall_1'")
+      MaterialExpressionEditorX=-832
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=380935D6C04653A5924F409C73F59B15
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionConstant_1" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionConstant_1'"
+      R=10.000000
+      MaterialExpressionEditorX=-656
+      MaterialExpressionEditorY=96
+      MaterialExpressionGuid=8389909818423BFD686030B4A61FBF25
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionConstant_2" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionConstant_2'"
+      R=2.000000
+      MaterialExpressionEditorX=-1169
+      MaterialExpressionEditorY=142
+      MaterialExpressionGuid=0DB021EE244D469D78F3C9895E118738
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionDDX_0" ExportPath="/Script/Engine.MaterialExpressionDDX'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionDDX_0'"
+      Value=(Expression="/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_0'")
+      MaterialExpressionEditorX=944
+      MaterialExpressionEditorY=400
+      MaterialExpressionGuid=A7324F0F23498A9FAC154DB30A14DC83
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionReroute_0" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionReroute_0'"
+      Input=(Expression="/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_1'")
+      MaterialExpressionEditorX=800
+      MaterialExpressionEditorY=544
+      MaterialExpressionGuid=4A3C75696A40A956F66ED985DACE931E
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionDDY_0" ExportPath="/Script/Engine.MaterialExpressionDDY'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionDDY_0'"
+      Value=(Expression="/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_0'")
+      MaterialExpressionEditorX=944
+      MaterialExpressionEditorY=464
+      MaterialExpressionGuid=750C366B4647E56ECC04DBAEB44A3A82
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_1" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionMaterialFunctionCall_1'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions02/Math/Pi.Pi'"
+      FunctionInputs(0)=(ExpressionInputId=84B7E00B475AA443B5528B9B43EBDA1E,Input=(Expression="/Script/Engine.MaterialExpressionConstant'MF_PolarUVss:MaterialExpressionConstant_2'",InputName="Multiplier"))
+      FunctionOutputs(0)=(ExpressionOutputId=D4753A094317F28FD02E698B43558358,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=-992
+      MaterialExpressionEditorY=144
+      MaterialExpressionGuid=8F6C07C017493931E2C00EA8109F8E53
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionDivide_6" ExportPath="/Script/Engine.MaterialExpressionDivide'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionDivide_6'"
+      A=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_4'")
+      B=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_1'")
+      MaterialExpressionEditorX=-160
+      MaterialExpressionEditorY=224
+      MaterialExpressionGuid=06F84AFBF54DF10148210E8D3B803706
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_4" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_4'"
+      InputName="Smoothstep Scale"
+      Id=893CD434784E6C819B9479823F320B0C
+      InputType=FunctionInput_Scalar
+      PreviewValue=(X=1.500000,Y=0.000000,Z=0.000000,W=1.000000)
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=-512
+      MaterialExpressionEditorY=288
+      MaterialExpressionGuid=F3F83143F443CC1FE2047AAFA2C4E95F
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_1" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_1'"
+      Preview=(Expression="/Script/Engine.MaterialExpressionConstant'MF_PolarUVss:MaterialExpressionConstant_1'")
+      InputName="Scale_X"
+      Id=DD2D01E9524B302A9A5EAC809DC4497A
+      InputType=FunctionInput_Scalar
+      MaterialExpressionEditorX=-480
+      MaterialExpressionEditorY=96
+      MaterialExpressionGuid=98F7308C334FC3568DCA139500784D2A
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionFrac_0" ExportPath="/Script/Engine.MaterialExpressionFrac'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFrac_0'"
+      Input=(Expression="/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_5'")
+      MaterialExpressionEditorX=-512
+      MaterialExpressionEditorY=-16
+      MaterialExpressionGuid=7AE27ABEB8448AF0189E609EF2EF67C2
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_0" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_0'"
+      Preview=(Expression="/Script/Engine.MaterialExpressionTextureCoordinate'MF_PolarUVss:MaterialExpressionTextureCoordinate_0'")
+      InputName="Texcture Coordinates"
+      Id=D0D9859237416A3D38D255A97DC8B1D0
+      InputType=FunctionInput_Vector2
+      MaterialExpressionEditorX=-2080
+      MaterialExpressionEditorY=208
+      MaterialExpressionGuid=EEBEAE01D54BA5A628BAB88D5E5DE167
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionTextureCoordinate_0" ExportPath="/Script/Engine.MaterialExpressionTextureCoordinate'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionTextureCoordinate_0'"
+      MaterialExpressionEditorX=-2319
+      MaterialExpressionEditorY=208
+      MaterialExpressionGuid=D3A6FC3EA64816271153C9AA9B726B9F
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_3" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_3'"
+      Preview=(Expression="/Script/Engine.MaterialExpressionTextureObject'MF_PolarUVss:MaterialExpressionTextureObject_0'")
+      InputName="Texture"
+      Id=153229612E4F2CAF3E75C6B9768514BC
+      InputType=FunctionInput_Texture2D
+      MaterialExpressionEditorX=863
+      MaterialExpressionEditorY=320
+      MaterialExpressionGuid=D0792BA9D848D13350D365B935F0FF80
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionTextureObject_0" ExportPath="/Script/Engine.MaterialExpressionTextureObject'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionTextureObject_0'"
+      Texture="/Script/Engine.Texture2D'/Game/Grass/Drawing2.Drawing2'"
+      MaterialExpressionEditorX=703
+      MaterialExpressionEditorY=320
+      MaterialExpressionGuid=0DA18E7DBF414AF0D0BFA1B6F9072828
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_5" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionInput_5'"
+      InputName="SmoothstepMax"
+      Id=3CB87417354DC3EAD414E49EB35748C2
+      InputType=FunctionInput_Scalar
+      PreviewValue=(X=0.500000,Y=0.000000,Z=0.000000,W=0.000000)
+      bUsePreviewValueAsDefault=True
+      MaterialExpressionEditorX=-224
+      MaterialExpressionEditorY=368
+      MaterialExpressionGuid=DE22A9B3334D292281926598C0898935
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionOutput_0" ExportPath="/Script/Engine.MaterialExpressionFunctionOutput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionOutput_0'"
+      OutputName="Image"
+      A=(Expression="/Script/Engine.MaterialExpressionStep'MF_PolarUVss:MaterialExpressionStep_1'")
+      bLastPreviewed=True
+      Id=D4A8806D4C4FB540DD1ED1912F40ACA1
+      MaterialExpressionEditorX=2064
+      MaterialExpressionEditorY=192
+      MaterialExpressionGuid=0211C2FA5749F189D5F6FABCAA3F88B7
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionStep_1" ExportPath="/Script/Engine.MaterialExpressionStep'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionStep_1'"
+      X=(Expression="/Script/Engine.MaterialExpressionAdd'MF_PolarUVss:MaterialExpressionAdd_1'")
+      ConstY=0.900000
+      MaterialExpressionEditorX=1824
+      MaterialExpressionEditorY=272
+      MaterialExpressionGuid=BA6F4A097948456C019FD39983AB7912
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionFunctionOutput_1" ExportPath="/Script/Engine.MaterialExpressionFunctionOutput'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionFunctionOutput_1'"
+      OutputName="PolarUvs"
+      A=(Expression="/Script/Engine.MaterialExpressionAppendVector'MF_PolarUVss:MaterialExpressionAppendVector_0'")
+      Id=7692D9CE8F4689762EAB8080F3C76E9D
+      MaterialExpressionEditorX=752
+      MaterialExpressionEditorY=-64
+      MaterialExpressionGuid=AE617747FD49845F27D8D6A4DCB3B6D6
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionReroute_2" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionReroute_2'"
+      Input=(Expression="/Script/Engine.MaterialExpressionSmoothStep'MF_PolarUVss:MaterialExpressionSmoothStep_0'")
+      MaterialExpressionEditorX=1056
+      MaterialExpressionEditorY=608
+      MaterialExpressionGuid=13EA0CBE74461F6C8E2B418063B5A8E5
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionReroute_1" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionReroute_1'"
+      Input=(Expression="/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_0'")
+      MaterialExpressionEditorX=-1232
+      MaterialExpressionEditorY=592
+      MaterialExpressionGuid=22466EFBF04C3E2F9E98DF95A193A9FE
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_3" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionSubtract_3'"
+      A=(Expression="/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_5'")
+      B=(Expression="/Script/Engine.MaterialExpressionDivide'MF_PolarUVss:MaterialExpressionDivide_6'")
+      MaterialExpressionEditorX=96
+      MaterialExpressionEditorY=288
+      MaterialExpressionGuid=DA2DBFA52B4676A84599A88C2667C746
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="MaterialExpressionSquareRoot_0" ExportPath="/Script/Engine.MaterialExpressionSquareRoot'/Game/Grass/MF_PolarUVss.MF_PolarUVss:MaterialExpressionSquareRoot_0'"
+      Input=(Expression="/Script/Engine.MaterialExpressionAdd'MF_PolarUVss:MaterialExpressionAdd_0'")
+      MaterialExpressionEditorX=-749
+      MaterialExpressionEditorY=401
+      MaterialExpressionGuid=08E77ED1654C0944542A4ABBB8DBE41D
+      Function="/Script/Engine.MaterialFunction'MF_PolarUVss'"
+   End Object
+   Begin Object Name="Material_0" ExportPath="/Script/Engine.Material'/Game/Grass/MF_PolarUVss.MF_PolarUVss:Material_0'"
+      Begin Object Name="Material_0EditorOnlyData" ExportPath="/Script/Engine.MaterialEditorOnlyData'/Game/Grass/MF_PolarUVss.MF_PolarUVss:Material_0.Material_0EditorOnlyData'"
+         EmissiveColor=(Expression="/Script/Engine.MaterialExpressionFunctionOutput'MF_PolarUVss:MaterialExpressionFunctionOutput_1'")
+         ExpressionCollection=(Expressions=("/Script/Engine.MaterialExpressionFunctionOutput'MF_PolarUVss:MaterialExpressionFunctionOutput_0'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_0'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_1'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_3'","/Script/Engine.MaterialExpressionTextureObject'MF_PolarUVss:MaterialExpressionTextureObject_0'","/Script/Engine.MaterialExpressionConstant'MF_PolarUVss:MaterialExpressionConstant_1'","/Script/Engine.MaterialExpressionTextureCoordinate'MF_PolarUVss:MaterialExpressionTextureCoordinate_0'","/Script/Engine.MaterialExpressionTextureSample'MF_PolarUVss:MaterialExpressionTextureSample_0'","/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_0'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_0'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_1'","/Script/Engine.MaterialExpressionArctangent2'MF_PolarUVss:MaterialExpressionArctangent2_0'","/Script/Engine.MaterialExpressionDivide'MF_PolarUVss:MaterialExpressionDivide_0'","/Script/Engine.MaterialExpressionMaterialFunctionCall'MF_PolarUVss:MaterialExpressionMaterialFunctionCall_1'","/Script/Engine.MaterialExpressionConstant'MF_PolarUVss:MaterialExpressionConstant_2'","/Script/Engine.MaterialExpressionFrac'MF_PolarUVss:MaterialExpressionFrac_0'","/Script/Engine.MaterialExpressionMultiply'MF_PolarUVss:MaterialExpressionMultiply_1'","/Script/Engine.MaterialExpressionAppendVector'MF_PolarUVss:MaterialExpressionAppendVector_0'","/Script/Engine.MaterialExpressionDDX'MF_PolarUVss:MaterialExpressionDDX_0'","/Script/Engine.MaterialExpressionDDY'MF_PolarUVss:MaterialExpressionDDY_0'","/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_0'","/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_1'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_3'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_4'","/Script/Engine.MaterialExpressionMultiply'MF_PolarUVss:MaterialExpressionMultiply_2'","/Script/Engine.MaterialExpressionAdd'MF_PolarUVss:MaterialExpressionAdd_0'","/Script/Engine.MaterialExpressionSquareRoot'MF_PolarUVss:MaterialExpressionSquareRoot_0'","/Script/Engine.MaterialExpressionSmoothStep'MF_PolarUVss:MaterialExpressionSmoothStep_0'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_4'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_5'","/Script/Engine.MaterialExpressionFunctionOutput'MF_PolarUVss:MaterialExpressionFunctionOutput_1'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_9'","/Script/Engine.MaterialExpressionFunctionInput'MF_PolarUVss:MaterialExpressionFunctionInput_10'","/Script/Engine.MaterialExpressionAppendVector'MF_PolarUVss:MaterialExpressionAppendVector_1'","/Script/Engine.MaterialExpressionComponentMask'MF_PolarUVss:MaterialExpressionComponentMask_5'","/Script/Engine.MaterialExpressionSubtract'MF_PolarUVss:MaterialExpressionSubtract_3'","/Script/Engine.MaterialExpressionDivide'MF_PolarUVss:MaterialExpressionDivide_6'","/Script/Engine.MaterialExpressionStep'MF_PolarUVss:MaterialExpressionStep_1'","/Script/Engine.MaterialExpressionReroute'MF_PolarUVss:MaterialExpressionReroute_2'","/Script/Engine.MaterialExpressionAdd'MF_PolarUVss:MaterialExpressionAdd_1'","/Script/Engine.MaterialExpressionOneMinus'MF_PolarUVss:MaterialExpressionOneMinus_0'"))
+      End Object
+      ShadingModel=MSM_Unlit
+      ShadingModels=(ShadingModelField=1)
+      bCanMaskedBeAssumedOpaque=True
+      StateId=29AB30CB467478C6D3A7458E0F476AA5
+      EditorOnlyData="/Script/Engine.MaterialEditorOnlyData'Material_0EditorOnlyData'"
+      LightingGuid=B1B4AEA8463C1BEF2DE91D82E6A93680
+   End Object
+   DependentFunctionExpressionCandidates(0)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_1'"
+   EditorOnlyData="/Script/Engine.MaterialFunctionEditorOnlyData'MF_PolarUVssEditorOnlyData'"
+   StateId=E1634E99E94A2C057D69E9A976A92288
+   CombinedInputTypes=31
+   CombinedOutputTypes=15
+End Object
