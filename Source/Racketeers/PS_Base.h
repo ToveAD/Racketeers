@@ -25,7 +25,7 @@ struct FPlayerInfo
 	APlayerState* PlayerState;
 
 	UPROPERTY(BlueprintReadWrite, Category = "PlayerInfo")
-	ETeams Teams;
+	ETeams Team;
 
 	UPROPERTY(BlueprintReadWrite, Category = "PlayerInfo")
 	int TeamPlayerID;
@@ -36,7 +36,7 @@ struct FPlayerInfo
 		PlayerName = FText::FromString("Player");
 		bIsReady = false;
 		PlayerState = nullptr;
-		Teams = ETeams::Team_Racoon;
+		Team = ETeams::Team_Racoon;
 		TeamPlayerID = -1;
 	}
 	
