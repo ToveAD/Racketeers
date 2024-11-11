@@ -3,12 +3,12 @@
 #include "Components/PrimitiveComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
-#include "EnhancedInputComponent.h"  // Ensure you include this header for input context management
-#include "EnhancedInputSubsystems.h" // For Enhanced Input Subsystem to access input contexts
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
 UBoatMovement::UBoatMovement()
 {
-    PrimaryComponentTick.bCanEverTick = true;
+    PrimaryComponentTick.bCanEverTick = true; // Enable ticking for this component
 }
 
 void UBoatMovement::BeginPlay()
@@ -21,7 +21,7 @@ void UBoatMovement::BeginPlay()
     if (BoatMesh)
     {
         BoatMesh->SetSimulatePhysics(true);  // Ensure that physics simulation is enabled
-        BoatMesh->SetIsReplicated(true); // Enable replication for the boat mesh
+        BoatMesh->SetIsReplicated(true);     // Enable replication for the boat mesh
         BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
     }
 
@@ -49,119 +49,155 @@ void UBoatMovement::BeginPlay()
     }
 }
 
+
 void UBoatMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-    // You can add any logic here that needs to be applied each frame.
+    // Currently unused, but could be used for continuous movement or other logic
 }
 
 void UBoatMovement::Accelerate(float Value)
 {
-    if (GetOwner()->HasAuthority()) // If on the server, apply directly
+    if (GetOwner()->HasAuthority()) // Check if the server has authority
     {
-        FVector ForwardVector = GetOwner()->GetActorForwardVector();
-        ForwardVector.Z = 0.0f;  // Zero out the Z axis for forward movement only
+        if (BoatMesh)
+        {
+            // Get the forward vector of the boat and zero out the Z component to prevent vertical movement
+            FVector ForwardVector = GetOwner()->GetActorForwardVector();
+            ForwardVector.Z = 0.0f;
 
-        FVector ForwardForce = ForwardVector * Value * BoatSpeed;
-        BoatMesh->AddForce(ForwardForce, NAME_None, true);  // Apply force to the boat
+            // Calculate the force to apply based on input value and boat speed
+            FVector ForwardForce = ForwardVector * Value * BoatSpeed;
+            BoatMesh->AddForce(ForwardForce, NAME_None, true); // Apply force to the boat mesh
+
+            // Log the applied force for debugging
+            UE_LOG(LogTemp, Warning, TEXT("Boat: %s, ForwardForce: %s, BoatSpeed: %f"),
+                *GetOwner()->GetName(), *ForwardForce.ToString(), BoatSpeed);
+        }
     }
-    else // If on the client, request the server to apply the force
+    else
     {
-        ServerAccelerate(Value);
+        ServerAccelerate(Value); // Request the server to handle acceleration
     }
 }
 
 void UBoatMovement::Steer(float Value)
 {
-    if (GetOwner()->HasAuthority()) // If on the server, apply directly
+    if (GetOwner()->HasAuthority()) // Check if the server has authority
     {
-        FVector Torque = FVector(0.0f, 0.0f, Value * SteeringSpeed);  // Apply torque for steering on the Z-axis
-        BoatMesh->AddTorqueInDegrees(Torque, NAME_None, true);  // Apply torque to the boat
+        if (BoatMesh)
+        {
+            // Calculate torque to apply for steering
+            FVector Torque = FVector(0.0f, 0.0f, Value * SteeringSpeed);
+            BoatMesh->AddTorqueInDegrees(Torque, NAME_None, true); // Apply torque to the boat mesh
+        }
     }
-    else // If on the client, request the server to apply the torque
+    else
     {
-        ServerSteer(Value);
+        ServerSteer(Value); // Request the server to handle steering
     }
 }
 
-// Server implementation for Accelerate
 void UBoatMovement::ServerAccelerate_Implementation(float Value)
 {
-    Accelerate(Value);
+    if (Value >= -1.0f && Value <= 1.0f) // Validate input value
+    {
+        Accelerate(Value); // Apply acceleration on the server
+        MulticastAccelerate(Value); // Inform all clients to visually update the acceleration
+    }
 }
 
 bool UBoatMovement::ServerAccelerate_Validate(float Value)
 {
-    return true;  // You can add specific validation here if needed
+    return (Value >= -1.0f && Value <= 1.0f); // Ensure the input value is within a valid range
 }
 
-// Server implementation for Steer
 void UBoatMovement::ServerSteer_Implementation(float Value)
 {
-    Steer(Value);
+    if (Value >= -1.0f && Value <= 1.0f) // Validate input value
+    {
+        Steer(Value); // Apply steering on the server
+        MulticastSteer(Value); // Inform all clients to visually update the steering
+    }
 }
 
 bool UBoatMovement::ServerSteer_Validate(float Value)
 {
-    return true;  // You can add specific validation here if needed
+    return (Value >= -1.0f && Value <= 1.0f); // Ensure the input value is within a valid range
 }
 
-// Teleport the boat when moving it
+void UBoatMovement::MulticastAccelerate_Implementation(float Value)
+{
+    if (!GetOwner()->HasAuthority()) // Skip execution on the server to avoid duplicate application
+    {
+        if (BoatMesh)
+        {
+            Accelerate(Value); // Visually update acceleration on clients
+        }
+    }
+}
+
+void UBoatMovement::MulticastSteer_Implementation(float Value)
+{
+    if (!GetOwner()->HasAuthority()) // Skip execution on the server to avoid duplicate application
+    {
+        if (BoatMesh)
+        {
+            Steer(Value); // Visually update steering on clients
+        }
+    }
+}
+
 void UBoatMovement::TeleportBoat(const FVector& NewLocation)
 {
     if (BoatMesh)
     {
-        // Move the boat to the new location using the Teleport flag to avoid physics interference
-        BoatMesh->SetWorldLocation(NewLocation, true);  // Teleport flag is set to true to move without physics collision
+        BoatMesh->SetWorldLocation(NewLocation, true); // Teleport the boat to the new location without collision issues
     }
 }
 
-// Function to switch input mappings to "IMC_Boat" when the boat is entered
 void UBoatMovement::SwitchInputMapping(bool IsAttaching)
 {
-    // Get the local player controller
-    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController(); // Get the player controller
 
     if (PlayerController)
     {
-        // Ensure the player controller has an enhanced input subsystem
-        UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
-
-        if (InputSubsystem)
+        if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer()) // Get the local player
         {
-            if (IMC_Boat)  // Check if IMC_Boat is valid
+            UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+
+            if (InputSubsystem)
             {
-                if(IsAttaching)
+                if (IMC_Boat)
                 {
-                    // Remove the default input mapping context
-                    InputSubsystem->RemoveMappingContext(IMC_Default);
-
-                    // Add the boat-specific input mapping context
-                    InputSubsystem->AddMappingContext(IMC_Boat, 1);  // You can set priority if needed (0 is default)
-
-                    UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
-                    
-                }else if(!IsAttaching)
-                {
-                    // Remove the default input mapping context
-                    InputSubsystem->RemoveMappingContext(IMC_Boat);
-
-                    // Add the boat-specific input mapping context
-                    InputSubsystem->AddMappingContext(IMC_Default, 1);  // You can set priority if needed (0 is default)
-
-                    UE_LOG(LogTemp, Log, TEXT("Switched to Player input mapping context: IMC_Default"));
+                    if (IsAttaching)
+                    {
+                        // Switch to boat input mapping when attaching
+                        InputSubsystem->RemoveMappingContext(IMC_Default);
+                        InputSubsystem->AddMappingContext(IMC_Boat, 1);
+                        UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
+                    }
+                    else
+                    {
+                        // Switch back to default input mapping when detaching
+                        InputSubsystem->RemoveMappingContext(IMC_Boat);
+                        InputSubsystem->AddMappingContext(IMC_Default, 1);
+                        UE_LOG(LogTemp, Log, TEXT("Switched to Player input mapping context: IMC_Default"));
+                    }
                 }
-               
+                else
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("IMC_Boat is null!"));
+                }
             }
             else
             {
-                UE_LOG(LogTemp, Warning, TEXT("IMC_Boat is null!"));
+                UE_LOG(LogTemp, Warning, TEXT("Input subsystem not found for player controller."));
             }
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("Input subsystem not found for player controller."));
+            UE_LOG(LogTemp, Warning, TEXT("LocalPlayer not found for player controller."));
         }
     }
     else
@@ -170,14 +206,12 @@ void UBoatMovement::SwitchInputMapping(bool IsAttaching)
     }
 }
 
-// Function to switch input mappings to "IMC_Boat" when the boat is entered
 void UBoatMovement::ClientSwitchInputMapping_Implementation(bool IsAttaching)
 {
-    SwitchInputMapping(IsAttaching);
+    SwitchInputMapping(IsAttaching); // Switch input mapping on the client side
 }
 
-// Function to switch input mappings to "IMC_Boat" when the boat is entered
 void UBoatMovement::ServerSwitchInputMapping_Implementation(bool IsAttaching)
 {
-    SwitchInputMapping(IsAttaching);
+    SwitchInputMapping(IsAttaching); // Switch input mapping on the server side
 }
