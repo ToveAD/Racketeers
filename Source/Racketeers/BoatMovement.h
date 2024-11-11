@@ -36,18 +36,6 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerSteer(float Value);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAccelerate(float Value);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSteer(float Value);
-
-	UFUNCTION(Client, Reliable)
-	void ClientSwitchInputMapping(bool IsAttaching);
-
-	UFUNCTION(Server, Reliable)
-	void ServerSwitchInputMapping(bool IsAttaching);
-
 private:
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float BoatSpeed = 1000.0f;

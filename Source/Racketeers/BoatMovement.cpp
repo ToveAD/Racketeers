@@ -60,8 +60,8 @@ void UBoatMovement::Accelerate(float Value)
 {
     if (GetOwner()->HasAuthority()) // Check if the server has authority
     {
-        if (BoatMesh)
-        {
+        
+        
             // Get the forward vector of the boat and zero out the Z component to prevent vertical movement
             FVector ForwardVector = GetOwner()->GetActorForwardVector();
             ForwardVector.Z = 0.0f;
@@ -73,18 +73,18 @@ void UBoatMovement::Accelerate(float Value)
             // Log the applied force for debugging
             UE_LOG(LogTemp, Warning, TEXT("Boat: %s, ForwardForce: %s, BoatSpeed: %f"),
                 *GetOwner()->GetName(), *ForwardForce.ToString(), BoatSpeed);
-        }
-    }
+        
+   }
     else
-    {
+   {
         ServerAccelerate(Value); // Request the server to handle acceleration
-    }
+   }
 }
 
 void UBoatMovement::Steer(float Value)
 {
     if (GetOwner()->HasAuthority()) // Check if the server has authority
-    {
+   {
         if (BoatMesh)
         {
             // Calculate torque to apply for steering
@@ -92,7 +92,7 @@ void UBoatMovement::Steer(float Value)
             BoatMesh->AddTorqueInDegrees(Torque, NAME_None, true); // Apply torque to the boat mesh
         }
     }
-    else
+   else
     {
         ServerSteer(Value); // Request the server to handle steering
     }
@@ -103,7 +103,6 @@ void UBoatMovement::ServerAccelerate_Implementation(float Value)
     if (Value >= -1.0f && Value <= 1.0f) // Validate input value
     {
         Accelerate(Value); // Apply acceleration on the server
-        MulticastAccelerate(Value); // Inform all clients to visually update the acceleration
     }
 }
 
@@ -117,35 +116,12 @@ void UBoatMovement::ServerSteer_Implementation(float Value)
     if (Value >= -1.0f && Value <= 1.0f) // Validate input value
     {
         Steer(Value); // Apply steering on the server
-        MulticastSteer(Value); // Inform all clients to visually update the steering
     }
 }
 
 bool UBoatMovement::ServerSteer_Validate(float Value)
 {
     return (Value >= -1.0f && Value <= 1.0f); // Ensure the input value is within a valid range
-}
-
-void UBoatMovement::MulticastAccelerate_Implementation(float Value)
-{
-    if (!GetOwner()->HasAuthority()) // Skip execution on the server to avoid duplicate application
-    {
-        if (BoatMesh)
-        {
-            Accelerate(Value); // Visually update acceleration on clients
-        }
-    }
-}
-
-void UBoatMovement::MulticastSteer_Implementation(float Value)
-{
-    if (!GetOwner()->HasAuthority()) // Skip execution on the server to avoid duplicate application
-    {
-        if (BoatMesh)
-        {
-            Steer(Value); // Visually update steering on clients
-        }
-    }
 }
 
 void UBoatMovement::TeleportBoat(const FVector& NewLocation)
@@ -206,12 +182,3 @@ void UBoatMovement::SwitchInputMapping(bool IsAttaching)
     }
 }
 
-void UBoatMovement::ClientSwitchInputMapping_Implementation(bool IsAttaching)
-{
-    SwitchInputMapping(IsAttaching); // Switch input mapping on the client side
-}
-
-void UBoatMovement::ServerSwitchInputMapping_Implementation(bool IsAttaching)
-{
-    SwitchInputMapping(IsAttaching); // Switch input mapping on the server side
-}
