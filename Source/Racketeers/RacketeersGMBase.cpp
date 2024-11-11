@@ -300,13 +300,14 @@ void ARacketeersGMBase::RespawnPlayers()
 		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
 		FString TeamName;
 
+		
 		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
 		{
-			TeamName = "Team_Racoon";
+			TeamName = "Team Racoon";
 		}
 		else
 		{
-			TeamName = "Team_RedPandas";
+			TeamName = "Team RedPandas";
 		}
 		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
 		if(GEngine)
