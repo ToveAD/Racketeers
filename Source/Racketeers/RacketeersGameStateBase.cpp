@@ -3,6 +3,8 @@
 
 #include "RacketeersGameStateBase.h"
 
+#include "BaseGameInstance.h"
+#include "GameplayTagContainer.h"
 #include "RacketeersGMBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -24,6 +26,14 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
 }
 
+
+void ARacketeersGameStateBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+
+	
+}
 
 void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
 {

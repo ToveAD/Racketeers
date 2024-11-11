@@ -17,6 +17,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	public:
 
+	void BeginPlay() override;
 
 	
 

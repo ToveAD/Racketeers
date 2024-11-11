@@ -3,6 +3,7 @@
 
 #include "RacketeersGMBase.h"
 
+#include "BaseGameInstance.h"
 #include "PS_Base.h"
 #include "RacketeersGameStateBase.h"
 #include "GameFramework/GameStateBase.h"
@@ -223,6 +224,9 @@ int ARacketeersGMBase::GetNextPhaseNumber()
 
 bool ARacketeersGMBase::CheckIfGameIsOver()
 {
+	return true;
+
+	/*
 	ARacketeersGameStateBase* GS = this->GetGameState<ARacketeersGameStateBase>();
 	
 	if(CurrentPhase->State == FPhaseState::Phase_3)
@@ -234,7 +238,7 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 		}
 	}
 	return false;
-	
+	*/
 }
 
 bool ARacketeersGMBase::LoadTransitionStats()
@@ -247,7 +251,24 @@ bool ARacketeersGMBase::LoadTransitionStats()
 
 bool ARacketeersGMBase::EndGame()
 {
-	ProcessServerTravel("Lobby");
+
+	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+	FGameStatsPackage Package{
+		GS->RacconsWood,
+		GS->RacconsFiber,
+		GS->RacconsMetal,
+		GS->RacconsRoundsWon,
+		GS->RacconsBoatHealth,
+		GS->RedPandasWood,
+		GS->RedPandasFiber,
+		GS->RedPandasMetal,
+		GS->RedPandasRoundsWon,
+		GS->RedPandasBoatHealth
+	};
+
+	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
+	GI->SetDataToTransfer(Package);
+	ProcessServerTravel("VictoryMap_GamePlay");
 	return true;
 }
 
@@ -299,9 +320,9 @@ void ARacketeersGMBase::RespawnPlayers()
 	{
 		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
 		FString TeamName;
-
+	
 		
-		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
+		if(PS->Team == ETeams::Team_Racoon)
 		{
 			TeamName = "Team Racoon";
 		}
@@ -309,7 +330,7 @@ void ARacketeersGMBase::RespawnPlayers()
 		{
 			TeamName = "Team RedPandas";
 		}
-		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
+		TeamName.AppendInt(PS->TeamPlayerID);
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *TeamName);
 
