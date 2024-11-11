@@ -3,6 +3,8 @@
 
 #include "PS_Base.h"
 
+#include "Net/UnrealNetwork.h"
+
 APS_Base::APS_Base()
 {
 	// Enable replication for this actor

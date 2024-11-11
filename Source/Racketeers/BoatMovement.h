@@ -20,30 +20,21 @@ public:
 	// Sets default values for this component's properties
 	UBoatMovement();
 
-	// Direct reference to the InputMappingContext assets
+	// Input Mapping Contexts
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputMappingContext* IMC_Boat;
+	UInputMappingContext* IMC_Boat;  // Boat-specific input context
 
-	// Default InputMappingContext asset reference
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
-	UInputMappingContext* IMC_Default;
+	UInputMappingContext* IMC_Default; // Default input context
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	// Movement functions
-	UFUNCTION(BlueprintCallable, Category="BoatMovement")
+	// Boat Movement Functions
+	UFUNCTION(BlueprintCallable, Category = "BoatMovement")
 	void Accelerate(float Value);
 
-	UFUNCTION(BlueprintCallable, Category="BoatMovement")
+	UFUNCTION(BlueprintCallable, Category = "BoatMovement")
 	void Steer(float Value);
 
-	// Server function declarations
+	// Networked Movement Functions (Server-Side)
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerAccelerate(float Value);
 	void ServerAccelerate_Implementation(float Value);
@@ -54,20 +45,36 @@ public:
 	void ServerSteer_Implementation(float Value);
 	bool ServerSteer_Validate(float Value);
 
-
-	// Teleport the boat
+	// Boat Teleport Function
 	void TeleportBoat(const FVector& NewLocation);
 
-	// Switch to boat-specific input mapping context
-	UFUNCTION(BlueprintCallable, Category="BoatMovement")
-	void SwitchToBoatInputMapping();
+	// Input Mapping Management
+	UFUNCTION(BlueprintCallable, Category = "BoatMovement")
+	void SwitchInputMapping(bool IsAttaching);
+
+	UFUNCTION(BlueprintCallable, Client, Reliable)
+	void ClientSwitchInputMapping(bool IsAttaching);
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void ServerSwitchInputMapping(bool IsAttaching);
+
+	// Apply input mapping directly on the client
+	void ApplyInputMapping(bool IsAttaching);
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+public:
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
 	// Boat mesh (or any other component you use for physics)
 	UPROPERTY()
 	UPrimitiveComponent* BoatMesh;
 
-	// Boat movement properties (for example, speed and steering)
+	// Boat Movement Properties
 	UPROPERTY(EditAnywhere, Category = "Boat Movement")
 	float BoatSpeed = 1000.0f;
 
