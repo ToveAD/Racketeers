@@ -3,6 +3,7 @@
 
 #include "RacketeersGMBase.h"
 
+#include "PS_Base.h"
 #include "RacketeersGameStateBase.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
@@ -29,9 +30,26 @@
  *
  */
 
+class APS_Base;
+
 ARacketeersGMBase::ARacketeersGMBase()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::AGM_Base"));
+}
+
+void ARacketeersGMBase::UnloadWidget()
+{
+	if(OnUnloadWidget.IsBound())
+	{
+		UnloadWidgetCount++;
+		if(UnloadWidgetCount == NumPlayers)
+		{
+			OnUnloadWidget.Broadcast();
+			bIsGameActive = true;
+			UnloadWidgetCount=0;
+		}
+	
+	}
 }
 
 void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -53,7 +71,8 @@ void ARacketeersGMBase::BeginPlay()
 	Phase_1 = NewObject<UPhase>();
 	Phase_2 = NewObject<UPhase>();
 	Phase_3 = NewObject<UPhase>();
-	
+
+
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
@@ -79,7 +98,7 @@ void ARacketeersGMBase::BeginPlay()
 
 	CurrentTime = 0;
 	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
-	
+	bIsGameActive = true;
 }
 
 
@@ -88,6 +107,10 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if(bIsGameActive == false)
+	{
+		return;
+	}
 	
 	if(CurrentPhase == nullptr)
 	{
@@ -149,7 +172,7 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 		}
 		if(GS->RedPandasBoatHealth > GS->RacconsBoatHealth)
 		{
-			GS->RedPandasBoatHealth++;
+			GS->RacconsRoundsWon++;
 			return true;
 		}
 		
@@ -211,11 +234,13 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 		}
 	}
 	return false;
+	
 }
 
 bool ARacketeersGMBase::LoadTransitionStats()
 {
 
+	bIsGameActive = false;
 	OnLoadWidget.Broadcast();
 	return true;
 }
@@ -270,12 +295,49 @@ void ARacketeersGMBase::LoadLevel()
 
 void ARacketeersGMBase::RespawnPlayers()
 {
+	for (int i = 0; i < this->GetGameState<AGameState>()->PlayerArray.Num(); ++i)
+	{
+		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
+		FString TeamName;
 
+		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
+		{
+			TeamName = "Team_Racoon";
+		}
+		else
+		{
+			TeamName = "Team_RedPandas";
+		}
+		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *TeamName);
+
+		UE_LOG(LogTemp, Warning, TEXT("PLayer Name: %s"), *TeamName);
+		AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
+		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
+	}
+	/*
 	for (APlayerState* Player : UGameplayStatics::GetGameState(GetWorld())->PlayerArray)
 	{
-		AActor* PlayerStart = FindPlayerStart(Player->GetPlayerController(), Phases[GetNextPhaseNumber()]->StartPhaseName);
+		
+		APS_Base* PS = Cast<APS_Base>(Player);
+		FString TeamName;
+
+		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
+		{
+			TeamName = "Team_Racoon";
+		}
+		else
+		{
+			TeamName = "Team_RedPandas";
+		}
+		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
+
+		UE_LOG(LogTemp, Warning, TEXT("PLayer Name: %s"), *TeamName);
+		AActor* PlayerStart = FindPlayerStart(Player->GetPlayerController(),TeamName);
 		Player->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	}
+	*/
 	UE_LOG(LogTemp, Warning, TEXT("RespawnPlayers"));
 	SwitchState();
 }

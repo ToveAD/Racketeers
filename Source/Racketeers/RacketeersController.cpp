@@ -6,8 +6,10 @@
 #include <string>
 #include "Blueprint/UserWidget.h"
 #include "RacketeersGameStateBase.h"
+#include "RacketeersGMBase.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 void ARacketeersController::Call_Interact_Implementation(const FString &string)
 {
@@ -147,18 +149,43 @@ void ARacketeersController::ActivateWidget_Implementation(UUserWidget* Widget)
 		return;
 	}
 	Widget->AddToViewport(9999);
+	UserWidget = Widget;
 }
 
-void ARacketeersController::RemoveWidget_Implementation(UUserWidget* Widget)
+void ARacketeersController::RemoveWidget_Implementation()
 {
-	int32 s = GetUniqueID();
-	FString String = FString::FromInt(s);
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
-	if(Widget == nullptr)
+
+	UserWidget->RemoveFromParent();
+	
+}
+
+void ARacketeersController::RequestRemoveWidget_Implementation()
+{
+	
+	if(bhavePressedContinue)
 	{
 		return;
 	}
-	Widget->RemoveFromParent();
+	
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could Not DamageBoat in ARacketeersController"));
+		return;
+	}
+	bhavePressedContinue = true;
+	State->RequestToRemoveWidget();
 }
 
+bool ARacketeersController::RequestRemoveWidget_Validate()
+{
+	return true;
+}
+
+void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ARacketeersController, bhavePressedContinue);
+	
+}

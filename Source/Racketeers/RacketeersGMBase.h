@@ -7,10 +7,16 @@
 #include "RacketeersGMBase.generated.h"
 
 /**
- * Varje Start måste ha rätt phase tag, sen kan det också behövas att de olika starts får ett id för spelare och team. 
+ * Varje Start måste ha rätt phase tag, sen kan det också behövas att de olika starts får ett id för spelare och team.
+ *
+ *
+ * IDAG,
+ *
+ * FIXA KLART WIDGET, Se till att poängen räknas ihopp av alla spelare. 
  */
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLoadWidget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadWidget);
 
 
 #define MAXTOTALROUNDS 8
@@ -67,6 +73,17 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnLoadWidget OnLoadWidget;
 
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnLoadWidget OnUnloadWidget;
+
+
+	
+	UFUNCTION(BlueprintCallable)
+	void UnloadWidget();
+
+	int8 UnloadWidgetCount;
+	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Respawn();
 
@@ -80,11 +97,11 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Blueprintable, Category = "Phases")
 	UPhase* Phase_1;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Blueprintable, Category = "Phases")
 	UPhase* Phase_2;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Blueprintable, Category = "Phases")
 	UPhase* Phase_3;
 
 	UFUNCTION(BlueprintCallable)
@@ -103,8 +120,10 @@ public:
 	void RoundCompletion();
 	
 	int8 GetTotalRounds();
-	
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsGameActive;
+	
 private:
 	UPROPERTY()
 	UPhase* CurrentPhase;

@@ -47,6 +47,13 @@ enum class ETeams : uint8
 	Team_Panda,
 };
 
+UENUM(BlueprintType, Blueprintable)
+enum class ETransitionStates : uint8
+{
+	IN_PHASE,
+	IN_TRANSITION_STATS,
+};
+
 
 
 

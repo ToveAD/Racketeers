@@ -18,6 +18,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	public:
 
 
+	
+
 	//Methods for adding and removing to gathering score
 	UFUNCTION(BlueprintCallable)
 	void AddToWood(int Amount, ETeams Team);
@@ -40,6 +42,10 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	UFUNCTION(BlueprintCallable)
 	void DamageBoat(int Amount, ETeams Team);
+
+
+	UFUNCTION(BlueprintCallable)
+	void RequestToRemoveWidget();
 
 	
 

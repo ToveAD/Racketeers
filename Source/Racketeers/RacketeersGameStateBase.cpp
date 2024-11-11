@@ -87,6 +87,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 		if(RacconsBoatHealth <= 0)
 		{
 			//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
+			RedPandasRoundsWon++;
 			GM->RoundCompletion();
 		}
 		return;
@@ -95,8 +96,19 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 	if(RedPandasBoatHealth <= 0)
 	{
 		//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
+		RacconsRoundsWon++;
 		GM->RoundCompletion();
 	}
+}
+
+void ARacketeersGameStateBase::RequestToRemoveWidget()
+{
+	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	if(GM == nullptr)
+	{
+		return;
+	}
+	GM->UnloadWidget();
 }
 
 
