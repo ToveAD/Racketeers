@@ -13,9 +13,10 @@ class RACKETEERS_API UDriverSteerProxy : public UActorComponent
 public:
 	UDriverSteerProxy();
 
+	UFUNCTION(BlueprintCallable, Category="Movement")
 	void HandleSteerInput(float Value);
 
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
 	void ServerHandleSteerInput(float Value);
 
 protected:
