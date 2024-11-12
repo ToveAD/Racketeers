@@ -68,6 +68,8 @@ void ARacketeersGMBase::BeginPlay()
 	//Set the GameState in GameMode
 	//GameState = Cast<AGS_Base>(UGameplayStatics::GetGameState(GetWorld()));
 
+	WidgetSubsystem = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+
 	//Initilize variables
 	Phase_1 = NewObject<UPhase>();
 	Phase_2 = NewObject<UPhase>();
@@ -108,7 +110,7 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if(bIsGameActive == false)
+	if(!WidgetSubsystem->CanRun)
 	{
 		return;
 	}
@@ -245,9 +247,10 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 bool ARacketeersGMBase::LoadTransitionStats()
 {
 	
-	bIsGameActive = false;
-	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
-	WS->OnLoadWidget.Broadcast("ShowScore");
+	//bIsGameActive = false;
+	
+	WidgetSubsystem->OnLoadWidget.Broadcast("ShowScore");
+	WidgetSubsystem->SetCanRunTick(false);
 	//OnLoadWidget.Broadcast();
 	return true;
 	
@@ -336,7 +339,7 @@ void ARacketeersGMBase::RespawnPlayers()
 		FString TeamName;
 		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
 		{
-			TeamName = "Team Racoon";
+			TeamName = "Team Racoons";
 		}
 		else
 		{

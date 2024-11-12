@@ -41,6 +41,11 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void IncrementPlayersPressed();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void SetCanRunTick(bool b);
+
+	bool CanRun = true;
+
 	int32 CountOfPlayersPressed;
 	
 };

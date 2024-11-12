@@ -17,10 +17,21 @@ void UWidgetSubsystem::IncrementPlayersPressed_Implementation()
 			OnUnload.Broadcast(Name);
 		}
 		CountOfPlayersPressed = 0;
+		SetCanRunTick(true);
 	}
 }
 
 bool UWidgetSubsystem::IncrementPlayersPressed_Validate()
+{
+	return true;
+}
+
+void UWidgetSubsystem::SetCanRunTick_Implementation(bool b)
+{
+	CanRun = b;
+}
+
+bool UWidgetSubsystem::SetCanRunTick_Validate(bool b)
 {
 	return true;
 }

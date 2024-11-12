@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GM_Base.h"
+#include "WidgetSubsystem.h"
 #include "RacketeersGMBase.generated.h"
 
 /**
@@ -78,6 +79,7 @@ public:
 	FOnLoadWidget OnUnloadWidget;
 
 
+	UWidgetSubsystem* WidgetSubsystem;
 	
 	UFUNCTION(BlueprintCallable)
 	void UnloadWidget();
