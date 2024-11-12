@@ -218,6 +218,7 @@ int ARacketeersGMBase::GetNextPhaseNumber()
 	{
 		return CurrentPhase->State+1;
 	}
+	
 }
 
 
@@ -265,7 +266,15 @@ bool ARacketeersGMBase::EndGame()
 		GS->RedPandasRoundsWon,
 		GS->RedPandasBoatHealth
 	};
-
+	if(Package.RacconsRoundsWon > Package.RedPandasRoundsWon)
+	{
+		Package.WonTeam = "Racoons";
+	}
+	else if (Package.RacconsRoundsWon < Package.RedPandasRoundsWon)
+	{
+		Package.WonTeam = "RedPandas";
+	}
+	
 	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
 	GI->SetDataToTransfer(Package);
 	ProcessServerTravel("VictoryMap_GamePlay");

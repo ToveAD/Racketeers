@@ -48,7 +48,10 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UFUNCTION(BlueprintCallable)
 	void RequestToRemoveWidget();
 
-	
+
+
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	FResources Resource;
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RacconsWood;
@@ -73,6 +76,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	float RedPandasBoatHealth; 
 	
 
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	FString GameWinner = "NONE";
 
 	
 };

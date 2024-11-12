@@ -18,6 +18,18 @@ enum ETransferState
 };
 
 USTRUCT(BlueprintType)
+struct FGamePackage
+{
+	GENERATED_BODY()
+	UPROPERTY(BlueprintReadWrite)
+	FString Tag = "EMPTY";
+	UPROPERTY(BlueprintReadWrite)
+	int32 ID = -1;
+	 
+};
+
+
+USTRUCT(BlueprintType)
 struct FGameStatsPackage
 {
 	GENERATED_BODY()
@@ -43,7 +55,8 @@ struct FGameStatsPackage
 	int32 RedPandasRoundsWon = 0;
 	UPROPERTY(BlueprintReadWrite)
 	float RedPandasBoatHealth = 0;
-
+	UPROPERTY(BlueprintReadWrite)
+	FString WonTeam = "DRAW";
 	
 	ETransferState State = EMPTY;
 		
@@ -64,9 +77,12 @@ public:
 	void SetGameStateData();
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ClearDataStatsPackage();
+
+	bool CheckIfDataToTransfer();
 	
-private:
 	FGameStatsPackage GetDataTransferPackage();
+private:
+
     	
 	UPROPERTY()
 	FGameStatsPackage TempSavedGameStatsPackage;

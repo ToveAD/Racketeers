@@ -24,6 +24,8 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasMetal);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
+
+	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
 }
 
 
@@ -32,6 +34,26 @@ void ARacketeersGameStateBase::BeginPlay()
 	Super::BeginPlay();
 
 
+	UBaseGameInstance* GI = Cast<UBaseGameInstance>(GetGameInstance());
+	if(GI->CheckIfDataToTransfer())
+	{
+		FGameStatsPackage Package = GI->GetDataTransferPackage();
+	
+		RacconsWood = Package.RacconsWood;
+		RacconsFiber = Package.RacconsFiber;
+		RacconsMetal = Package.RacconsMetal;
+		RacconsRoundsWon = Package.RacconsRoundsWon;
+		RacconsBoatHealth = Package.RacconsBoatHealth; 
+		RedPandasWood = Package.RedPandasWood;
+		RedPandasFiber = Package.RedPandasFiber;
+		RedPandasMetal = Package.RedPandasMetal;
+		RedPandasRoundsWon = Package.RedPandasRoundsWon;
+		RedPandasBoatHealth = Package.RedPandasBoatHealth;
+		GameWinner = Package.WonTeam;
+		GI->ClearDataStatsPackage();
+	}
+
+	
 	
 }
 

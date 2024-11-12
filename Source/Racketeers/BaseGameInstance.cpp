@@ -19,6 +19,13 @@ bool UBaseGameInstance::SetDataToTransfer_Validate(FGameStatsPackage GameStatsPa
 	return true;
 }
 
+bool UBaseGameInstance::CheckIfDataToTransfer()
+{
+	if(TempSavedGameStatsPackage.State == ETransferState::READY)
+		return true;
+	return false;
+}
+
 FGameStatsPackage UBaseGameInstance::GetDataTransferPackage()
 {
 	if(TempSavedGameStatsPackage.State == ETransferState::EMPTY)
