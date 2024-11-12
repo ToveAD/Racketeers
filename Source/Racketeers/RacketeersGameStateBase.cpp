@@ -6,8 +6,11 @@
 #include "BaseGameInstance.h"
 #include "GameplayTagContainer.h"
 #include "RacketeersGMBase.h"
+#include "WidgetSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+
+class UWidgetSubsystem;
 
 void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -140,7 +143,14 @@ void ARacketeersGameStateBase::RequestToRemoveWidget()
 	{
 		return;
 	}
-	GM->UnloadWidget();
+	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+	if(WS == nullptr)
+	{
+		return;
+	}
+	WS->IncrementPlayersPressed();
+	
+	//GM->UnloadWidget();
 }
 
 

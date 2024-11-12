@@ -6,6 +6,7 @@
 #include "BaseGameInstance.h"
 #include "PS_Base.h"
 #include "RacketeersGameStateBase.h"
+#include "WidgetSubsystem.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
@@ -31,6 +32,7 @@
  *
  */
 
+class UWidgetSubsystem;
 class APS_Base;
 
 ARacketeersGMBase::ARacketeersGMBase()
@@ -40,17 +42,15 @@ ARacketeersGMBase::ARacketeersGMBase()
 
 void ARacketeersGMBase::UnloadWidget()
 {
-	if(OnUnloadWidget.IsBound())
-	{
+
 		UnloadWidgetCount++;
 		if(UnloadWidgetCount == NumPlayers)
 		{
-			OnUnloadWidget.Broadcast();
 			bIsGameActive = true;
 			UnloadWidgetCount=0;
 		}
 	
-	}
+	
 }
 
 void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -225,7 +225,7 @@ int ARacketeersGMBase::GetNextPhaseNumber()
 
 bool ARacketeersGMBase::CheckIfGameIsOver()
 {
-	return true;
+	return false;
 
 	/*
 	ARacketeersGameStateBase* GS = this->GetGameState<ARacketeersGameStateBase>();
@@ -244,10 +244,13 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 
 bool ARacketeersGMBase::LoadTransitionStats()
 {
-
+	
 	bIsGameActive = false;
-	OnLoadWidget.Broadcast();
+	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+	WS->OnLoadWidget.Broadcast("ShowScore");
+	//OnLoadWidget.Broadcast();
 	return true;
+	
 }
 
 bool ARacketeersGMBase::EndGame()
@@ -268,12 +271,14 @@ bool ARacketeersGMBase::EndGame()
 	};
 	if(Package.RacconsRoundsWon > Package.RedPandasRoundsWon)
 	{
-		Package.WonTeam = "Racoons";
+		Package.WonTeam = ETeams::Team_Racoon;
 	}
 	else if (Package.RacconsRoundsWon < Package.RedPandasRoundsWon)
 	{
-		Package.WonTeam = "RedPandas";
+		Package.WonTeam = ETeams::Team_Racoon;
 	}
+
+	Package.WonTeam = ETeams::Team_Racoon;
 	
 	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
 	GI->SetDataToTransfer(Package);

@@ -2,12 +2,13 @@
 
 
 #include "RacketeersController.h"
-
 #include <string>
+
+#include "OnlineSubsystemUtils.h"
 #include "Blueprint/UserWidget.h"
 #include "RacketeersGameStateBase.h"
 #include "RacketeersGMBase.h"
-
+#include "WidgetSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
@@ -138,24 +139,54 @@ bool ARacketeersController::DamageBoat_Validate(int Amount, ETeams Team)
 	return true;
 }
 
-void ARacketeersController::ActivateWidget_Implementation(UUserWidget* Widget)
+void ARacketeersController::ActivateWidget_Implementation(FName Name, UUserWidget* Widget)
 {
 	int32 s = GetUniqueID();
 	FString String = FString::FromInt(s);
+
+	
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
 	if(Widget == nullptr)
 	{
 		return;
 	}
-	Widget->AddToViewport(9999);
-	UserWidget = Widget;
+	
+	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+	if(WS == nullptr)
+	{
+		return;
+	}
+	if(!WS->WidgetComponents.Contains(Name))
+	{
+		Widget->AddToViewport();
+		WS->WidgetComponents.Add(Name, Widget);
+	}
+	//UserWidget = Widget;
+	
 }
 
-void ARacketeersController::RemoveWidget_Implementation()
+void ARacketeersController::RemoveWidget_Implementation(FName Name)
 {
+	
+	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+	if(WS == nullptr)
+	{
+		return;
+	}
+	
+	UUserWidget* Widget= *WS->WidgetComponents.Find(Name);
 
-	UserWidget->RemoveFromParent();
+	
+	if(Widget == nullptr)
+	{
+		return;
+	}
+
+	Widget->RemoveFromParent();
+	WS->WidgetComponents.Remove(Name);
+	
+	//UserWidget->RemoveFromParent();
 	
 }
 

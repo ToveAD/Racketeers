@@ -77,7 +77,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	FString GameWinner = "NONE";
+	ETeams GameWinner = ETeams::NONE;
 
 	
 };

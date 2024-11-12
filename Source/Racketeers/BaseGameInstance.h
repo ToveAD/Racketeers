@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AdvancedFriendsGameInstance.h"
+#include "GameModeStructs.h"
 #include "BaseGameInstance.generated.h"
 
 /**
@@ -56,7 +57,7 @@ struct FGameStatsPackage
 	UPROPERTY(BlueprintReadWrite)
 	float RedPandasBoatHealth = 0;
 	UPROPERTY(BlueprintReadWrite)
-	FString WonTeam = "DRAW";
+	ETeams WonTeam = ETeams::NONE;
 	
 	ETransferState State = EMPTY;
 		
