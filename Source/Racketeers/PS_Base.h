@@ -56,13 +56,13 @@ public:
 	FPlayerInfo PlayerInfo;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
-	FText PlayerName;
+	ETeams Team = ETeams::Team_Racoon;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
-	ETeams Team;
+	int TeamPlayerID = -1;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
-	int TeamPlayerID;
+	APlayerController* PlayerController;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

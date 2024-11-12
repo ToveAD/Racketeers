@@ -18,7 +18,7 @@ void APS_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 
 	// Replicate PlayerInfo and each property inside if needed
 	DOREPLIFETIME(APS_Base, PlayerInfo);
-	DOREPLIFETIME(APS_Base, PlayerName);
 	DOREPLIFETIME(APS_Base, Team);
 	DOREPLIFETIME(APS_Base, TeamPlayerID);
+	DOREPLIFETIME(APS_Base, PlayerController);
 }
