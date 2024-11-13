@@ -43,13 +43,10 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	UFUNCTION(BlueprintCallable)
 	void DamageBoat(int Amount, ETeams Team);
-
-
+	
 	UFUNCTION(BlueprintCallable)
 	void RequestToRemoveWidget();
-
-
-
+	
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FResources Resource;
 

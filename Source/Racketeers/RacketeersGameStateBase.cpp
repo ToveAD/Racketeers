@@ -15,6 +15,8 @@ class UWidgetSubsystem;
 void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ARacketeersGameStateBase, Resource);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsWood);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsFiber);
@@ -27,7 +29,6 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasMetal);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
-
 
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
 
@@ -59,20 +60,18 @@ void ARacketeersGameStateBase::BeginPlay()
 		GameWinner = Package.WonTeam;
 		GI->ClearDataStatsPackage();
 	}
-
-	
-	
 }
 
 void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
 {
+	
+	Resource.Wood += Amount;
 	if(Team == ETeams::Team_Racoon)
 	{
 		RacconsWood += Amount;
 		return;
 	}
 	RedPandasWood += Amount;
-	
 }
 
 void ARacketeersGameStateBase::AddToFiber(int Amount, ETeams Team)
