@@ -22,6 +22,8 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasMetal);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
+
+	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
 }
 
 
@@ -99,4 +101,8 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 	}
 }
 
+void ARacketeersGameStateBase::SetRandomNumber(int Number)
+{
+	Phase2RandomNumber = Number;
+}
 

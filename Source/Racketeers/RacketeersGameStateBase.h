@@ -41,6 +41,9 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UFUNCTION(BlueprintCallable)
 	void DamageBoat(int Amount, ETeams Team);
 
+	UFUNCTION(BlueprintCallable)
+	void SetRandomNumber(int Number);
+
 	
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
@@ -65,7 +68,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float RedPandasBoatHealth; 
 	
-
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	float Phase2RandomNumber; 
 
 	
 };
