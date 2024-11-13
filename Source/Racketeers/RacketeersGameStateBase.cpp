@@ -28,7 +28,11 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
 
+
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
+
+	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
+
 }
 
 
@@ -136,6 +140,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 	}
 }
 
+
 void ARacketeersGameStateBase::RequestToRemoveWidget()
 {
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -151,6 +156,12 @@ void ARacketeersGameStateBase::RequestToRemoveWidget()
 	WS->IncrementPlayersPressed();
 	
 	//GM->UnloadWidget();
+}
+
+
+void ARacketeersGameStateBase::SetRandomNumber(int Number)
+{
+	Phase2RandomNumber = Number;
 }
 
 

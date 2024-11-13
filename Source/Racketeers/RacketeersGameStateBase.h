@@ -53,6 +53,12 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FResources Resource;
 
+	UFUNCTION(BlueprintCallable)
+	void SetRandomNumber(int Number);
+
+	
+
+
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RacconsWood;
 	UPROPERTY(Replicated, BlueprintReadWrite)
@@ -76,8 +82,13 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	float RedPandasBoatHealth; 
 	
 
+
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	ETeams GameWinner = ETeams::NONE;
+	ETeams GameWinner;
+	
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	float Phase2RandomNumber; 
+
 
 	
 };

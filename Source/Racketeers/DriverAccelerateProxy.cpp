@@ -29,8 +29,8 @@ void UDriverAccelerateProxy::BeginPlay()
 
 void UDriverAccelerateProxy::HandleAccelerationInput(float Value)
 {
-    if (BoatMovementComponent)
-    {
+    //if (BoatMovementComponent)
+    //{
         if (!GetOwner()->HasAuthority())
         {
             if (Value >= -1.0f && Value <= 1.0f) // Validate the value on the client side before sending to the server
@@ -42,11 +42,11 @@ void UDriverAccelerateProxy::HandleAccelerationInput(float Value)
         {
             BoatMovementComponent->Accelerate(Value); // Apply acceleration directly on the server
         }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("BoatMovementComponent is null. Cannot handle acceleration input."));
-    }
+    //}
+    //else
+    //{
+    //    UE_LOG(LogTemp, Warning, TEXT("BoatMovementComponent is null. Cannot handle acceleration input."));
+    //}
 }
 
 void UDriverAccelerateProxy::ServerHandleAcceleration_Implementation(float Value)
