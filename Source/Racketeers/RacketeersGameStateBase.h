@@ -78,10 +78,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float RedPandasBoatHealth; 
 	
-
-
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	ETeams GameWinner;
+	ETeams GameWinner = ETeams::NONE;
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float Phase2RandomNumber; 
