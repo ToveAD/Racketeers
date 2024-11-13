@@ -132,7 +132,7 @@ void UBoatMovement::TeleportBoat(const FVector& NewLocation)
     }
 }
 
-void UBoatMovement::SwitchInputMapping(bool IsAttaching)
+void UBoatMovement::SwitchInputMapping(bool IsAttaching, UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove)
 {
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController(); // Get the player controller
 
@@ -144,20 +144,20 @@ void UBoatMovement::SwitchInputMapping(bool IsAttaching)
 
             if (InputSubsystem)
             {
-                if (IMC_Boat)
+                if (InputToAdd && InputToRemove)
                 {
                     if (IsAttaching)
                     {
                         // Switch to boat input mapping when attaching
-                        InputSubsystem->RemoveMappingContext(IMC_Default);
-                        InputSubsystem->AddMappingContext(IMC_Boat, 1);
+                        InputSubsystem->RemoveMappingContext(InputToRemove);
+                        InputSubsystem->AddMappingContext(InputToAdd, 1);
                         UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
                     }
                     else
                     {
                         // Switch back to default input mapping when detaching
-                        InputSubsystem->RemoveMappingContext(IMC_Boat);
-                        InputSubsystem->AddMappingContext(IMC_Default, 1);
+                        InputSubsystem->RemoveMappingContext(InputToAdd);
+                        InputSubsystem->AddMappingContext(InputToRemove, 1);
                         UE_LOG(LogTemp, Log, TEXT("Switched to Player input mapping context: IMC_Default"));
                     }
                 }

@@ -13,9 +13,10 @@ class RACKETEERS_API UGunnerProxy : public UActorComponent
 public:
 	UGunnerProxy();
 
+	UFUNCTION(BlueprintCallable, Category="Movement")
 	void HandleGunnerProxy(float Value);
 
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
 	void ServerHandleGunner(float Value);
 
 protected:
