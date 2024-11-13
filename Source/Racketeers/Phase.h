@@ -8,6 +8,13 @@
 /*
 	 *	Fases class
 	 *
+	 *		problems
+	 *
+	 *		When respawning  when has been in a boat
+	 *		boat part of level so need to remove before unloading or, make the parts presistant and just do it when the player respawns
+	 *
+	 *
+	 *		OnUnloadingMap
 	 *
 	 *	Phase 1
 	 *		- Next Face condition is a time limit.
@@ -17,6 +24,10 @@
 	 *		- Determinig end of face is a timer
 	 *		- lose condition is when the teams ship is destroyed or the team has less health than the other team
 	 *		- win condition is when the other teams ship is destroyed or the team has more health than the other
+	 *
+	 *
+	 *
+	 *		
 	 *
 	 */
 

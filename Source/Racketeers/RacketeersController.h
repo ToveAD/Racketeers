@@ -29,6 +29,16 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	public:
 
+	UPROPERTY(Replicated, EditAnywhere ,BlueprintReadWrite)
+	bool bhavePressedContinue = false;
+
+	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	UUserWidget* UserWidget;
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void RequestRemoveWidget();
+	
 	//RPC to interact with a gatherable object
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Call_Interact(const FString &string);
@@ -55,10 +65,12 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	void DamageBoat(int Amount, ETeams Team);
 
 	UFUNCTION(CLient, Reliable, BlueprintCallable)
-	void ActivateWidget(UUserWidget* Widget);
+	void ActivateWidget(FName Name, UUserWidget* Widget);
 
-	UFUNCTION(CLient, Reliable, BlueprintCallable)
-	void RemoveWidget(UUserWidget* Widget);
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void RemoveWidget(FName Name);
+
+
 
 	
 };

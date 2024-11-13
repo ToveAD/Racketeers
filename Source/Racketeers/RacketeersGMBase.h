@@ -4,13 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "GM_Base.h"
+#include "WidgetSubsystem.h"
 #include "RacketeersGMBase.generated.h"
 
 /**
- * Varje Start måste ha rätt phase tag, sen kan det också behövas att de olika starts får ett id för spelare och team. 
+ * Varje Start måste ha rätt phase tag, sen kan det också behövas att de olika starts får ett id för spelare och team.
+ *
+ *
+ * IDAG,
+ *
+ * FIXA KLART WIDGET, Se till att poängen räknas ihopp av alla spelare. 
  */
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLoadWidget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadWidget);
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadingMap);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnloadedMap);
 
 
 #define MAXTOTALROUNDS 8
@@ -64,9 +75,36 @@ public:
 	ARacketeersGMBase();
 
 
+	//Events / Delegates
+
+	/*
+	 * When A Widget Need To Load
+	 */
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnLoadWidget OnLoadWidget;
+	/*
+	* When A Widget Need To Unload
+	*/
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnLoadWidget OnUnloadWidget;
+	/*
+	* When the game mode has loaded a new map
+	*/
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnloadedMap OnloadedMap;
+	/*
+	* When the game mode starts to unload a new map
+	*/
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnUnloadingMap OnUnloadingMap;
+	
+	UWidgetSubsystem* WidgetSubsystem;
+	
+	UFUNCTION(BlueprintCallable)
+	void UnloadWidget();
 
+	int8 UnloadWidgetCount;
+	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Respawn();
 
@@ -80,11 +118,11 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	
 	
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Blueprintable, Category = "Phases")
 	UPhase* Phase_1;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Blueprintable, Category = "Phases")
 	UPhase* Phase_2;
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(Editanywhere, BlueprintReadWrite, Blueprintable, Category = "Phases")
 	UPhase* Phase_3;
 
 	UFUNCTION(BlueprintCallable)
@@ -103,16 +141,18 @@ public:
 	void RoundCompletion();
 	
 	int8 GetTotalRounds();
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsGameActive;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPhase* CurrentPhase;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TArray<UPhase*> Phases;
 
 private:
-	UPROPERTY()
-	UPhase* CurrentPhase;
-	UPROPERTY()
-	TArray<UPhase*> Phases;
-	UPROPERTY()
+
+	UPROPERTY(EditAnywhere)
 	int8 TotalRounds;
-	
 	float CurrentTime;
 
 	int GetNextPhaseNumber();
