@@ -45,6 +45,25 @@ enum class ETeams : uint8
 {
 	Team_Racoon,
 	Team_Panda,
+	NONE,
+};
+
+UENUM(BlueprintType, Blueprintable)
+enum class ETransitionStates : uint8
+{
+	IN_PHASE,
+	IN_TRANSITION_STATS,
+};
+
+USTRUCT(BlueprintType, Blueprintable)
+struct FWidgetClassAndName
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FName Name;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UUserWidget*  Widget;
 };
 
 

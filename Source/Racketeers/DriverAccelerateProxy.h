@@ -13,9 +13,10 @@ class RACKETEERS_API UDriverAccelerateProxy : public UActorComponent
 public:
 	UDriverAccelerateProxy();
 
+	UFUNCTION(BlueprintCallable, Category="Movement")
 	void HandleAccelerationInput(float Value);
 
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
 	void ServerHandleAcceleration(float Value);
 
 protected:

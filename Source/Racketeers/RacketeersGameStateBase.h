@@ -17,6 +17,9 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	public:
 
+	void BeginPlay() override;
+
+	
 
 	//Methods for adding and removing to gathering score
 	UFUNCTION(BlueprintCallable)
@@ -40,8 +43,18 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	UFUNCTION(BlueprintCallable)
 	void DamageBoat(int Amount, ETeams Team);
+	
+	UFUNCTION(BlueprintCallable)
+	void RequestToRemoveWidget();
+	
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	FResources Resource;
+
+	UFUNCTION(BlueprintCallable)
+	void SetRandomNumber(int Number);
 
 	
+
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RacconsWood;
@@ -65,6 +78,13 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float RedPandasBoatHealth; 
 	
+
+
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	ETeams GameWinner;
+	
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	float Phase2RandomNumber; 
 
 
 	
