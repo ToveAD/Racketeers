@@ -200,6 +200,9 @@ void ARacketeersGMBase::SwitchState()
 
 void ARacketeersGMBase::Transition()
 {
+
+	OnUnloadingMap.Broadcast();
+	
 	FLatentActionInfo ActionInfo;
 	ActionInfo.Linkage = 0;
 	ActionInfo.CallbackTarget = this;
@@ -227,9 +230,7 @@ int ARacketeersGMBase::GetNextPhaseNumber()
 
 bool ARacketeersGMBase::CheckIfGameIsOver()
 {
-	return false;
 
-	/*
 	ARacketeersGameStateBase* GS = this->GetGameState<ARacketeersGameStateBase>();
 	
 	if(CurrentPhase->State == FPhaseState::Phase_3)
@@ -241,7 +242,7 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 		}
 	}
 	return false;
-	*/
+	
 }
 
 bool ARacketeersGMBase::LoadTransitionStats()
@@ -333,6 +334,7 @@ void ARacketeersGMBase::LoadLevel()
 
 void ARacketeersGMBase::RespawnPlayers()
 {
+	OnloadedMap.Broadcast();
 	for (int i = 0; i < this->GetGameState<AGameState>()->PlayerArray.Num(); ++i)
 	{
 		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
@@ -349,8 +351,18 @@ void ARacketeersGMBase::RespawnPlayers()
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *TeamName);
 
-		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
 		AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
+
+		AActor* PotentialParent = PS->GetPawn()->GetAttachParentActor();
+		if( PotentialParent== nullptr)
+		{
+			EDetachmentRule InRule = EDetachmentRule();
+			InRule = EDetachmentRule::KeepWorld;
+			FDetachmentTransformRules DETCTMGR = FDetachmentTransformRules(InRule, true);
+			PS->GetPawn()->DetachFromActor(DETCTMGR);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
+	
 		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	}
 	/*

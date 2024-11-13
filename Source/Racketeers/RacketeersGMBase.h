@@ -20,6 +20,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLoadWidget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadWidget);
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadingMap);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnloadedMap);
+
+
 #define MAXTOTALROUNDS 8
 
 UCLASS()
@@ -71,14 +75,29 @@ public:
 	ARacketeersGMBase();
 
 
+	//Events / Delegates
+
+	/*
+	 * When A Widget Need To Load
+	 */
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnLoadWidget OnLoadWidget;
-
-
+	/*
+	* When A Widget Need To Unload
+	*/
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnLoadWidget OnUnloadWidget;
-
-
+	/*
+	* When the game mode has loaded a new map
+	*/
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnloadedMap OnloadedMap;
+	/*
+	* When the game mode starts to unload a new map
+	*/
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnUnloadingMap OnUnloadingMap;
+	
 	UWidgetSubsystem* WidgetSubsystem;
 	
 	UFUNCTION(BlueprintCallable)
@@ -125,15 +144,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGameActive;
-	
-private:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UPhase* CurrentPhase;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UPhase*> Phases;
-	UPROPERTY()
+
+private:
+
+	UPROPERTY(EditAnywhere)
 	int8 TotalRounds;
-	
 	float CurrentTime;
 
 	int GetNextPhaseNumber();
