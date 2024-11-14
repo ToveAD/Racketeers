@@ -35,6 +35,7 @@
 class UWidgetSubsystem;
 class APS_Base;
 
+
 ARacketeersGMBase::ARacketeersGMBase()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::AGM_Base"));
@@ -42,22 +43,18 @@ ARacketeersGMBase::ARacketeersGMBase()
 
 void ARacketeersGMBase::UnloadWidget()
 {
-
-		UnloadWidgetCount++;
-		if(UnloadWidgetCount == NumPlayers)
-		{
+	UnloadWidgetCount++;
+	if(UnloadWidgetCount == NumPlayers)
+	{
 			bIsGameActive = true;
 			UnloadWidgetCount=0;
-		}
-	
-	
+	}
 }
 
 void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::Initiate Game"));
-	
 }
 
 
@@ -67,6 +64,7 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Set the GameState in GameMode
 	//GameState = Cast<AGS_Base>(UGameplayStatics::GetGameState(GetWorld()));
+
 
 	WidgetSubsystem = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
 
@@ -79,17 +77,17 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
-	Phase_1->TimeLimit = 15.0f;
+	Phase_1->TimeLimit = 500.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
 	Phase_2->State = FPhaseState::Phase_2;
-	Phase_2->TimeLimit = 15.0f;
+	Phase_2->TimeLimit = 500.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
 	
 	Phase_3->State = FPhaseState::Phase_3;
-	Phase_3->TimeLimit = 15.0f;
+	Phase_3->TimeLimit = 500.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
 
@@ -103,7 +101,7 @@ void ARacketeersGMBase::BeginPlay()
 	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
 	bIsGameActive = true;
 
-	TotalRounds = 4;
+	TotalRounds = 3;
 }
 
 
@@ -112,10 +110,14 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	if(!WidgetSubsystem->CanRun)
+	if(WidgetSubsystem != nullptr)
 	{
-		return;
+		if(!WidgetSubsystem->CanRun)
+		{
+			return;
+		}
 	}
+	
 	
 	if(CurrentPhase == nullptr)
 	{
@@ -237,8 +239,9 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 	
 	if(CurrentPhase->State == FPhaseState::Phase_3)
 	{
+		int AvailibleRounds = TotalRounds - (GS->RacconsRoundsWon + GS->RedPandasRoundsWon);
 		int8 RoundsPlayed = GS->RacconsRoundsWon + GS->RedPandasRoundsWon;
-		if(RoundsPlayed == GetTotalRounds() )
+		if(RoundsPlayed == GetTotalRounds())
 		{
 			return true; 
 		}

@@ -32,8 +32,7 @@ public:
 	 */
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnUnloadTest OnUnload;
-
-
+	
 	/* Array with the local players active widgets */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<FName, UUserWidget*> WidgetComponents;

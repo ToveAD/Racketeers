@@ -73,8 +73,7 @@ class RACKETEERS_API ARacketeersGMBase : public AGM_Base
 public:
 
 	ARacketeersGMBase();
-
-
+	
 	//Events / Delegates
 
 	/*
@@ -107,7 +106,7 @@ public:
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Respawn();
-
+	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void SpawnTeams();
 

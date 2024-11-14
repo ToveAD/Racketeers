@@ -28,7 +28,7 @@ public:
 	void TeleportBoat(const FVector& NewLocation);
 
 	UFUNCTION(BlueprintCallable, Category="Input")
-	void SwitchInputMapping(bool IsAttaching,  UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove);
+	void SwitchInputMapping(bool IsAttaching,  UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove, APlayerController* PlayerController);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerAccelerate(float Value);
