@@ -102,6 +102,8 @@ void ARacketeersGMBase::BeginPlay()
 	CurrentTime = 0;
 	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
 	bIsGameActive = true;
+
+	TotalRounds = 4;
 }
 
 
@@ -164,7 +166,7 @@ void ARacketeersGMBase::RoundCompletion()
 bool ARacketeersGMBase::CheckWinnerOfRound()
 {
 
-	if(CurrentPhase->State == FPhaseState::Phase_1)
+	if(CurrentPhase->State == FPhaseState::Phase_3)
 	{
 		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 		if(GS == nullptr) return false;
@@ -175,12 +177,12 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 		}
 		if(GS->RedPandasBoatHealth > GS->RacconsBoatHealth)
 		{
-			GS->RacconsRoundsWon++;
+			GS->RedPandasBoatHealth++;
 			return true;
 		}
 		
 		GS->RacconsRoundsWon++;
-		GS->RedPandasBoatHealth++;
+		GS->RedPandasRoundsWon++;
 	}
 	
 	return true;

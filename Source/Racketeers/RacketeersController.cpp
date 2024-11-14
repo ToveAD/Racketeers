@@ -144,7 +144,7 @@ void ARacketeersController::ActivateWidget_Implementation(FName Name, UUserWidge
 	int32 s = GetUniqueID();
 	FString String = FString::FromInt(s);
 
-	
+	bhavePressedContinue = false;
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
 	if(Widget == nullptr)
@@ -168,36 +168,42 @@ void ARacketeersController::ActivateWidget_Implementation(FName Name, UUserWidge
 
 void ARacketeersController::RemoveWidget_Implementation(FName Name)
 {
-	
 	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
 	if(WS == nullptr)
 	{
 		return;
 	}
-	
 	UUserWidget* Widget= *WS->WidgetComponents.Find(Name);
-
-	
 	if(Widget == nullptr)
 	{
 		return;
 	}
-
 	Widget->RemoveFromParent();
-	WS->WidgetComponents.Remove(Name);
-	
+	if(WS->WidgetComponents.Contains(Name))
+	{
+		WS->WidgetComponents.Remove(Name);
+	}
+	bhavePressedContinue = false;
+
 	//UserWidget->RemoveFromParent();
 	
 }
 
 void ARacketeersController::RequestRemoveWidget_Implementation()
 {
-	
 	if(bhavePressedContinue)
 	{
 		return;
 	}
-	
+	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+	if(WS == nullptr)
+	{
+		return;
+	}
+	if(WS->WidgetComponents.Num() == 0)
+	{
+		return;
+	}
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	if(State == nullptr)
 	{
@@ -219,4 +225,34 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 
 	DOREPLIFETIME(ARacketeersController, bhavePressedContinue);
 	
+}
+
+void ARacketeersController::RemoveResource_Implementation(int Amount, EResources Resource, ETeams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if (State == nullptr)
+	{
+		return;
+	}
+	State->RemoveResource(Amount, Resource, Team);
+}
+
+bool ARacketeersController::RemoveResource_Validate(int Amount, EResources Resource, ETeams Team)
+{
+	return true;
+}
+
+void ARacketeersController::AddResource_Implementation(int Amount, EResources Resource, ETeams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if (State == nullptr)
+	{
+		return;
+	}
+	State->AddResource(Amount, Resource, Team);
+}
+
+bool ARacketeersController::AddResource_Validate(int Amount, EResources Resource, ETeams Team)
+{
+	return true;
 }

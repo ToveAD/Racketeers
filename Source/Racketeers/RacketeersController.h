@@ -71,6 +71,10 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	void RemoveWidget(FName Name);
 
 
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void AddResource(int Amount, EResources Resource, ETeams Team);
 
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 	
 };
