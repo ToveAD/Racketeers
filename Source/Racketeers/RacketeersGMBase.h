@@ -106,7 +106,7 @@ public:
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Respawn();
-
+	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void SpawnTeams();
 
