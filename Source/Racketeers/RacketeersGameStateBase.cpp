@@ -3,6 +3,8 @@
 
 #include "RacketeersGameStateBase.h"
 
+#include <filesystem>
+
 #include "BaseGameInstance.h"
 #include "GameplayTagContainer.h"
 #include "RacketeersGMBase.h"
@@ -167,6 +169,17 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 {
 	if(Team == ETeams::Team_Racoon)
 	{
+		int Space = (int)Resource;
+		int8* material = (int8*)((&RacconResource.Wood + Space));
+		//ptr += Amount;
+		unsigned int add = material[0];
+		if(material == nullptr)
+		{
+			return;
+		}
+		material[0] += Amount;
+		
+		/*
 		switch(Resource)
 		{
 		case EResources::WOOD:
@@ -179,8 +192,19 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 			RacconResource.Metal += Amount;
 			break;
 		}
+		*/
 		return;
 	}
+	
+	int Space = (int)Resource;
+	int8* material = (int8*)((&RedPandasResource.Wood + Space));
+	if(material == nullptr)
+	{
+		return;
+	}
+	material[0] += Amount;
+	
+	/*
 	switch(Resource)
 	{
 	case EResources::WOOD:
@@ -193,6 +217,67 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 		RedPandasResource.Metal += Amount;
 		break;
 	}
+	*/
+}
+
+void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, ETeams Team)
+{
+	if(Team == ETeams::Team_Racoon)
+	{
+		int Space = (int)Resource;
+		int8* material = (int8*)((&RacconResource.Wood + Space));
+		if(material == nullptr)
+		{
+			return;
+		}
+		material[0] -= Amount;
+		if(material[0] < 0)
+		{
+			material[0] = 0;
+		}
+		/*
+		switch(Resource)
+		{
+		case EResources::WOOD:
+			RacconResource.Wood += Amount;
+				break;
+		case EResources::FIBER:
+			RacconResource.Fiber+= Amount;
+			break;
+		case EResources::METAL:
+			RacconResource.Metal += Amount;
+			break;
+		}
+		*/
+		return;
+	}
+	
+	int Space = (int)Resource;
+	int8* material = (int8*)((&RedPandasResource.Wood + Space));
+	if(material == nullptr)
+	{
+		return;
+	}
+	material[0] -= Amount;
+	if(material[0] < 0)
+	{
+		material[0] = 0;
+	}
+	/*
+	switch(Resource)
+	{
+	case EResources::WOOD:
+		RedPandasResource.Wood += Amount;
+		break;
+	case EResources::FIBER:
+		RedPandasResource.Fiber+= Amount;
+		break;
+	case EResources::METAL:
+		RedPandasResource.Metal += Amount;
+		break;
+	}
+	*/
+	
 }
 
 

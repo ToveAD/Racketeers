@@ -73,5 +73,8 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 	
 };
