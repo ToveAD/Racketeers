@@ -12,6 +12,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+
+
 void ARacketeersController::Call_Interact_Implementation(const FString &string)
 {
 	//Change Player Enum Trough out Servers and send it

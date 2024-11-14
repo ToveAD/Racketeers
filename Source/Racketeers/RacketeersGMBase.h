@@ -73,8 +73,7 @@ class RACKETEERS_API ARacketeersGMBase : public AGM_Base
 public:
 
 	ARacketeersGMBase();
-
-
+	
 	//Events / Delegates
 
 	/*
