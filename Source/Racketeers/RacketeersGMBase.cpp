@@ -3,7 +3,10 @@
 
 #include "RacketeersGMBase.h"
 
+#include "BaseGameInstance.h"
+#include "PS_Base.h"
 #include "RacketeersGameStateBase.h"
+#include "WidgetSubsystem.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
@@ -29,9 +32,25 @@
  *
  */
 
+class UWidgetSubsystem;
+class APS_Base;
+
 ARacketeersGMBase::ARacketeersGMBase()
 {
 	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::AGM_Base"));
+}
+
+void ARacketeersGMBase::UnloadWidget()
+{
+
+		UnloadWidgetCount++;
+		if(UnloadWidgetCount == NumPlayers)
+		{
+			bIsGameActive = true;
+			UnloadWidgetCount=0;
+		}
+	
+	
 }
 
 void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -49,11 +68,14 @@ void ARacketeersGMBase::BeginPlay()
 	//Set the GameState in GameMode
 	//GameState = Cast<AGS_Base>(UGameplayStatics::GetGameState(GetWorld()));
 
+	WidgetSubsystem = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+
 	//Initilize variables
 	Phase_1 = NewObject<UPhase>();
 	Phase_2 = NewObject<UPhase>();
 	Phase_3 = NewObject<UPhase>();
-	
+
+
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
@@ -79,7 +101,9 @@ void ARacketeersGMBase::BeginPlay()
 
 	CurrentTime = 0;
 	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
-	
+	bIsGameActive = true;
+
+	TotalRounds = 4;
 }
 
 
@@ -88,6 +112,10 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if(!WidgetSubsystem->CanRun)
+	{
+		return;
+	}
 	
 	if(CurrentPhase == nullptr)
 	{
@@ -138,7 +166,7 @@ void ARacketeersGMBase::RoundCompletion()
 bool ARacketeersGMBase::CheckWinnerOfRound()
 {
 
-	if(CurrentPhase->State == FPhaseState::Phase_1)
+	if(CurrentPhase->State == FPhaseState::Phase_3)
 	{
 		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 		if(GS == nullptr) return false;
@@ -154,7 +182,7 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 		}
 		
 		GS->RacconsRoundsWon++;
-		GS->RedPandasBoatHealth++;
+		GS->RedPandasRoundsWon++;
 	}
 	
 	return true;
@@ -174,6 +202,9 @@ void ARacketeersGMBase::SwitchState()
 
 void ARacketeersGMBase::Transition()
 {
+
+	OnUnloadingMap.Broadcast();
+	
 	FLatentActionInfo ActionInfo;
 	ActionInfo.Linkage = 0;
 	ActionInfo.CallbackTarget = this;
@@ -194,12 +225,14 @@ int ARacketeersGMBase::GetNextPhaseNumber()
 	{
 		return CurrentPhase->State+1;
 	}
+	
 }
 
 
 
 bool ARacketeersGMBase::CheckIfGameIsOver()
 {
+
 	ARacketeersGameStateBase* GS = this->GetGameState<ARacketeersGameStateBase>();
 	
 	if(CurrentPhase->State == FPhaseState::Phase_3)
@@ -211,18 +244,51 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 		}
 	}
 	return false;
+	
 }
 
 bool ARacketeersGMBase::LoadTransitionStats()
 {
-
-	OnLoadWidget.Broadcast();
+	
+	//bIsGameActive = false;
+	
+	WidgetSubsystem->OnLoadWidget.Broadcast("ShowScore");
+	WidgetSubsystem->SetCanRunTick(false);
+	//OnLoadWidget.Broadcast();
 	return true;
+	
 }
 
 bool ARacketeersGMBase::EndGame()
 {
-	ProcessServerTravel("Lobby");
+
+	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+	FGameStatsPackage Package{
+		GS->RacconsWood,
+		GS->RacconsFiber,
+		GS->RacconsMetal,
+		GS->RacconsRoundsWon,
+		GS->RacconsBoatHealth,
+		GS->RedPandasWood,
+		GS->RedPandasFiber,
+		GS->RedPandasMetal,
+		GS->RedPandasRoundsWon,
+		GS->RedPandasBoatHealth
+	};
+	if(Package.RacconsRoundsWon > Package.RedPandasRoundsWon)
+	{
+		Package.WonTeam = ETeams::Team_Racoon;
+	}
+	else if (Package.RacconsRoundsWon < Package.RedPandasRoundsWon)
+	{
+		Package.WonTeam = ETeams::Team_Racoon;
+	}
+
+	Package.WonTeam = ETeams::Team_Racoon;
+	
+	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
+	GI->SetDataToTransfer(Package);
+	ProcessServerTravel("VictoryMap_GamePlay");
 	return true;
 }
 
@@ -270,12 +336,59 @@ void ARacketeersGMBase::LoadLevel()
 
 void ARacketeersGMBase::RespawnPlayers()
 {
+	OnloadedMap.Broadcast();
+	for (int i = 0; i < this->GetGameState<AGameState>()->PlayerArray.Num(); ++i)
+	{
+		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
+		FString TeamName;
+		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
+		{
+			TeamName = "Team Racoons";
+		}
+		else
+		{
+			TeamName = "Team RedPandas";
+		}
+		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *TeamName);
 
+		AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
+
+		AActor* PotentialParent = PS->GetPawn()->GetAttachParentActor();
+		if( PotentialParent== nullptr)
+		{
+			EDetachmentRule InRule = EDetachmentRule();
+			InRule = EDetachmentRule::KeepWorld;
+			FDetachmentTransformRules DETCTMGR = FDetachmentTransformRules(InRule, true);
+			PS->GetPawn()->DetachFromActor(DETCTMGR);
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
+	
+		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
+	}
+	/*
 	for (APlayerState* Player : UGameplayStatics::GetGameState(GetWorld())->PlayerArray)
 	{
-		AActor* PlayerStart = FindPlayerStart(Player->GetPlayerController(), Phases[GetNextPhaseNumber()]->StartPhaseName);
+		
+		APS_Base* PS = Cast<APS_Base>(Player);
+		FString TeamName;
+
+		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
+		{
+			TeamName = "Team_Racoon";
+		}
+		else
+		{
+			TeamName = "Team_RedPandas";
+		}
+		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
+
+		UE_LOG(LogTemp, Warning, TEXT("PLayer Name: %s"), *TeamName);
+		AActor* PlayerStart = FindPlayerStart(Player->GetPlayerController(),TeamName);
 		Player->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	}
+	*/
 	UE_LOG(LogTemp, Warning, TEXT("RespawnPlayers"));
 	SwitchState();
 }
