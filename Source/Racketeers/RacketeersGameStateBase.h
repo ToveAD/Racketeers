@@ -57,6 +57,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	
 	UFUNCTION(BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
+	UFUNCTION(BlueprintCallable)
+	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
