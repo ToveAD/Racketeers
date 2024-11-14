@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "InputAction.h"
 #include "WinnerLobbyPawn.generated.h"
 
 UCLASS()
@@ -15,12 +14,12 @@ class RACKETEERS_API AWinnerLobbyPawn : public APawn
 public:
 	// Sets default values for this pawn's properties
 	AWinnerLobbyPawn();
+	
 
-	/** Interact Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UInputAction* InteractAction;
-
-
+	/** MappingContext */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputMappingContext* DefaultMappingContext;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

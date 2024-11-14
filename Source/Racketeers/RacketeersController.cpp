@@ -168,24 +168,22 @@ void ARacketeersController::ActivateWidget_Implementation(FName Name, UUserWidge
 
 void ARacketeersController::RemoveWidget_Implementation(FName Name)
 {
-	
 	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
 	if(WS == nullptr)
 	{
 		return;
 	}
-	
 	UUserWidget* Widget= *WS->WidgetComponents.Find(Name);
-
-	
 	if(Widget == nullptr)
 	{
 		return;
 	}
-
 	Widget->RemoveFromParent();
-	WS->WidgetComponents.Remove(Name);
-	
+	if(WS->WidgetComponents.Contains(Name))
+	{
+		WS->WidgetComponents.Remove(Name);
+	}
+
 	//UserWidget->RemoveFromParent();
 	
 }
@@ -219,4 +217,19 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 
 	DOREPLIFETIME(ARacketeersController, bhavePressedContinue);
 	
+}
+
+void ARacketeersController::AddResource_Implementation(int Amount, EResources Resource, ETeams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if (State == nullptr)
+	{
+		return;
+	}
+	State->AddResource(Amount, Resource, Team);
+}
+
+bool ARacketeersController::AddResource_Validate(int Amount, EResources Resource, ETeams Team)
+{
+	return true;
 }
