@@ -5,19 +5,10 @@
 
 ATimerInfo::ATimerInfo()
 {
-}
-
-ATimerInfo::ATimerInfo(float T)
-{
-	Time = T;
-}
-
-ATimerInfo::ATimerInfo(int32 M, int32 S)
-{
 	bIsActive = false;
-	Time += M * 60;
-	Time += S;
+	Time = 0;
 }
+
 
 void ATimerInfo::Tick(float DeltaSeconds)
 {

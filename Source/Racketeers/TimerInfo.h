@@ -16,10 +16,6 @@ class RACKETEERS_API ATimerInfo : public AInfo
 
 
 	ATimerInfo();
-	
-	ATimerInfo(float T = 0);
-	
-	ATimerInfo(int32 M = 0 ,int32 S = 0);
 
 	virtual void Tick(float DeltaSeconds) override;
 
