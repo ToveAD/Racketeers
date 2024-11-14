@@ -7,6 +7,12 @@
 
 void UWidgetSubsystem::IncrementPlayersPressed_Implementation()
 {
+	if(CanRun)
+	{
+		return;
+	}
+
+	
 	CountOfPlayersPressed++;
 	if(CountOfPlayersPressed == GetWorld()->GetGameState()->PlayerArray.Num())
 	{

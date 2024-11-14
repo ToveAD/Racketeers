@@ -102,6 +102,8 @@ void ARacketeersGMBase::BeginPlay()
 	CurrentTime = 0;
 	//UGameplayStatics::GetStreamingLevel(GetWorld(), (TEXT("%s"), *Phases[GetNextPhaseNumber()]->LevelToLoad))->SetShouldBeLoaded(true);
 	bIsGameActive = true;
+
+	TotalRounds = 4;
 }
 
 
