@@ -16,8 +16,8 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ARacketeersGameStateBase, Resource);
-	
+	DOREPLIFETIME(ARacketeersGameStateBase, RacconResource);
+	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasResource);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsWood);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsFiber);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMetal);
@@ -65,7 +65,7 @@ void ARacketeersGameStateBase::BeginPlay()
 void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
 {
 	
-	Resource.Wood += Amount;
+
 	if(Team == ETeams::Team_Racoon)
 	{
 		RacconsWood += Amount;
@@ -161,6 +161,38 @@ void ARacketeersGameStateBase::RequestToRemoveWidget()
 void ARacketeersGameStateBase::SetRandomNumber(int Number)
 {
 	Phase2RandomNumber = Number;
+}
+
+void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETeams Team)
+{
+	if(Team == ETeams::Team_Racoon)
+	{
+		switch(Resource)
+		{
+		case EResources::WOOD:
+			RacconResource.Wood += Amount;
+				break;
+		case EResources::FIBER:
+			RacconResource.Fiber+= Amount;
+			break;
+		case EResources::METAL:
+			RacconResource.Metal += Amount;
+			break;
+		}
+		return;
+	}
+	switch(Resource)
+	{
+	case EResources::WOOD:
+		RedPandasResource.Wood += Amount;
+		break;
+	case EResources::FIBER:
+		RedPandasResource.Fiber+= Amount;
+		break;
+	case EResources::METAL:
+		RedPandasResource.Metal += Amount;
+		break;
+	}
 }
 
 

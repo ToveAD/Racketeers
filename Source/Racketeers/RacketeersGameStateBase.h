@@ -48,12 +48,15 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	void RequestToRemoveWidget();
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	FResources Resource;
+	FResources RacconResource;
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	FResources RedPandasResource;
 
 	UFUNCTION(BlueprintCallable)
 	void SetRandomNumber(int Number);
-
 	
+	UFUNCTION(BlueprintCallable)
+	void AddResource(int Amount, EResources Resource, ETeams Team);
 
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
@@ -78,10 +81,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float RedPandasBoatHealth; 
 	
-
-
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	ETeams GameWinner;
+	ETeams GameWinner = ETeams::NONE;
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float Phase2RandomNumber; 

@@ -48,6 +48,14 @@ enum class ETeams : uint8
 	NONE,
 };
 
+UENUM(BlueprintType)
+enum class EResources : uint8
+{
+	WOOD = 0,
+	FIBER = 1,
+	METAL = 2
+};
+
 UENUM(BlueprintType, Blueprintable)
 enum class ETransitionStates : uint8
 {
