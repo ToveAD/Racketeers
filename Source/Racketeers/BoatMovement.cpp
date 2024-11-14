@@ -20,9 +20,9 @@ void UBoatMovement::BeginPlay()
 
     if (BoatMesh)
     {
-        BoatMesh->SetSimulatePhysics(true);  // Ensure that physics simulation is enabled
-        BoatMesh->SetIsReplicated(true);     // Enable replication for the boat mesh
-        BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
+        //BoatMesh->SetSimulatePhysics(true);  // Ensure that physics simulation is enabled
+        //BoatMesh->SetIsReplicated(true);     // Enable replication for the boat mesh
+        //BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
     }
 
     // Load input mapping contexts during BeginPlay, once assets are properly initialized
@@ -58,27 +58,16 @@ void UBoatMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 void UBoatMovement::Accelerate(float Value)
 {
-    if (GetOwner()->HasAuthority()) // Check if the server has authority
-    {
-        
-        
-            // Get the forward vector of the boat and zero out the Z component to prevent vertical movement
-            FVector ForwardVector = GetOwner()->GetActorForwardVector();
-            ForwardVector.Z = 0.0f;
+    // The server applies the movement force
+    FVector ForwardVector = GetOwner()->GetActorForwardVector();
+    ForwardVector.Z = 0.0f;
 
-            // Calculate the force to apply based on input value and boat speed
-            FVector ForwardForce = ForwardVector * Value * BoatSpeed;
-            BoatMesh->AddForce(ForwardForce, NAME_None, true); // Apply force to the boat mesh
+    FVector ForwardForce = ForwardVector * Value * BoatSpeed;
+    BoatMesh->AddForce(ForwardForce, NAME_None, true);
 
-            // Log the applied force for debugging
-            UE_LOG(LogTemp, Warning, TEXT("Boat: %s, ForwardForce: %s, BoatSpeed: %f"),
-                *GetOwner()->GetName(), *ForwardForce.ToString(), BoatSpeed);
-        
-   }
-    else
-   {
-        ServerAccelerate(Value); // Request the server to handle acceleration
-   }
+    // Log the applied force for debugging
+    UE_LOG(LogTemp, Warning, TEXT("Server Boat: %s, ForwardForce: %s, BoatSpeed: %f"),
+           *GetOwner()->GetName(), *ForwardForce.ToString(), BoatSpeed);
 }
 
 void UBoatMovement::Steer(float Value)
@@ -100,10 +89,7 @@ void UBoatMovement::Steer(float Value)
 
 void UBoatMovement::ServerAccelerate_Implementation(float Value)
 {
-    if (Value >= -1.0f && Value <= 1.0f) // Validate input value
-    {
-        Accelerate(Value); // Apply acceleration on the server
-    }
+    
 }
 
 bool UBoatMovement::ServerAccelerate_Validate(float Value)
