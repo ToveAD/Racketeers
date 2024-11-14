@@ -32,6 +32,8 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	UPROPERTY(Replicated, EditAnywhere ,BlueprintReadWrite)
 	bool bhavePressedContinue = false;
 
+
+
 	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	UUserWidget* UserWidget;
