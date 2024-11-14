@@ -132,9 +132,9 @@ void UBoatMovement::TeleportBoat(const FVector& NewLocation)
     }
 }
 
-void UBoatMovement::SwitchInputMapping(bool IsAttaching, UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove)
+void UBoatMovement::SwitchInputMapping(bool IsAttaching, UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove, APlayerController* PlayerController)
 {
-    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController(); // Get the player controller
+    //APlayerController* PlayerController = GetWorld()->GetFirstPlayerController(); // Get the player controller
 
     if (PlayerController)
     {
