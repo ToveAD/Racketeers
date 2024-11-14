@@ -16,8 +16,8 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ARacketeersGameStateBase, Resource);
-	
+	DOREPLIFETIME(ARacketeersGameStateBase, RacconResource);
+	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasResource);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsWood);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsFiber);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMetal);
