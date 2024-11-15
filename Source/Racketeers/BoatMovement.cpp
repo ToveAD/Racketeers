@@ -20,9 +20,9 @@ void UBoatMovement::BeginPlay()
 
     if (BoatMesh)
     {
-        //BoatMesh->SetSimulatePhysics(true);  // Ensure that physics simulation is enabled
+       // BoatMesh->SetSimulatePhysics(true);  // Ensure that physics simulation is enabled
         //BoatMesh->SetIsReplicated(true);     // Enable replication for the boat mesh
-        //BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
+       // BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
     }
 
     // Load input mapping contexts during BeginPlay, once assets are properly initialized
@@ -52,22 +52,29 @@ void UBoatMovement::BeginPlay()
 
 void UBoatMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-    // Currently unused, but could be used for continuous movement or other logic
+
+   
+    
+
+    
 }
 
 void UBoatMovement::Accelerate(float Value)
 {
-    // The server applies the movement force
-    FVector ForwardVector = GetOwner()->GetActorForwardVector();
-    ForwardVector.Z = 0.0f;
+    
+    if (BoatMesh)
+    {
+        FVector ForwardVector = GetOwner()->GetActorForwardVector();
+        ForwardVector.Z = 0.0f;
 
-    FVector ForwardForce = ForwardVector * Value * BoatSpeed;
-    BoatMesh->AddForce(ForwardForce, NAME_None, true);
+        FVector ForwardForce = ForwardVector * Value * BoatSpeed;
+        BoatMesh->AddForce(ForwardForce, NAME_None, true);
 
-    // Log the applied force for debugging
-    UE_LOG(LogTemp, Warning, TEXT("Server Boat: %s, ForwardForce: %s, BoatSpeed: %f"),
-           *GetOwner()->GetName(), *ForwardForce.ToString(), BoatSpeed);
+        // Log the applied force for debugging
+        UE_LOG(LogTemp, Warning, TEXT("Server Boat: %s, ForwardForce: %s, BoatSpeed: %f"),
+               *GetOwner()->GetName(), *ForwardForce.ToString(), BoatSpeed);
+    }
+    
 }
 
 void UBoatMovement::Steer(float Value)
