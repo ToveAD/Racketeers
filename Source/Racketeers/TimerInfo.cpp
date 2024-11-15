@@ -5,10 +5,11 @@
 
 #include "Net/UnrealNetwork.h"
 
+float ATimerInfo::Time;
+
 ATimerInfo::ATimerInfo()
 {
-	bIsActive = false;
-	Time = 0;
+	bIsActive = true;
 	UE_LOG(LogTemp, Warning, TEXT("TimerInfo::ATimerInfo()"));
 }
 
@@ -28,6 +29,7 @@ void ATimerInfo::Tick(float DeltaSeconds)
 		DecreaseTime(DeltaSeconds);
 	}
 }
+
 
 void ATimerInfo::DecreaseTime(float DeltaSeconds)
 {
@@ -56,25 +58,25 @@ void ATimerInfo::SetTime_Analog(int32 Minutes, int32 Seconds, bool SetIsActive)
 	bIsActive = SetIsActive;
 }
 
-void ATimerInfo::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ATimerInfo, StartTimer);
-}
-
 void ATimerInfo::ActivateTime()
 {
 	bIsActive = true;
+}
+
+float ATimerInfo::GetTime()
+{
+	return Time;
+}
+
+void ATimerInfo::SetTime(float T)
+{
+	Time = T;
 }
 
 void ATimerInfo::On_RepStartTimer()
 {
 	
 }
-
-
-
 
 void ATimerInfo::MultiCastActivateTimer_Implementation(float T)
 {

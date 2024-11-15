@@ -229,6 +229,17 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 	
 }
 
+void ARacketeersController::SetTimeSecondsn_Implementation(float seconds, bool SetIsActive)
+{
+	
+	ATimerInfo::SetTime(seconds);
+}
+
+void ARacketeersController::SetTime_Analog_Implementation(ATimerInfo* timer, int32 Minutes, int32 Seconds, bool SetIsActive)
+{
+	
+}
+
 void ARacketeersController::AddWidgetToViewport_Implementation(UUserWidget* Widget)
 {
 	if(Widget == nullptr)
@@ -268,21 +279,18 @@ bool ARacketeersController::AddResource_Validate(int Amount, EResources Resource
 	return true;
 }
 
-inline void ARacketeersController::SetMultiTimeSeconds_Implementation(ATimerInfo* timer ,float seconds, bool SetIsActive)
+inline void ARacketeersController::SetServerTimeSeconds_Implementation(ARacketeersController* Controller ,float seconds, bool SetIsActive)
 {
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "TimerInfo::SetMultiTimeSeconds_Implementation");
-
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	if(GM == nullptr)
 	{
 		return;
 	}
-	timer->SetTimeSeconds(GM->TimerInfo->Time, SetIsActive);
+	Controller->SetTimeSecondsn(ATimerInfo::GetTime(), SetIsActive);
 	
 }
 
-inline void ARacketeersController::SetMultiTime_Analog_Implementation(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive)
+inline void ARacketeersController::SetServerTime_Analog_Implementation(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive)
 {
 
 }

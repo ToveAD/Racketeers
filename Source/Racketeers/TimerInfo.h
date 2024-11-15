@@ -13,24 +13,15 @@ UCLASS(BlueprintType, Blueprintable)
 class RACKETEERS_API ATimerInfo : public AInfo
 {
 	GENERATED_BODY()
-
-
 	ATimerInfo();
-
-
-
 	void DecreaseTime(float DeltaSeconds);
-	
-	bool bIsActive;
-	
 	public:
+	bool bIsActive;
 	virtual void Tick(float DeltaSeconds) override;
-	
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void SetTimeSeconds(float seconds, bool SetIsActive);
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void SetTime_Analog(int32 Minutes, int32 Seconds, bool SetIsActive);
-
 	
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	int32 GetMinutes();
@@ -43,22 +34,16 @@ class RACKETEERS_API ATimerInfo : public AInfo
 	UFUNCTION(NetMulticast, reliable)
 	void MultiCastActivateTimer(float T);
 	
-	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
-
-
-	
-	
-	
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void ActivateTime();
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Time;
+
+	UFUNCTION(Blueprintable, BlueprintCallable)
+	static float GetTime();
+	UFUNCTION(Blueprintable, BlueprintCallable)
+	static void SetTime(float T);
 
 
-	UPROPERTY(ReplicatedUsing=On_RepStartTimer, BlueprintReadWrite)
-	float StartTimer;
-
-
+private:
+	static float Time;
 };
 

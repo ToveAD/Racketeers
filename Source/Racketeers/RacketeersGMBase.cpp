@@ -55,6 +55,7 @@ void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options,
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::Initiate Game"));
+	
 }
 
 
@@ -89,7 +90,7 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
-	Phase_1->TimeLimit = 60.0f;
+	Phase_1->TimeLimit = 15.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
@@ -116,7 +117,7 @@ void ARacketeersGMBase::BeginPlay()
 	TotalRounds = 3;
 	if(TimerInfo == nullptr)
 	{
-		TimerInfo->SetTimeSeconds(Phase_1->TimeLimit,false);
+		ATimerInfo::SetTime(Phase_1->TimeLimit );
 	}
 }
 
@@ -133,14 +134,17 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 			return;
 		}
 	}
-	
-	
 	if(CurrentPhase == nullptr)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Returned NullPtr"));
 		return;
 	}
-	if(CurrentTime >= CurrentPhase->TimeLimit)
+	//CurrentTime >= CurrentPhase->TimeLimit
+	if(!TimerInfo->bIsActive)
+	{
+		return;
+	}
+	if(ATimerInfo::GetTime() <= 0)
 	{
 		RoundCompletion();
 	}else
@@ -360,6 +364,7 @@ void ARacketeersGMBase::RespawnPlayers()
 	{
 		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
 		FString TeamName;
+		
 		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
 		{
 			TeamName = "Team Racoons";
@@ -368,6 +373,8 @@ void ARacketeersGMBase::RespawnPlayers()
 		{
 			TeamName = "Team RedPandas";
 		}
+
+		//TeamName = UEnum::GetValueAsString(PS->PlayerInfo.Team);
 		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *TeamName);
@@ -409,7 +416,10 @@ void ARacketeersGMBase::RespawnPlayers()
 	}
 	*/
 	UE_LOG(LogTemp, Warning, TEXT("RespawnPlayers"));
+
 	SwitchState();
+	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
+	TimerInfo->ActivateTime();
 }
 
 

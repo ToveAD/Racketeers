@@ -75,10 +75,16 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void RemoveWidget(FName Name);
 
+	UFUNCTION(Client, Reliable , BlueprintCallable, Blueprintable)
+	void SetTimeSecondsn(float seconds, bool SetIsActive);
+	UFUNCTION(Client, Reliable , BlueprintCallable, Blueprintable)
+	void SetTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
+
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
-	void SetMultiTimeSeconds(ATimerInfo* timer ,float seconds, bool SetIsActive);
+	void SetServerTimeSeconds(ARacketeersController* Controller ,float seconds, bool SetIsActive);
+	
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
-	void SetMultiTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
+	void SetServerTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
 
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
