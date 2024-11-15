@@ -60,7 +60,7 @@ void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options,
 
 void ARacketeersGMBase::BeginPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::BeginPlay"));
+	UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::BeginPlay"));
 	
 	//Set the GameState in GameMode
 	//GameState = Cast<AGS_Base>(UGameplayStatics::GetGameState(GetWorld()));
@@ -72,6 +72,18 @@ void ARacketeersGMBase::BeginPlay()
 	Phase_1 = NewObject<UPhase>();
 	Phase_2 = NewObject<UPhase>();
 	Phase_3 = NewObject<UPhase>();
+	FActorSpawnParameters ASPParams;
+
+	FVector* V = new FVector(0,0,0);
+	FRotator* RO = new FRotator(0,0,0);
+	
+	UE_LOG(LogTemp, Warning, TEXT("About To Spawn Timer Info"));
+	TimerInfo = Cast<ATimerInfo>(UGameplayStatics::GetActorOfClass(GetWorld(), ATimerInfo::StaticClass()));
+	
+	if(TimerInfo == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::SpawnActor is nullptr"));
+	}
 
 
 	
@@ -102,6 +114,7 @@ void ARacketeersGMBase::BeginPlay()
 	bIsGameActive = true;
 
 	TotalRounds = 3;
+	TimerInfo->Time = Phase_1->TimeLimit;
 }
 
 
