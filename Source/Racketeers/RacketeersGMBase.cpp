@@ -114,7 +114,10 @@ void ARacketeersGMBase::BeginPlay()
 	bIsGameActive = true;
 
 	TotalRounds = 3;
-//	TimerInfo->Time = Phase_1->TimeLimit;
+	if(TimerInfo == nullptr)
+	{
+		TimerInfo->SetTimeSeconds(Phase_1->TimeLimit,false);
+	}
 }
 
 
