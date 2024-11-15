@@ -30,12 +30,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void SwitchInputMapping(bool IsAttaching,  UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove, APlayerController* PlayerController);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerAccelerate(float Value);
-
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerSteer(float Value);
-
 private:
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float BoatSpeed = 1000.0f;

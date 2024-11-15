@@ -52,10 +52,6 @@ void UBoatMovement::BeginPlay()
 
 void UBoatMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-
-   
-    
-
     
 }
 
@@ -79,42 +75,12 @@ void UBoatMovement::Accelerate(float Value)
 
 void UBoatMovement::Steer(float Value)
 {
-    if (GetOwner()->HasAuthority()) // Check if the server has authority
-   {
         if (BoatMesh)
         {
             // Calculate torque to apply for steering
             FVector Torque = FVector(0.0f, 0.0f, Value * SteeringSpeed);
             BoatMesh->AddTorqueInDegrees(Torque, NAME_None, true); // Apply torque to the boat mesh
         }
-    }
-   else
-    {
-        ServerSteer(Value); // Request the server to handle steering
-    }
-}
-
-void UBoatMovement::ServerAccelerate_Implementation(float Value)
-{
-    
-}
-
-bool UBoatMovement::ServerAccelerate_Validate(float Value)
-{
-    return (Value >= -1.0f && Value <= 1.0f); // Ensure the input value is within a valid range
-}
-
-void UBoatMovement::ServerSteer_Implementation(float Value)
-{
-    if (Value >= -1.0f && Value <= 1.0f) // Validate input value
-    {
-        Steer(Value); // Apply steering on the server
-    }
-}
-
-bool UBoatMovement::ServerSteer_Validate(float Value)
-{
-    return (Value >= -1.0f && Value <= 1.0f); // Ensure the input value is within a valid range
 }
 
 void UBoatMovement::TeleportBoat(const FVector& NewLocation)
