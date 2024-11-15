@@ -77,7 +77,7 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
-	Phase_1->TimeLimit = 500.0f;
+	Phase_1->TimeLimit = 100.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
