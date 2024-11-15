@@ -60,7 +60,7 @@ void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options,
 
 void ARacketeersGMBase::BeginPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AGM_Base::BeginPlay"));
+	UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::BeginPlay"));
 	
 	//Set the GameState in GameMode
 	//GameState = Cast<AGS_Base>(UGameplayStatics::GetGameState(GetWorld()));
@@ -72,22 +72,34 @@ void ARacketeersGMBase::BeginPlay()
 	Phase_1 = NewObject<UPhase>();
 	Phase_2 = NewObject<UPhase>();
 	Phase_3 = NewObject<UPhase>();
+	FActorSpawnParameters ASPParams;
+
+	FVector* V = new FVector(0,0,0);
+	FRotator* RO = new FRotator(0,0,0);
+	
+	UE_LOG(LogTemp, Warning, TEXT("About To Spawn Timer Info"));
+	TimerInfo = Cast<ATimerInfo>(UGameplayStatics::GetActorOfClass(GetWorld(), ATimerInfo::StaticClass()));
+	
+	if(TimerInfo == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::SpawnActor is nullptr"));
+	}
 
 
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
-	Phase_1->TimeLimit = 500.0f;
+	Phase_1->TimeLimit = 15.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
 	Phase_2->State = FPhaseState::Phase_2;
-	Phase_2->TimeLimit = 500.0f;
+	Phase_2->TimeLimit = 14.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
 	
 	Phase_3->State = FPhaseState::Phase_3;
-	Phase_3->TimeLimit = 500.0f;
+	Phase_3->TimeLimit = 15.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
 
@@ -102,6 +114,7 @@ void ARacketeersGMBase::BeginPlay()
 	bIsGameActive = true;
 
 	TotalRounds = 3;
+//	TimerInfo->Time = Phase_1->TimeLimit;
 }
 
 

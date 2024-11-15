@@ -229,6 +229,15 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 	
 }
 
+void ARacketeersController::AddWidgetToViewport_Implementation(UUserWidget* Widget)
+{
+	if(Widget == nullptr)
+	{
+		return;
+	}
+	Widget->AddToViewport();
+}
+
 void ARacketeersController::RemoveResource_Implementation(int Amount, EResources Resource, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
@@ -257,4 +266,23 @@ void ARacketeersController::AddResource_Implementation(int Amount, EResources Re
 bool ARacketeersController::AddResource_Validate(int Amount, EResources Resource, ETeams Team)
 {
 	return true;
+}
+
+inline void ARacketeersController::SetMultiTimeSeconds_Implementation(ATimerInfo* timer ,float seconds, bool SetIsActive)
+{
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "TimerInfo::SetMultiTimeSeconds_Implementation");
+
+	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	if(GM == nullptr)
+	{
+		return;
+	}
+	timer->SetTimeSeconds(GM->TimerInfo->Time, SetIsActive);
+	
+}
+
+inline void ARacketeersController::SetMultiTime_Analog_Implementation(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive)
+{
+
 }

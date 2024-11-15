@@ -31,17 +31,17 @@ void UDriverAccelerateProxy::HandleAccelerationInput(float Value)
 {
     //if (BoatMovementComponent)
     //{
-        if (!GetOwner()->HasAuthority())
-        {
-            if (Value >= -1.0f && Value <= 1.0f) // Validate the value on the client side before sending to the server
-            {
-                ServerHandleAcceleration(Value); // Request the server to handle acceleration
-            }
-        }
-        else
-        {
-            BoatMovementComponent->Accelerate(Value); // Apply acceleration directly on the server
-        }
+     //  if (!GetOwner()->HasAuthority())
+       // {
+         //   if (Value >= -1.0f && Value <= 1.0f) // Validate the value on the client side before sending to the server
+           // {
+             //   ServerHandleAcceleration(Value); // Request the server to handle acceleration
+            ///}
+        //}
+        //else
+       // {
+          //  BoatMovementComponent->Accelerate(Value, DeltaTime); // Apply acceleration directly on the server
+        //}
     //}
     //else
     //{
@@ -53,7 +53,7 @@ void UDriverAccelerateProxy::ServerHandleAcceleration_Implementation(float Value
 {
     if (BoatMovementComponent && (Value >= -1.0f && Value <= 1.0f)) // Validate the value
     {
-        BoatMovementComponent->Accelerate(Value); // Apply acceleration on the server
+       // BoatMovementComponent->Accelerate(Value); // Apply acceleration on the server
     }
     else
     {

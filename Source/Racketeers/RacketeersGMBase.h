@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GM_Base.h"
+#include "TimerInfo.h"
 #include "WidgetSubsystem.h"
 #include "RacketeersGMBase.generated.h"
 
@@ -75,6 +76,11 @@ public:
 	ARacketeersGMBase();
 	
 	//Events / Delegates
+
+
+
+	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
+	ATimerInfo* TimerInfo = nullptr;
 
 	/*
 	 * When A Widget Need To Load

@@ -30,18 +30,24 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void SwitchInputMapping(bool IsAttaching,  UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove, APlayerController* PlayerController);
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerAccelerate(float Value);
-
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerSteer(float Value);
-
 private:
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float BoatSpeed = 1000.0f;
 
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float SteeringSpeed = 500.0f;
+
+	// Boat maximum speed
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	float MaxBoatSpeed = 1200.0f; // Maximum speed of the boat
+
+	// Drag force to slow down the boat when no input is applied
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	float DragForce = 5.0f; // Higher values result in faster deceleration
+
+	// Rapid deceleration force multiplier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	float RapidDecelerationForce = 20.0f; // Higher value = faster deceleration
 
 	UPROPERTY()
 	UPrimitiveComponent* BoatMesh;
@@ -51,4 +57,8 @@ private:
 
 	UPROPERTY()
 	UInputMappingContext* IMC_Default; // Declare IMC_Default
+
+	// Flags for input control
+	bool bIsAccelerating = false; // True when acceleration input is active
+	float CurrentAccelerationValue = 0.0f; // Holds the current acceleration input value
 };
