@@ -73,6 +73,16 @@ struct FWidgetClassAndName
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UUserWidget*  Widget;
 };
+USTRUCT(BlueprintType)
+struct FTimer
+{
+	GENERATED_BODY();
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int Minutes;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int Seconds;
+	
+};
 
 
 
