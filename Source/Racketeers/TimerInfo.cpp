@@ -9,7 +9,7 @@ float ATimerInfo::Time;
 
 ATimerInfo::ATimerInfo()
 {
-	bIsActive = true;
+	bIsActive = false;
 	UE_LOG(LogTemp, Warning, TEXT("TimerInfo::ATimerInfo()"));
 }
 

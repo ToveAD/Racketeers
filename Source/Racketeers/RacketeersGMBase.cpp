@@ -118,6 +118,7 @@ void ARacketeersGMBase::BeginPlay()
 	if(TimerInfo == nullptr)
 	{
 		ATimerInfo::SetTime(Phase_1->TimeLimit );
+		TimerInfo->ActivateTime();
 	}
 }
 
