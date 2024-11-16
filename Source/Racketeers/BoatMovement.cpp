@@ -5,139 +5,212 @@
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Net/UnrealNetwork.h"
 
 UBoatMovement::UBoatMovement()
 {
     PrimaryComponentTick.bCanEverTick = true; // Enable ticking for this component
+    SetIsReplicatedByDefault(true); // Enable replication for this component
 }
 
 void UBoatMovement::BeginPlay()
 {
     Super::BeginPlay();
 
-    // Get the StaticMesh or any other PrimitiveComponent that simulates physics
     BoatMesh = Cast<UPrimitiveComponent>(GetOwner()->GetComponentByClass(UPrimitiveComponent::StaticClass()));
 
     if (BoatMesh)
     {
-       // BoatMesh->SetSimulatePhysics(true);  // Ensure that physics simulation is enabled
-        //BoatMesh->SetIsReplicated(true);     // Enable replication for the boat mesh
-       // BoatMesh->GetOwner()->SetReplicateMovement(true); // Enable movement replication
+        BoatMesh->SetSimulatePhysics(true);
+        BoatMesh->SetIsReplicated(true);
+        BoatMesh->GetOwner()->SetReplicateMovement(false); // Disable default movement replication; we’ll handle it manually
     }
 
-    // Load input mapping contexts during BeginPlay, once assets are properly initialized
-    IMC_Boat = LoadObject<UInputMappingContext>(nullptr, TEXT("/Game/Racketeers/Characters/Input/IMC_Boat.IMC_Boat"));
-    IMC_Default = LoadObject<UInputMappingContext>(nullptr, TEXT("/Game/Racketeers/Characters/Input/IMC_Default.IMC_Default"));
-
-    // Log to check if the loading was successful
-    if (!IMC_Boat)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("IMC_Boat failed to load!"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Log, TEXT("IMC_Boat loaded successfully!"));
-    }
-
-    if (!IMC_Default)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("IMC_Default failed to load!"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Log, TEXT("IMC_Default loaded successfully!"));
-    }
+    // Initialize target location and rotation
+    ReplicatedLocation = GetOwner()->GetActorLocation();
+    ReplicatedRotation = GetOwner()->GetActorRotation();
 }
-
 
 void UBoatMovement::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-    
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    if (GetOwner()->HasAuthority()) // Server side
+    {
+        Server_UpdateTransform(DeltaTime); // Update the authoritative transform on the server
+    }
+    else // Client side
+    {
+        Client_InterpolateTransform(DeltaTime); // Interpolate on the client
+    }
 }
 
+// Accelerate Function
 void UBoatMovement::Accelerate(float Value)
 {
-    
+    if (Value == 0.0f)
+    {
+        return; // No input to process
+    }
+
+    if (GetOwner()->HasAuthority()) // Server processes movement
+    {
+        ApplyMovement(Value);
+    }
+    else // Client sends input to server
+    {
+        Server_Accelerate(Value);
+        ApplyMovement(Value); // Client-side prediction
+    }
+}
+
+// Steer Function
+void UBoatMovement::Steer(float Value)
+{
+    if (Value == 0.0f)
+    {
+        return; // No input to process
+    }
+
+    if (GetOwner()->HasAuthority()) // Server processes steering
+    {
+        ApplySteering(Value);
+    }
+    else // Client sends input to server
+    {
+        Server_Steer(Value);
+        ApplySteering(Value); // Client-side prediction
+    }
+}
+
+// ApplyMovement Helper Function
+void UBoatMovement::ApplyMovement(float Value)
+{
     if (BoatMesh)
     {
         FVector ForwardVector = GetOwner()->GetActorForwardVector();
         ForwardVector.Z = 0.0f;
+        ForwardVector.Normalize();
 
-        FVector ForwardForce = ForwardVector * Value * BoatSpeed;
-        BoatMesh->AddForce(ForwardForce, NAME_None, true);
+        float DesiredSpeed = Value * MaxBoatSpeed;
+        FVector NewVelocity = ForwardVector * DesiredSpeed;
 
-        // Log the applied force for debugging
-        UE_LOG(LogTemp, Warning, TEXT("Server Boat: %s, ForwardForce: %s, BoatSpeed: %f"),
-               *GetOwner()->GetName(), *ForwardForce.ToString(), BoatSpeed);
-    }
-    
-}
+        BoatMesh->SetPhysicsLinearVelocity(NewVelocity, true);
 
-void UBoatMovement::Steer(float Value)
-{
-        if (BoatMesh)
+        // Update replicated values on the server
+        if (GetOwner()->HasAuthority())
         {
-            // Calculate torque to apply for steering
-            FVector Torque = FVector(0.0f, 0.0f, Value * SteeringSpeed);
-            BoatMesh->AddTorqueInDegrees(Torque, NAME_None, true); // Apply torque to the boat mesh
+            ReplicatedLocation = GetOwner()->GetActorLocation();
+            ReplicatedRotation = GetOwner()->GetActorRotation();
         }
+    }
 }
 
-void UBoatMovement::TeleportBoat(const FVector& NewLocation)
+// ApplySteering Helper Function
+void UBoatMovement::ApplySteering(float Value)
 {
     if (BoatMesh)
     {
-        BoatMesh->SetWorldLocation(NewLocation, true); // Teleport the boat to the new location without collision issues
+        FVector Torque = FVector(0.0f, 0.0f, Value * SteeringSpeed);
+        BoatMesh->AddTorqueInDegrees(Torque, NAME_None, true);
+
+        // Update replicated rotation on the server
+        if (GetOwner()->HasAuthority())
+        {
+            ReplicatedRotation = GetOwner()->GetActorRotation();
+        }
     }
+}
+
+// Server RPCs for Accelerate
+void UBoatMovement::Server_Accelerate_Implementation(float Value)
+{
+    ApplyMovement(Value);
+}
+
+bool UBoatMovement::Server_Accelerate_Validate(float Value)
+{
+    return FMath::Abs(Value) <= 1.0f;
+}
+
+// Server RPCs for Steer
+void UBoatMovement::Server_Steer_Implementation(float Value)
+{
+    ApplySteering(Value);
+}
+
+bool UBoatMovement::Server_Steer_Validate(float Value)
+{
+    return FMath::Abs(Value) <= 1.0f;
+}
+
+// Implementation for Server_UpdateTransform
+void UBoatMovement::Server_UpdateTransform_Implementation(float DeltaTime)
+{
+    if (BoatMesh)
+    {
+        // Update position and rotation only if significant movement occurs
+        if (FVector::Dist(ReplicatedLocation, GetOwner()->GetActorLocation()) > UpdateThreshold ||
+            FMath::Abs(ReplicatedRotation.Yaw - GetOwner()->GetActorRotation().Yaw) > UpdateThreshold)
+        {
+            ReplicatedLocation = GetOwner()->GetActorLocation();
+            ReplicatedRotation = GetOwner()->GetActorRotation();
+        }
+    }
+}
+
+bool UBoatMovement::Server_UpdateTransform_Validate(float DeltaTime)
+{
+    // Validation logic: Ensure DeltaTime is within a reasonable range
+    return DeltaTime >= 0.0f && DeltaTime <= 1.0f;
+}
+
+void UBoatMovement::Client_InterpolateTransform(float DeltaTime)
+{
+    FVector CurrentLocation = GetOwner()->GetActorLocation();
+    FRotator CurrentRotation = GetOwner()->GetActorRotation();
+
+    // Interpolate location and rotation towards the target
+    FVector InterpolatedLocation = FMath::VInterpTo(CurrentLocation, ReplicatedLocation, DeltaTime, InterpolationSpeed);
+    FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, ReplicatedRotation, DeltaTime, InterpolationSpeed);
+
+    // Set the actor’s location and rotation
+    GetOwner()->SetActorLocation(InterpolatedLocation);
+    GetOwner()->SetActorRotation(InterpolatedRotation);
 }
 
 void UBoatMovement::SwitchInputMapping(bool IsAttaching, UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove, APlayerController* PlayerController)
 {
-    //APlayerController* PlayerController = GetWorld()->GetFirstPlayerController(); // Get the player controller
-
     if (PlayerController)
     {
-        if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer()) // Get the local player
+        if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer())
         {
             UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 
-            if (InputSubsystem)
+            if (InputSubsystem && InputToAdd && InputToRemove)
             {
-                if (InputToAdd && InputToRemove)
+                if (IsAttaching)
                 {
-                    if (IsAttaching)
-                    {
-                        // Switch to boat input mapping when attaching
-                        InputSubsystem->RemoveMappingContext(InputToRemove);
-                        InputSubsystem->AddMappingContext(InputToAdd, 1);
-                        UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
-                    }
-                    else
-                    {
-                        // Switch back to default input mapping when detaching
-                        InputSubsystem->RemoveMappingContext(InputToAdd);
-                        InputSubsystem->AddMappingContext(InputToRemove, 1);
-                        UE_LOG(LogTemp, Log, TEXT("Switched to Player input mapping context: IMC_Default"));
-                    }
+                    InputSubsystem->RemoveMappingContext(InputToRemove);
+                    InputSubsystem->AddMappingContext(InputToAdd, 1);
+                    UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
                 }
                 else
                 {
-                    UE_LOG(LogTemp, Warning, TEXT("IMC_Boat is null!"));
+                    InputSubsystem->RemoveMappingContext(InputToAdd);
+                    InputSubsystem->AddMappingContext(InputToRemove, 1);
+                    UE_LOG(LogTemp, Log, TEXT("Switched to Player input mapping context: IMC_Default"));
                 }
             }
-            else
-            {
-                UE_LOG(LogTemp, Warning, TEXT("Input subsystem not found for player controller."));
-            }
         }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("LocalPlayer not found for player controller."));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("PlayerController not found!"));
     }
 }
 
+void UBoatMovement::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    // Declaration of variables to be replicated
+    DOREPLIFETIME(UBoatMovement, ReplicatedLocation);
+    DOREPLIFETIME(UBoatMovement, ReplicatedRotation);
+}
