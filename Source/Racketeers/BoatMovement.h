@@ -75,7 +75,7 @@ private:
 
 	UPROPERTY(Replicated)
 	FRotator ReplicatedRotation;
-
+	
 	// Reference to the boat’s mesh component
 	UPROPERTY()
 	UPrimitiveComponent* BoatMesh;
