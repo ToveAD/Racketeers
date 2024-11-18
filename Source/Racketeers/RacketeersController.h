@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "GameModeStructs.h"
+#include "Net/UnrealNetwork.h"
 
 #include "RacketeersController.generated.h"
 
@@ -22,6 +23,8 @@
 class UUserWidget;
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeginPlayerEvent);
+
 UCLASS()
 class RACKETEERS_API ARacketeersController : public APlayerController
 {
@@ -32,7 +35,10 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	UPROPERTY(Replicated, EditAnywhere ,BlueprintReadWrite)
 	bool bhavePressedContinue = false;
 
+	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
+	FOnBeginPlayerEvent OnBeginPlayerEvent;
 
+	void BeginPlay() override;
 
 	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
@@ -92,5 +98,13 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RemoveResource(int Amount, EResources Resource, ETeams Team);
+
+
+
+	UFUNCTION(Server, reliable)
+	void ServerMultiCastActivateTimer();
+	
+	UFUNCTION(NetMulticast, reliable, BlueprintCallable)
+	void MultiCastActivateTimer(float T,  bool SetIsActive);
 	
 };

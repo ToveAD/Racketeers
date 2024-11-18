@@ -16,7 +16,17 @@ class RACKETEERS_API ATimerInfo : public AInfo
 	ATimerInfo();
 	void DecreaseTime(float DeltaSeconds);
 	public:
-	bool bIsActive;
+
+	UFUNCTION(BlueprintCallable, Blueprintable)
+	static bool GetIsActive(){return ATimerInfo::bIsActive;};
+	UFUNCTION(BlueprintCallable, Blueprintable)
+	static void SetIsActive(bool active){ATimerInfo::bIsActive = active;};
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+	
+	static bool bIsActive;
+	
 	virtual void Tick(float DeltaSeconds) override;
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void SetTimeSeconds(float seconds, bool SetIsActive);
@@ -31,11 +41,16 @@ class RACKETEERS_API ATimerInfo : public AInfo
 	UFUNCTION()
 	void On_RepStartTimer();
 	
-	UFUNCTION(NetMulticast, reliable)
-	void MultiCastActivateTimer(float T);
+	UFUNCTION(Server, reliable)
+	void ServerMultiCastActivateTimer();
+	
+	UFUNCTION(NetMulticast, reliable, BlueprintCallable)
+	void MultiCastActivateTimer(float T,  bool SetIsActive);
 	
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void ActivateTime();
+	UFUNCTION(BlueprintCallable, Blueprintable)
+	void DeactivateTime();
 
 	UFUNCTION(Blueprintable, BlueprintCallable)
 	static float GetTime();

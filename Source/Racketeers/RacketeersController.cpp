@@ -10,7 +10,6 @@
 #include "RacketeersGMBase.h"
 #include "WidgetSubsystem.h"
 #include "Kismet/GameplayStatics.h"
-#include "Net/UnrealNetwork.h"
 
 
 
@@ -221,6 +220,13 @@ bool ARacketeersController::RequestRemoveWidget_Validate()
 	return true;
 }
 
+void ARacketeersController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	OnBeginPlayerEvent.Broadcast();
+}
+
 void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -229,10 +235,26 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 	
 }
 
+void ARacketeersController::ServerMultiCastActivateTimer_Implementation()
+{
+	MultiCastActivateTimer(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
+}
+
+void ARacketeersController::MultiCastActivateTimer_Implementation(float T, bool SetIsActive)
+{
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "CONTROLLER ACTIVATE TIMER MULTICAST");
+	ATimerInfo::SetIsActive(SetIsActive);
+	ATimerInfo::SetTime(T);
+	SetTimeSecondsn(T, SetIsActive);
+	
+}
+
 void ARacketeersController::SetTimeSecondsn_Implementation(float seconds, bool SetIsActive)
 {
 	
 	ATimerInfo::SetTime(seconds);
+	ATimerInfo::SetIsActive(SetIsActive);
 }
 
 void ARacketeersController::SetTime_Analog_Implementation(ATimerInfo* timer, int32 Minutes, int32 Seconds, bool SetIsActive)
@@ -286,7 +308,7 @@ inline void ARacketeersController::SetServerTimeSeconds_Implementation(ARacketee
 	{
 		return;
 	}
-	Controller->SetTimeSecondsn(ATimerInfo::GetTime(), SetIsActive);
+	Controller->SetTimeSecondsn(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
 	
 }
 

@@ -5,6 +5,7 @@
 
 #include "BaseGameInstance.h"
 #include "PS_Base.h"
+#include "RacketeersController.h"
 #include "RacketeersGameStateBase.h"
 #include "WidgetSubsystem.h"
 #include "GameFramework/GameStateBase.h"
@@ -90,12 +91,12 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
-	Phase_1->TimeLimit = 15.0f;
+	Phase_1->TimeLimit = 20.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
 	Phase_2->State = FPhaseState::Phase_2;
-	Phase_2->TimeLimit = 14.0f;
+	Phase_2->TimeLimit = 25.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
 	
@@ -115,12 +116,15 @@ void ARacketeersGMBase::BeginPlay()
 	bIsGameActive = true;
 
 	TotalRounds = 3;
-	if(TimerInfo == nullptr)
+	if(TimerInfo != nullptr)
 	{
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Activate Time ");
 		ATimerInfo::SetTime(Phase_1->TimeLimit );
-		TimerInfo->ActivateTime();
+		TimerInfo->SetIsActive(true);
 	}
 }
+
 
 
 
@@ -151,7 +155,7 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 	}else
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Current Time: %f"), CurrentTime);
-		CurrentTime += DeltaSeconds;
+		//CurrentTime += DeltaSeconds;
 	}
 }
 
@@ -167,22 +171,27 @@ void ARacketeersGMBase::RoundCompletion()
 
 	CurrentTime = 0;
 
+	TimerInfo->SetIsActive(false);
 
-	
-	UE_LOG(LogTemp, Warning, TEXT("Check If Game Is Over"));
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check If Game Is Over");
 	if(CheckIfGameIsOver())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("EndGame"));
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "End Game");
 		EndGame();
 		return;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("CheckWinner Of Round"));
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check Winner of Round");
 	CheckWinnerOfRound();
 
-	UE_LOG(LogTemp, Warning, TEXT("Load Transition Stats"));
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Transition stats");
 	LoadTransitionStats();
 
-	UE_LOG(LogTemp, Warning, TEXT("Transition"));
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Transition");
 	Transition();
 }
 
@@ -234,7 +243,8 @@ void ARacketeersGMBase::Transition()
 	ActionInfo.ExecutionFunction = TEXT("LoadLevel");
 	ActionInfo.UUID = GetUniqueID();	
 
-	UE_LOG(LogTemp, Warning, TEXT("Unload Level"))
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Unload Level");
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
 }
 
@@ -355,6 +365,9 @@ void ARacketeersGMBase::LoadLevel()
 	LoadActionInfo.ExecutionFunction = TEXT("RespawnPlayers");
 	LoadActionInfo.UUID = GetUniqueID();
 	
+	
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
 	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true , false, LoadActionInfo);
 }
 
@@ -416,11 +429,19 @@ void ARacketeersGMBase::RespawnPlayers()
 		Player->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	}
 	*/
-	UE_LOG(LogTemp, Warning, TEXT("RespawnPlayers"));
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Respawn Players");
 
-	SwitchState();
+	SwitchState(); 
 	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
-	TimerInfo->ActivateTime();
+	ATimerInfo::SetIsActive(true);
+
+	ARacketeersController* C = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	C->ServerMultiCastActivateTimer();
+		//TimerInfo->ServerMultiCastActivateTimer();
+	
+	
 }
 
 
