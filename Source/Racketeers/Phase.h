@@ -30,7 +30,7 @@
 	 *		
 	 *
 	 */
-
+UENUM()
 enum FPhaseState
 {
 	Phase_1,
@@ -52,8 +52,9 @@ public:
 
 	UPROPERTY()
 	float TimeLimit;
-	
-	FPhaseState State;
+
+	UPROPERTY(BlueprintReadWrite, Category= "State")
+	TEnumAsByte<FPhaseState> State;
 	FString LevelToLoad;
 	FString StartPhaseName;
 
