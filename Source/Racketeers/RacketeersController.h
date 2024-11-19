@@ -25,24 +25,28 @@ class UUserWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeginPlayerEvent);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerPressedReady);
+
 UCLASS()
 class RACKETEERS_API ARacketeersController : public APlayerController
 {
 	GENERATED_BODY()
 
 	public:
-
 	UPROPERTY(Replicated, EditAnywhere ,BlueprintReadWrite)
 	bool bhavePressedContinue = false;
-
 	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
 	FOnBeginPlayerEvent OnBeginPlayerEvent;
-
-	void BeginPlay() override;
-
-	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
+	FOnPlayerPressedReady OnPlayerPressedReady;
 	
 	UUserWidget* UserWidget;
+
+	
+	
+	void BeginPlay() override;
+	
+	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RequestRemoveWidget();
@@ -100,6 +104,9 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 
 
+	//Called when player wants to check ready, and does so in the server
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void ServerCheckReady();
 
 	UFUNCTION(Server, reliable)
 	void ServerMultiCastActivateTimer();

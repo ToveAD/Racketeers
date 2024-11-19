@@ -35,7 +35,10 @@ public:
 	
 	/* Array with the local players active widgets */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<FName, UUserWidget*> WidgetComponents;
+	TMap<FName, UUserWidget*> ActiveWidgetComponents;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FName, UUserWidget*> MapOfAllPlayerWidget;
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void IncrementPlayersPressed();

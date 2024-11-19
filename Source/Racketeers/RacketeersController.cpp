@@ -9,6 +9,7 @@
 #include "RacketeersGameStateBase.h"
 #include "RacketeersGMBase.h"
 #include "WidgetSubsystem.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -142,6 +143,33 @@ bool ARacketeersController::DamageBoat_Validate(int Amount, ETeams Team)
 
 void ARacketeersController::ActivateWidget_Implementation(FName Name, UUserWidget* Widget)
 {
+	FString String = "ADD WIDGET";
+
+	bhavePressedContinue = false;
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
+	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+	if(WS == nullptr)
+	{
+		return;
+	}
+
+	if(!WS->ActiveWidgetComponents.Contains(Name))
+	{
+		UUserWidget* W = *WS->MapOfAllPlayerWidget.Find(Name);
+		if(W)
+		{
+			WS->ActiveWidgetComponents.Add(Name, UserWidget);
+		}
+	}
+	//UserWidget = Widget;
+	
+	/*
 	int32 s = GetUniqueID();
 	FString String = FString::FromInt(s);
 
@@ -158,13 +186,13 @@ void ARacketeersController::ActivateWidget_Implementation(FName Name, UUserWidge
 	{
 		return;
 	}
-	if(!WS->WidgetComponents.Contains(Name))
+	if(!WS->ActiveWidgetComponents.Contains(Name))
 	{
 		Widget->AddToViewport();
-		WS->WidgetComponents.Add(Name, Widget);
+		WS->ActiveWidgetComponents.Add(Name, Widget);
 	}
 	//UserWidget = Widget;
-	
+	*/
 }
 
 void ARacketeersController::RemoveWidget_Implementation(FName Name)
@@ -174,15 +202,15 @@ void ARacketeersController::RemoveWidget_Implementation(FName Name)
 	{
 		return;
 	}
-	UUserWidget* Widget= *WS->WidgetComponents.Find(Name);
+	UUserWidget* Widget= *WS->ActiveWidgetComponents.Find(Name);
 	if(Widget == nullptr)
 	{
 		return;
 	}
 	Widget->RemoveFromParent();
-	if(WS->WidgetComponents.Contains(Name))
+	if(WS->ActiveWidgetComponents.Contains(Name))
 	{
-		WS->WidgetComponents.Remove(Name);
+		WS->ActiveWidgetComponents.Remove(Name);
 	}
 	bhavePressedContinue = false;
 
@@ -201,7 +229,7 @@ void ARacketeersController::RequestRemoveWidget_Implementation()
 	{
 		return;
 	}
-	if(WS->WidgetComponents.Num() == 0)
+	if(WS->ActiveWidgetComponents.Num() == 0)
 	{
 		return;
 	}
@@ -235,9 +263,26 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 	
 }
 
+void ARacketeersController::ServerCheckReady_Implementation()
+ {
+	OnPlayerPressedReady.Broadcast();
+ }
+ 
+ bool ARacketeersController::ServerCheckReady_Validate()
+ {
+	return true;
+ }
+
 void ARacketeersController::ServerMultiCastActivateTimer_Implementation()
 {
 	MultiCastActivateTimer(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
+
+	for (APlayerState* PState : UGameplayStatics::GetGameState(GetWorld())->PlayerArray)
+	{
+		ARacketeersController* PController = Cast<ARacketeersController>(PState->GetPlayerController());
+		
+		PController->SetTimeSecondsn(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
+	}
 }
 
 void ARacketeersController::MultiCastActivateTimer_Implementation(float T, bool SetIsActive)
@@ -247,7 +292,6 @@ void ARacketeersController::MultiCastActivateTimer_Implementation(float T, bool 
 	ATimerInfo::SetIsActive(SetIsActive);
 	ATimerInfo::SetTime(T);
 	SetTimeSecondsn(T, SetIsActive);
-	
 }
 
 void ARacketeersController::SetTimeSecondsn_Implementation(float seconds, bool SetIsActive)

@@ -7,6 +7,7 @@
 #include "PS_Base.h"
 #include "RacketeersController.h"
 #include "RacketeersGameStateBase.h"
+#include "TransitionComponent.h"
 #include "WidgetSubsystem.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
@@ -91,17 +92,17 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = FPhaseState::Phase_1;
-	Phase_1->TimeLimit = 20.0f;
+	Phase_1->TimeLimit = 5.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
 	Phase_2->State = FPhaseState::Phase_2;
-	Phase_2->TimeLimit = 25.0f;
+	Phase_2->TimeLimit = 5.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
 	
 	Phase_3->State = FPhaseState::Phase_3;
-	Phase_3->TimeLimit = 15.0f;
+	Phase_3->TimeLimit = 5.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
 
@@ -120,9 +121,21 @@ void ARacketeersGMBase::BeginPlay()
 	{
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Activate Time ");
-		ATimerInfo::SetTime(Phase_1->TimeLimit );
+		ATimerInfo::SetTime(Phase_1->TimeLimit);
 		TimerInfo->SetIsActive(true);
 	}
+
+	TransitionComponent = NewObject<UTransitionComponent>();
+	TransitionComponent->WidgetName = TEXT("ShowScore");
+	OnloadedMap.AddDynamic(TransitionComponent, &UTransitionComponent::LoadingFinished);
+
+	ARacketeersController* PController = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if(HasAuthority() && PController)
+	{
+		PController->OnPlayerPressedReady.AddDynamic( TransitionComponent, &UTransitionComponent::IncrementPlayerReady);
+	}
+
+	TransitionComponent->OnFinished.AddDynamic(this, &ARacketeersGMBase::AllStagesFinished);
 }
 
 
@@ -145,7 +158,7 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 		return;
 	}
 	//CurrentTime >= CurrentPhase->TimeLimit
-	if(!TimerInfo->bIsActive)
+	if(!TimerInfo->GetIsActive())
 	{
 		return;
 	}
@@ -248,6 +261,21 @@ void ARacketeersGMBase::Transition()
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
 }
 
+void ARacketeersGMBase::AllStagesFinished()
+{
+	SwitchState(); 
+	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
+	ATimerInfo::SetIsActive(true);
+	
+
+	ARacketeersController* C = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+
+	if(C->HasAuthority())
+	{
+		C->ServerMultiCastActivateTimer();
+	}
+}
+
 int ARacketeersGMBase::GetNextPhaseNumber()
 {
 	if(CurrentPhase->State == FPhaseState::Phase_3)
@@ -283,11 +311,15 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 
 bool ARacketeersGMBase::LoadTransitionStats()
 {
+
+	//New Transition Way
+	TransitionComponent->AddWidgetsToPlayers(GetGameState<AGameStateBase>());
+	
 	
 	//bIsGameActive = false;
 	
-	WidgetSubsystem->OnLoadWidget.Broadcast("ShowScore");
-	WidgetSubsystem->SetCanRunTick(false);
+	//WidgetSubsystem->OnLoadWidget.Broadcast("ShowScore");
+	//WidgetSubsystem->SetCanRunTick(false);
 	//OnLoadWidget.Broadcast();
 	return true;
 	
@@ -404,41 +436,13 @@ void ARacketeersGMBase::RespawnPlayers()
 			PS->GetPawn()->DetachFromActor(DETCTMGR);
 		}
 		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
-	
 		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	}
-	/*
-	for (APlayerState* Player : UGameplayStatics::GetGameState(GetWorld())->PlayerArray)
-	{
-		
-		APS_Base* PS = Cast<APS_Base>(Player);
-		FString TeamName;
-
-		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
-		{
-			TeamName = "Team_Racoon";
-		}
-		else
-		{
-			TeamName = "Team_RedPandas";
-		}
-		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
-
-		UE_LOG(LogTemp, Warning, TEXT("PLayer Name: %s"), *TeamName);
-		AActor* PlayerStart = FindPlayerStart(Player->GetPlayerController(),TeamName);
-		Player->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
-	}
-	*/
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Respawn Players");
+	
+	
 
-	SwitchState(); 
-	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
-	ATimerInfo::SetIsActive(true);
-
-	ARacketeersController* C = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-
-	C->ServerMultiCastActivateTimer();
 		//TimerInfo->ServerMultiCastActivateTimer();
 	
 	

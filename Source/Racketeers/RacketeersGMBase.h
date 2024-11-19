@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GM_Base.h"
 #include "TimerInfo.h"
+#include "TransitionComponent.h"
 #include "WidgetSubsystem.h"
 #include "RacketeersGMBase.generated.h"
 
@@ -22,6 +23,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadWidget);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadingMap);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnloadedMap);
+
+
 
 
 #define MAXTOTALROUNDS 8
@@ -81,6 +84,8 @@ public:
 	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
 	ATimerInfo* TimerInfo = nullptr;
 
+	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
+	UTransitionComponent* TransitionComponent = nullptr;
 	/*
 	 * When A Widget Need To Load
 	 */
@@ -153,6 +158,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UPhase*> Phases;
 
+	
+
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -169,7 +176,8 @@ private:
 	bool EndGame();
 	void SwitchState();
 	void Transition();
-	
+	UFUNCTION()
+	void AllStagesFinished();
 	
 };
 

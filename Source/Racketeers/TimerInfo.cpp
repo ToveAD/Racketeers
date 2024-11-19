@@ -84,12 +84,6 @@ void ATimerInfo::SetTime(float T)
 {
 	Time = T;
 }
-
-void ATimerInfo::On_RepStartTimer()
-{
-	
-}
-
 void ATimerInfo::ServerMultiCastActivateTimer_Implementation()
 {
 	MultiCastActivateTimer(GetTime(), GetIsActive());
