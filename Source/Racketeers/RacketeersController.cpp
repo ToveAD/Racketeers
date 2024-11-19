@@ -143,28 +143,16 @@ bool ARacketeersController::DamageBoat_Validate(int Amount, ETeams Team)
 
 void ARacketeersController::ActivateWidget_Implementation(FName Name, UUserWidget* Widget)
 {
-	FString String = "ADD WIDGET";
-
 	bhavePressedContinue = false;
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
-
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *String);
 	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
-	if(WS == nullptr)
+	if(!WS->ActiveWidgetComponents.Contains(Name) && WS->MapOfAllPlayerWidget.Contains(Name))
 	{
-		return;
-	}
-
-	if(!WS->ActiveWidgetComponents.Contains(Name))
-	{
+		
 		UUserWidget* W = *WS->MapOfAllPlayerWidget.Find(Name);
 		if(W)
 		{
-			WS->ActiveWidgetComponents.Add(Name, UserWidget);
+		    W->AddToViewport();
+			WS->ActiveWidgetComponents.Add(Name, W);
 		}
 	}
 	//UserWidget = Widget;
@@ -202,17 +190,20 @@ void ARacketeersController::RemoveWidget_Implementation(FName Name)
 	{
 		return;
 	}
-	UUserWidget* Widget= *WS->ActiveWidgetComponents.Find(Name);
-	if(Widget == nullptr)
-	{
-		return;
-	}
-	Widget->RemoveFromParent();
 	if(WS->ActiveWidgetComponents.Contains(Name))
 	{
-		WS->ActiveWidgetComponents.Remove(Name);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "IT DOES CONTAIN");
+		UUserWidget* Widget= *WS->ActiveWidgetComponents.Find(Name);
+		if(Widget)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "REMOVE FROM PARENT");
+			Widget->RemoveFromParent();
+			WS->ActiveWidgetComponents.Remove(Name);
+			bhavePressedContinue = false;
+		}
+	
 	}
-	bhavePressedContinue = false;
+
 
 	//UserWidget->RemoveFromParent();
 	
@@ -220,6 +211,7 @@ void ARacketeersController::RemoveWidget_Implementation(FName Name)
 
 void ARacketeersController::RequestRemoveWidget_Implementation()
 {
+	
 	if(bhavePressedContinue)
 	{
 		return;
@@ -259,13 +251,28 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ARacketeersController, bhavePressedContinue);
+	//DOREPLIFETIME(ARacketeersController, bhavePressedContinue);
 	
+}
+
+void ARacketeersController::ClientCheckReady_Implementation()
+{
+	if(bhavePressedContinue) return;
+	bhavePressedContinue = true;
+	ServerCheckReady();
+}
+
+bool ARacketeersController::ClientCheckReady_Validate()
+{
+	return true;
 }
 
 void ARacketeersController::ServerCheckReady_Implementation()
  {
-	OnPlayerPressedReady.Broadcast();
+	if(!HasAuthority()) return;
+	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SERVER CHECK READY");
+	GM->BroadcastOnPlayerPressed();
  }
  
  bool ARacketeersController::ServerCheckReady_Validate()
@@ -287,8 +294,7 @@ void ARacketeersController::ServerMultiCastActivateTimer_Implementation()
 
 void ARacketeersController::MultiCastActivateTimer_Implementation(float T, bool SetIsActive)
 {
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "CONTROLLER ACTIVATE TIMER MULTICAST");
+
 	ATimerInfo::SetIsActive(SetIsActive);
 	ATimerInfo::SetTime(T);
 	SetTimeSecondsn(T, SetIsActive);

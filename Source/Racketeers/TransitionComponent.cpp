@@ -4,12 +4,14 @@
 #include "TransitionComponent.h"
 
 #include "RacketeersController.h"
+#include "RacketeersGMBase.h"
 #include "WidgetSubsystem.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
 
+class ARacketeersGMBase;
 class AGameState;
 // Sets default values for this component's properties
 UTransitionComponent::UTransitionComponent()
@@ -33,11 +35,23 @@ void UTransitionComponent::BeginPlay()
 
 void UTransitionComponent::IncrementPlayerReady()
 {
-	CountPlayersReady++;
-	if(bIsFinished && CountPlayersReady == UGameplayStatics::GetGameState(GetWorld())->PlayerArray.Num())
+	
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "IncrementPlayerReady" );
+	if(bIsOn)
 	{
-		OnFinished.Broadcast();
+		CountPlayersReady++;
+		AGameStateBase* GS = UGameplayStatics::GetGameState(GetWorld());
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "NUM: " + FString::FromInt(GS->PlayerArray.Num()) + " Current Player Count: " + FString::FromInt(CountPlayersReady) );
+		if(GS == nullptr) return;
+		
+		if(bIsFinished && CountPlayersReady == GS->PlayerArray.Num())
+		{
+			CountPlayersReady = 0;
+			OnFinished.Broadcast();
+		}
 	}
+	//ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
+	//GM->IncrementPlayerCounter();
 }
 
 
@@ -65,13 +79,10 @@ void UTransitionComponent::AddWidgetsToPlayers(AGameStateBase* GS)
 	bIsFinished = false;
 	bIsOn = true;
 	OnBeginTransition.Broadcast();
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "ADD WIDGETS TO PLAYERS");
 	
 	if(GS == nullptr)
 	{
 		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "GAME STATE IS A NULLPTR");
 		return;
 	}
 	for (APlayerState* PlayerState : GS->PlayerArray)
@@ -80,18 +91,18 @@ void UTransitionComponent::AddWidgetsToPlayers(AGameStateBase* GS)
 		if(PlayerState == nullptr)
 		{
 			if(GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "PLAYER STATE IS A NULLPTR");
+
 			continue;
 		}
 		ARacketeersController* PC = Cast<ARacketeersController>(PlayerState->GetPlayerController());
 		if (PC == nullptr)
 		{
 			if(GEngine)
-				GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "PLAYER CONTROLLER STATE IS A NULLPTR");
+				//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "PLAYER CONTROLLER STATE IS A NULLPTR");
 			continue;
 		}
 		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "CALL TO ACTIVATE WIDGET");
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "CALL TO ACTIVATE WIDGET");
 		PC->ActivateWidget(WidgetName, WidgetToDisplay);
 	}
 }
@@ -108,7 +119,7 @@ void UTransitionComponent::RemoveWidgetsFromPlayers()
 
 void UTransitionComponent::LoadingFinished()
 {
-	bIsOn = false;
+	//bIsOn = false;
 	bIsFinished = true;
 	AGameStateBase* GS = UGameplayStatics::GetGameState(GetWorld());
 	if(GS == nullptr) return;

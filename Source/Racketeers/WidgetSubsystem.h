@@ -14,6 +14,9 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoadWidgetTest, FName, Name);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnloadTest, FName, Name);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickUp);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDamaged);
+
 //Add So the key bind is instead binded with a Enhanced Input Action to a specifik function
 UCLASS()
 class RACKETEERS_API UWidgetSubsystem : public UGameInstanceSubsystem

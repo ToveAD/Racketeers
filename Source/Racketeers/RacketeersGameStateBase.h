@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
 #include "GS_Base.h"
+#include "Phase.h"
 #include "RacketeersGameStateBase.generated.h"
 
 /**
@@ -18,9 +19,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	public:
 
 	void BeginPlay() override;
-
 	
-
 	//Methods for adding and removing to gathering score
 	UFUNCTION(BlueprintCallable)
 	void AddToWood(int Amount, ETeams Team);
@@ -51,7 +50,9 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	FResources RacconResource;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FResources RedPandasResource;
-
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	TEnumAsByte<EPhaseState> CurrentPhase;
+	
 	UFUNCTION(BlueprintCallable)
 	void SetRandomNumber(int Number);
 	

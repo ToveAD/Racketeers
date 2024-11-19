@@ -33,7 +33,7 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	GENERATED_BODY()
 
 	public:
-	UPROPERTY(Replicated, EditAnywhere ,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere ,BlueprintReadWrite)
 	bool bhavePressedContinue = false;
 	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
 	FOnBeginPlayerEvent OnBeginPlayerEvent;
@@ -107,6 +107,8 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	//Called when player wants to check ready, and does so in the server
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void ServerCheckReady();
+	UFUNCTION(Client, Reliable, WithValidation, BlueprintCallable)
+	void ClientCheckReady();
 
 	UFUNCTION(Server, reliable)
 	void ServerMultiCastActivateTimer();

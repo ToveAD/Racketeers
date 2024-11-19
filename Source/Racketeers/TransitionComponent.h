@@ -15,7 +15,8 @@ class RACKETEERS_API UTransitionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
+
 	// Sets default values for this component's properties
 	UTransitionComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -45,9 +46,9 @@ public:
 	FName WidgetName;
 	bool bIsFinished;
 	bool bIsOn;
-
-private:
 	int32 CountPlayersReady;
+private:
+
 };
 
 

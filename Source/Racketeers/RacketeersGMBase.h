@@ -148,7 +148,8 @@ public:
 	void DecreaseTotalRounds();
 	UFUNCTION(BlueprintCallable)
 	void RoundCompletion();
-	
+	void BroadcastOnPlayerPressed();
+	void IncrementPlayerCounter();
 	int8 GetTotalRounds();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -176,6 +177,8 @@ private:
 	bool EndGame();
 	void SwitchState();
 	void Transition();
+
+
 	UFUNCTION()
 	void AllStagesFinished();
 	

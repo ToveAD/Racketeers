@@ -4,6 +4,7 @@
 #include "RacketeersGMBase.h"
 
 #include "BaseGameInstance.h"
+#include "HeadMountedDisplayTypes.h"
 #include "PS_Base.h"
 #include "RacketeersController.h"
 #include "RacketeersGameStateBase.h"
@@ -91,17 +92,17 @@ void ARacketeersGMBase::BeginPlay()
 
 	
 	//Declare the variables 
-	Phase_1->State = FPhaseState::Phase_1;
+	Phase_1->State = EPhaseState::Phase_1;
 	Phase_1->TimeLimit = 5.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
-	Phase_2->State = FPhaseState::Phase_2;
+	Phase_2->State = EPhaseState::Phase_2;
 	Phase_2->TimeLimit = 5.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
 	
-	Phase_3->State = FPhaseState::Phase_3;
+	Phase_3->State = EPhaseState::Phase_3;
 	Phase_3->TimeLimit = 5.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
@@ -125,17 +126,16 @@ void ARacketeersGMBase::BeginPlay()
 		TimerInfo->SetIsActive(true);
 	}
 
-	TransitionComponent = NewObject<UTransitionComponent>();
+	TransitionComponent = NewObject<UTransitionComponent>(this);
 	TransitionComponent->WidgetName = TEXT("ShowScore");
 	OnloadedMap.AddDynamic(TransitionComponent, &UTransitionComponent::LoadingFinished);
-
+	
 	ARacketeersController* PController = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-	if(HasAuthority() && PController)
-	{
-		PController->OnPlayerPressedReady.AddDynamic( TransitionComponent, &UTransitionComponent::IncrementPlayerReady);
-	}
+
+	PController->OnPlayerPressedReady.AddDynamic(TransitionComponent, &UTransitionComponent::IncrementPlayerReady);
 
 	TransitionComponent->OnFinished.AddDynamic(this, &ARacketeersGMBase::AllStagesFinished);
+	
 }
 
 
@@ -211,7 +211,7 @@ void ARacketeersGMBase::RoundCompletion()
 bool ARacketeersGMBase::CheckWinnerOfRound()
 {
 
-	if(CurrentPhase->State == FPhaseState::Phase_3)
+	if(CurrentPhase->State == EPhaseState::Phase_3)
 	{
 		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 		if(GS == nullptr) return false;
@@ -235,7 +235,7 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 
 void ARacketeersGMBase::SwitchState()
 {
-	if(CurrentPhase->State == FPhaseState::Phase_3)
+	if(CurrentPhase->State == EPhaseState::Phase_3)
 	{
 		CurrentPhase = Phases[0];
 	}else
@@ -261,6 +261,33 @@ void ARacketeersGMBase::Transition()
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
 }
 
+void ARacketeersGMBase::BroadcastOnPlayerPressed()
+{
+	if(HasAuthority())
+	{
+		ARacketeersController* PController = Cast<ARacketeersController>(	UGameplayStatics::GetPlayerController(GetWorld(), 0));
+		PController->OnPlayerPressedReady.Broadcast();
+	}
+}
+
+void ARacketeersGMBase::IncrementPlayerCounter()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "IncrementPlayerReady" );
+	if(TransitionComponent->bIsOn)
+	{
+		TransitionComponent->CountPlayersReady++;
+		AGameStateBase* GS = UGameplayStatics::GetGameState(GetWorld());
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "NUM: " + FString::FromInt(GS->PlayerArray.Num()) + " Current Player Count: " + FString::FromInt(TransitionComponent->CountPlayersReady) );
+		if(GS == nullptr) return;
+		
+		if(TransitionComponent->bIsFinished && TransitionComponent->CountPlayersReady == GS->PlayerArray.Num())
+		{
+			TransitionComponent->CountPlayersReady = 0;
+			TransitionComponent->OnFinished.Broadcast();
+		}
+	}
+}
+
 void ARacketeersGMBase::AllStagesFinished()
 {
 	SwitchState(); 
@@ -270,6 +297,7 @@ void ARacketeersGMBase::AllStagesFinished()
 
 	ARacketeersController* C = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
+	TransitionComponent->RemoveWidgetsFromPlayers();
 	if(C->HasAuthority())
 	{
 		C->ServerMultiCastActivateTimer();
@@ -278,7 +306,7 @@ void ARacketeersGMBase::AllStagesFinished()
 
 int ARacketeersGMBase::GetNextPhaseNumber()
 {
-	if(CurrentPhase->State == FPhaseState::Phase_3)
+	if(CurrentPhase->State == EPhaseState::Phase_3)
 	{
 		return 0;
 	}
@@ -296,7 +324,7 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 
 	ARacketeersGameStateBase* GS = this->GetGameState<ARacketeersGameStateBase>();
 	
-	if(CurrentPhase->State == FPhaseState::Phase_3)
+	if(CurrentPhase->State == EPhaseState::Phase_3)
 	{
 		int AvailibleRounds = TotalRounds - (GS->RacconsRoundsWon + GS->RedPandasRoundsWon);
 		int8 RoundsPlayed = GS->RacconsRoundsWon + GS->RedPandasRoundsWon;

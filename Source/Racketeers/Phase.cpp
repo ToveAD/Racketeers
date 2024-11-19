@@ -14,7 +14,7 @@ UPhase::UPhase()
 	State = Phase_1;
 }
 
-UPhase::UPhase(float P_TimeLimit, FPhaseState P_State)
+UPhase::UPhase(float P_TimeLimit, EPhaseState P_State)
 {
 	TimeLimit = P_TimeLimit;
 	State = P_State;

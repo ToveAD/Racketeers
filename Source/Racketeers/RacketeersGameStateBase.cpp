@@ -33,7 +33,9 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
 
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
-
+	
+	DOREPLIFETIME(ARacketeersGameStateBase, CurrentPhase);
+	
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
 }
 
