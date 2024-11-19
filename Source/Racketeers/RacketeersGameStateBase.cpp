@@ -25,7 +25,7 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMetal);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsBoatHealth);
-	
+
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasWood);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasFiber);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasMetal);
@@ -35,7 +35,6 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
 
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
-
 }
 
 
@@ -45,15 +44,15 @@ void ARacketeersGameStateBase::BeginPlay()
 
 
 	UBaseGameInstance* GI = Cast<UBaseGameInstance>(GetGameInstance());
-	if(GI->CheckIfDataToTransfer())
+	if (GI->CheckIfDataToTransfer())
 	{
 		FGameStatsPackage Package = GI->GetDataTransferPackage();
-	
+
 		RacconsWood = Package.RacconsWood;
 		RacconsFiber = Package.RacconsFiber;
 		RacconsMetal = Package.RacconsMetal;
 		RacconsRoundsWon = Package.RacconsRoundsWon;
-		RacconsBoatHealth = Package.RacconsBoatHealth; 
+		RacconsBoatHealth = Package.RacconsBoatHealth;
 		RedPandasWood = Package.RedPandasWood;
 		RedPandasFiber = Package.RedPandasFiber;
 		RedPandasMetal = Package.RedPandasMetal;
@@ -62,13 +61,22 @@ void ARacketeersGameStateBase::BeginPlay()
 		GameWinner = Package.WonTeam;
 		GI->ClearDataStatsPackage();
 	}
+
+	if (HasAuthority())
+	{
+		AddResource(3, EResources::WOOD, ETeams::Team_Racoon);
+		AddResource(3, EResources::WOOD, ETeams::Team_Panda);
+		AddResource(3, EResources::FIBER, ETeams::Team_Racoon);
+		AddResource(3, EResources::FIBER, ETeams::Team_Panda);
+		AddResource(3, EResources::METAL, ETeams::Team_Racoon);
+		AddResource(3, EResources::METAL, ETeams::Team_Panda);
+	}
+
 }
 
 void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
 {
-	
-
-	if(Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Racoon)
 	{
 		RacconsWood += Amount;
 		return;
@@ -78,7 +86,7 @@ void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
 
 void ARacketeersGameStateBase::AddToFiber(int Amount, ETeams Team)
 {
-	if(Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Racoon)
 	{
 		RacconsFiber += Amount;
 		return;
@@ -88,7 +96,7 @@ void ARacketeersGameStateBase::AddToFiber(int Amount, ETeams Team)
 
 void ARacketeersGameStateBase::AddToMetal(int Amount, ETeams Team)
 {
-	if(Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Racoon)
 	{
 		RacconsMetal += Amount;
 		return;
@@ -115,16 +123,16 @@ void ARacketeersGameStateBase::RemoveMetal(int Amount, ETeams Team)
 void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 {
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	if(GM == nullptr)
+	if (GM == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("ARacketeersGameStateBase::DamageBoat GM is equal to nullptr"));
 		return;
 	}
-	
-	if(Team == ETeams::Team_Racoon)
+
+	if (Team == ETeams::Team_Racoon)
 	{
 		RacconsBoatHealth -= Amount;
-		if(RacconsBoatHealth <= 0)
+		if (RacconsBoatHealth <= 0)
 		{
 			//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 			RedPandasRoundsWon++;
@@ -133,7 +141,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 		return;
 	}
 	RedPandasBoatHealth -= Amount;
-	if(RedPandasBoatHealth <= 0)
+	if (RedPandasBoatHealth <= 0)
 	{
 		//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 		RacconsRoundsWon++;
@@ -145,17 +153,17 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 void ARacketeersGameStateBase::RequestToRemoveWidget()
 {
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	if(GM == nullptr)
+	if (GM == nullptr)
 	{
 		return;
 	}
 	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
-	if(WS == nullptr)
+	if (WS == nullptr)
 	{
 		return;
 	}
 	WS->IncrementPlayersPressed();
-	
+
 	//GM->UnloadWidget();
 }
 
@@ -167,18 +175,18 @@ void ARacketeersGameStateBase::SetRandomNumber(int Number)
 
 void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETeams Team)
 {
-	if(Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Racoon)
 	{
 		int Space = (int)Resource;
 		int8* material = (int8*)((&RacconResource.Wood + Space));
 		//ptr += Amount;
 		unsigned int add = material[0];
-		if(material == nullptr)
+		if (material == nullptr)
 		{
 			return;
 		}
 		material[0] += Amount;
-		
+
 		/*
 		switch(Resource)
 		{
@@ -195,15 +203,15 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 		*/
 		return;
 	}
-	
+
 	int Space = (int)Resource;
 	int8* material = (int8*)((&RedPandasResource.Wood + Space));
-	if(material == nullptr)
+	if (material == nullptr)
 	{
 		return;
 	}
 	material[0] += Amount;
-	
+
 	/*
 	switch(Resource)
 	{
@@ -222,16 +230,16 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 
 void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, ETeams Team)
 {
-	if(Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Racoon)
 	{
 		int Space = (int)Resource;
 		int8* material = (int8*)((&RacconResource.Wood + Space));
-		if(material == nullptr)
+		if (material == nullptr)
 		{
 			return;
 		}
 		material[0] -= Amount;
-		if(material[0] < 0)
+		if (material[0] < 0)
 		{
 			material[0] = 0;
 		}
@@ -251,15 +259,15 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 		*/
 		return;
 	}
-	
+
 	int Space = (int)Resource;
 	int8* material = (int8*)((&RedPandasResource.Wood + Space));
-	if(material == nullptr)
+	if (material == nullptr)
 	{
 		return;
 	}
 	material[0] -= Amount;
-	if(material[0] < 0)
+	if (material[0] < 0)
 	{
 		material[0] = 0;
 	}
@@ -277,7 +285,4 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 		break;
 	}
 	*/
-	
 }
-
-
