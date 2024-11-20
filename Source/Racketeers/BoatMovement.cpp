@@ -91,39 +91,23 @@ void UBoatMovement::ApplyMovement(float Value, bool GoBackwards)
         FVector ForwardVector = GetOwner()->GetActorForwardVector();
         ForwardVector.Z = 0.0f; // Prevent vertical movement
         ForwardVector.Normalize();
-
-        float DeltaTime = GetWorld()->GetDeltaSeconds();
-
-        // Forward Movement Logic
-        if (Value == 1)
+        
+        // Ensure the boat moves at a fixed speed when input is pressed
+        if (Value == 1) // Value represents forward input
         {
-            // Calculate the target speed for forward movement
-            float TargetSpeed = MaxBoatSpeed;
+            // Calculate the desired velocity
+            FVector DesiredVelocity = ForwardVector * BoatSpeed;
 
-            // Gradually adjust current speed toward the target speed
-            CurrentSpeed = FMath::FInterpTo(CurrentSpeed, TargetSpeed, DeltaTime, AccelerationRate / MaxBoatSpeed);
-
-            if (CurrentSpeed <= TargetSpeed)
-            {
-                FVector DesiredSpeed = ForwardVector * CurrentSpeed;
-                BoatMesh->SetPhysicsLinearVelocity(DesiredSpeed, true);
-            }
+            // Set the physics linear velocity directly to achieve constant speed
+            BoatMesh->SetPhysicsLinearVelocity(DesiredVelocity, true);
         }
-
-        // Backward Movement Logic
-        else if (Value == -1)
+        else if (Value == -1) // Backward Movement Logic
         {
-            // Calculate the target speed for backward movement
-            float TargetSpeed = -MaxBoatSpeed;
+            // Calculate the desired velocity
+            FVector DesiredVelocity = ForwardVector * -BoatSpeed;
 
-            // Gradually adjust current speed toward the target speed
-            CurrentSpeed = FMath::FInterpTo(CurrentSpeed, TargetSpeed, DeltaTime, AccelerationRate / MaxBoatSpeed);
-
-            if (CurrentSpeed >= TargetSpeed)
-            {
-                FVector DesiredSpeed = ForwardVector * CurrentSpeed;
-                BoatMesh->SetPhysicsLinearVelocity(DesiredSpeed, true);
-            }
+            // Set the physics linear velocity directly to achieve constant speed
+            BoatMesh->SetPhysicsLinearVelocity(DesiredVelocity, true);
         }
 
         // Update replicated values on the server
