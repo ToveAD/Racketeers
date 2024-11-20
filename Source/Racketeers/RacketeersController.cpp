@@ -343,6 +343,10 @@ void ARacketeersController::AddResource_Implementation(int Amount, EResources Re
 	{
 		return;
 	}
+	if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "TOTAL AMOUNT TO ADD : " +  FString::FromInt(Amount));
+	}
 	State->AddResource(Amount, Resource, Team);
 }
 

@@ -121,6 +121,32 @@ void ARacketeersGameStateBase::RemoveMetal(int Amount, ETeams Team)
 	AddToMetal(-Amount, Team);
 }
 
+void ARacketeersGameStateBase::ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPhase)
+{
+	CurrentPhase = NewPhase;
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		OnRep_PhaseChange();
+	}
+
+}
+
+int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resource) const
+{
+	if(Team == ETeams::Team_Racoon)
+	{
+		
+		int Space = (int)Resource;
+		int32* material = (int32*)((&RacconResource.Wood + Space));
+		int32 MaterialAmount = material[0];
+		return MaterialAmount;
+	}
+	int Space = (int)Resource;
+	int8* material = (int8*)((&RedPandasResource.Wood + Space));
+	int32 MaterialAmount = material[0];
+	return MaterialAmount;
+}
+
 
 void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 {
@@ -170,6 +196,24 @@ void ARacketeersGameStateBase::RequestToRemoveWidget()
 }
 
 
+void ARacketeersGameStateBase::OnRep_PickUp()
+{
+	if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "PICKED UP");
+	}
+	GetGameInstance()->GetSubsystem<UWidgetSubsystem>()->OnPickUp.Broadcast();
+
+}
+
+void ARacketeersGameStateBase::OnRep_PhaseChange()
+{
+	if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "PHASE CHANGE");
+	}
+}
+
 void ARacketeersGameStateBase::SetRandomNumber(int Number)
 {
 	Phase2RandomNumber = Number;
@@ -180,62 +224,43 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 	if (Team == ETeams::Team_Racoon)
 	{
 		int Space = (int)Resource;
-		int8* material = (int8*)((&RacconResource.Wood + Space));
-		//ptr += Amount;
-		unsigned int add = material[0];
+		int32* material = (int32*)((&RacconResource.Wood + Space));
 		if (material == nullptr)
 		{
 			return;
 		}
 		material[0] += Amount;
-
-		/*
-		switch(Resource)
+		if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole()  == ENetRole::ROLE_Authority)
 		{
-		case EResources::WOOD:
-			RacconResource.Wood += Amount;
-				break;
-		case EResources::FIBER:
-			RacconResource.Fiber+= Amount;
-			break;
-		case EResources::METAL:
-			RacconResource.Metal += Amount;
-			break;
+			OnRep_PickUp();
 		}
-		*/
+
 		return;
 	}
-
 	int Space = (int)Resource;
-	int8* material = (int8*)((&RedPandasResource.Wood + Space));
+	int32* material = (int32*)((&RedPandasResource.Wood + Space));
 	if (material == nullptr)
 	{
 		return;
 	}
 	material[0] += Amount;
 
-	/*
-	switch(Resource)
+
+	if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole() == ENetRole::ROLE_Authority)
 	{
-	case EResources::WOOD:
-		RedPandasResource.Wood += Amount;
-		break;
-	case EResources::FIBER:
-		RedPandasResource.Fiber+= Amount;
-		break;
-	case EResources::METAL:
-		RedPandasResource.Metal += Amount;
-		break;
+		OnRep_PickUp();
 	}
-	*/
+
+	
 }
 
+//Callas på clienten sen på servern
 void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, ETeams Team)
 {
 	if (Team == ETeams::Team_Racoon)
 	{
 		int Space = (int)Resource;
-		int8* material = (int8*)((&RacconResource.Wood + Space));
+		int32* material = (int32*)((&RacconResource.Wood + Space));
 		if (material == nullptr)
 		{
 			return;
@@ -245,25 +270,15 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 		{
 			material[0] = 0;
 		}
-		/*
-		switch(Resource)
+		if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole() == ENetRole::ROLE_Authority)
 		{
-		case EResources::WOOD:
-			RacconResource.Wood += Amount;
-				break;
-		case EResources::FIBER:
-			RacconResource.Fiber+= Amount;
-			break;
-		case EResources::METAL:
-			RacconResource.Metal += Amount;
-			break;
+			OnRep_PickUp();
 		}
-		*/
 		return;
 	}
 
 	int Space = (int)Resource;
-	int8* material = (int8*)((&RedPandasResource.Wood + Space));
+	int32* material = (int32*)((&RedPandasResource.Wood + Space));
 	if (material == nullptr)
 	{
 		return;
@@ -273,18 +288,9 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 	{
 		material[0] = 0;
 	}
-	/*
-	switch(Resource)
+	if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole()  == ENetRole::ROLE_Authority)
 	{
-	case EResources::WOOD:
-		RedPandasResource.Wood += Amount;
-		break;
-	case EResources::FIBER:
-		RedPandasResource.Fiber+= Amount;
-		break;
-	case EResources::METAL:
-		RedPandasResource.Metal += Amount;
-		break;
+		OnRep_PickUp();
 	}
-	*/
+
 }

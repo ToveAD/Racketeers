@@ -93,7 +93,7 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = EPhaseState::Phase_1;
-	Phase_1->TimeLimit = 5.0f;
+	Phase_1->TimeLimit = 500.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
@@ -293,8 +293,13 @@ void ARacketeersGMBase::AllStagesFinished()
 	SwitchState(); 
 	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
 	ATimerInfo::SetIsActive(true);
-	
+	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+	if(GS)
+	{
+		GS->ChangeCurrentPhase(CurrentPhase->State);
+	}
 
+	
 	ARacketeersController* C = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TransitionComponent->RemoveWidgetsFromPlayers();

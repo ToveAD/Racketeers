@@ -7,22 +7,39 @@
 #include "Engine/GameInstance.h"
 #include "WidgetSubsystem.generated.h"
 
-/**
- * Subsystem to Load Widgets 
- */
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoadWidgetTest, FName, Name);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnloadTest, FName, Name);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickUp);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDamaged);
-
-//Add So the key bind is instead binded with a Enhanced Input Action to a specifik function
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTakeDamage, float, Amount, ETeams, Team, APlayerController*, Controller = nullptr);
+/**
+ * Subsystem to Load Widgets 
+ */
 UCLASS()
 class RACKETEERS_API UWidgetSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 public:
+	/*
+	 *Delegate called when something is picked upp 
+	 */
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnPickUp OnPickUp;
+	/*
+	 * Delegate Called When a Player/Boat has taken damage
+	 */
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnDamaged OnDamaged;
+	/*
+	 * Delegate Called When Someone has taken damage
+	 */
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTakeDamage OnTakeDamage;
+
+	
 
 	/*
 	 * Delegate To load a Widget onto the screen and to the WidgetComponents

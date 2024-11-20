@@ -33,54 +33,12 @@ UCLASS()
 class RACKETEERS_API ARacketeersGMBase : public AGM_Base
 {
 	GENERATED_BODY()
-
-	
-
-
-	
-
-	/*
-	 *	GameMode should
-	 *		- Gå igenom de olika faserna
-	 *		- Keep states of the Game And What fase
-	 *		- Keeping check on each teams Data
-	 *
-	 *
-	 *
-	 *		Funcitons:
-	 *		void SwitchFase
-	 *		void Lose
-	 *		void Win
-	 *
-	 *		
-	 *		
-	 *		Varibles:
-	 *		Struct - Wood, Fiber, Metal for TEAM A and TEAM B
-	 *		Total Rounds
-	 *		CurrentFase / FaseToSwitch
-	 *
-	 *
-	 *
-	 *
-	 *
-	 *			
-	 *
-	 *
-	 * Transitions scenes inom varje phase som vissar score, 
-	 * Kunna Bestäma I lobby om olika settings i lobby om vad det ska vara  best av 3 eller 5. 
-	 *
-	 *
-	 *			 
-	 */
-
 public:
 
 	ARacketeersGMBase();
 	
 	//Events / Delegates
-
-
-
+	
 	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
 	ATimerInfo* TimerInfo = nullptr;
 
