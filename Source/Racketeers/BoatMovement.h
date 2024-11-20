@@ -46,12 +46,18 @@ public:
 
 private:
 	// Helper functions for applying movement and steering
-	void ApplyMovement(float Value);
+	void ApplyMovement(float Value, bool GoBackwards);
 	void ApplySteering(float Value);
 
 	// Maximum speed for boat movement
 	UPROPERTY(EditAnywhere, Category="Movement")
 	float MaxBoatSpeed = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float CurrentSpeed = 0.0f; // Boat's current speed, starts at 0
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float AccelerationRate = 600.0f; // Speed increase per second
 
 	// Steering speed for turning the boat
 	UPROPERTY(EditAnywhere, Category="Movement")

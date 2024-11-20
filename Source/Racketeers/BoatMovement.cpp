@@ -55,12 +55,12 @@ void UBoatMovement::Accelerate(float Value)
 
     if (GetOwner()->HasAuthority()) // Server processes movement
     {
-        ApplyMovement(Value);
+        ApplyMovement(Value, false);
     }
     else // Client sends input to server
     {
         Server_Accelerate(Value);
-        ApplyMovement(Value); // Client-side prediction
+        ApplyMovement(Value, false); // Client-side prediction
     }
 }
 
@@ -84,18 +84,47 @@ void UBoatMovement::Steer(float Value)
 }
 
 // ApplyMovement Helper Function
-void UBoatMovement::ApplyMovement(float Value)
+void UBoatMovement::ApplyMovement(float Value, bool GoBackwards)
 {
     if (BoatMesh)
     {
         FVector ForwardVector = GetOwner()->GetActorForwardVector();
-        ForwardVector.Z = 0.0f;
+        ForwardVector.Z = 0.0f; // Prevent vertical movement
         ForwardVector.Normalize();
 
-        float DesiredSpeed = Value * MaxBoatSpeed;
-        FVector NewVelocity = ForwardVector * DesiredSpeed;
+        float DeltaTime = GetWorld()->GetDeltaSeconds();
 
-        BoatMesh->SetPhysicsLinearVelocity(NewVelocity, true);
+        // Forward Movement Logic
+        if (Value == 1)
+        {
+            // Calculate the target speed for forward movement
+            float TargetSpeed = MaxBoatSpeed;
+
+            // Gradually adjust current speed toward the target speed
+            CurrentSpeed = FMath::FInterpTo(CurrentSpeed, TargetSpeed, DeltaTime, AccelerationRate / MaxBoatSpeed);
+
+            if (CurrentSpeed <= TargetSpeed)
+            {
+                FVector DesiredSpeed = ForwardVector * CurrentSpeed;
+                BoatMesh->SetPhysicsLinearVelocity(DesiredSpeed, true);
+            }
+        }
+
+        // Backward Movement Logic
+        else if (Value == -1)
+        {
+            // Calculate the target speed for backward movement
+            float TargetSpeed = -MaxBoatSpeed;
+
+            // Gradually adjust current speed toward the target speed
+            CurrentSpeed = FMath::FInterpTo(CurrentSpeed, TargetSpeed, DeltaTime, AccelerationRate / MaxBoatSpeed);
+
+            if (CurrentSpeed >= TargetSpeed)
+            {
+                FVector DesiredSpeed = ForwardVector * CurrentSpeed;
+                BoatMesh->SetPhysicsLinearVelocity(DesiredSpeed, true);
+            }
+        }
 
         // Update replicated values on the server
         if (GetOwner()->HasAuthority())
@@ -125,7 +154,7 @@ void UBoatMovement::ApplySteering(float Value)
 // Server RPCs for Accelerate
 void UBoatMovement::Server_Accelerate_Implementation(float Value)
 {
-    ApplyMovement(Value);
+    ApplyMovement(Value, false);
 }
 
 bool UBoatMovement::Server_Accelerate_Validate(float Value)
