@@ -30,6 +30,7 @@
 	 *		
 	 *
 	 */
+
 UENUM(BlueprintType)
 enum EPhaseState
 {
@@ -52,8 +53,8 @@ public:
 
 	UPROPERTY()
 	float TimeLimit;
-	
-	EPhaseState State;
+	UPROPERTY(BlueprintReadWrite, Category= "State")
+	TEnumAsByte<EPhaseState> State;
 	FString LevelToLoad;
 	FString StartPhaseName;
 
