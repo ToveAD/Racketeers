@@ -43,11 +43,20 @@ void APC_Lobby::Server_SetTeam_Implementation(ETeams Team)
 	// Notify the GameMode to handle spawning
 	if (AGM_LobbyHost* GameMode = Cast<AGM_LobbyHost>(GetWorld()->GetAuthGameMode()))
 	{
-		GameMode->SpawnPlayer(Team);
+		GameMode->SpawnPlayer(this, Team);
 	}
 }
 
 void APC_Lobby::SetTeam(ETeams Team)
 {
+	if (LobbyWidgetClass)
+	{
+		
+		if (UUserWidget* LobbyWidget = CreateWidget<UUserWidget>(this, LobbyWidgetClass))
+		{
+			LobbyWidget->AddToViewport();
+		}
+	}
+	
 	Server_SetTeam(Team);
 }
