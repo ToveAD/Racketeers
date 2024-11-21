@@ -93,7 +93,7 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = EPhaseState::Phase_1;
-	Phase_1->TimeLimit = 500.0f;
+	Phase_1->TimeLimit = 5.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
@@ -242,6 +242,9 @@ void ARacketeersGMBase::SwitchState()
 	{
 		CurrentPhase = Phases[CurrentPhase->State+1];	
 	}
+	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+	GS->CurrentPhase = this->CurrentPhase->State;
+	GS->OnRep_PhaseChange();
 }
 
 

@@ -9,6 +9,7 @@
 #include "GameplayTagContainer.h"
 #include "RacketeersGMBase.h"
 #include "WidgetSubsystem.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
@@ -74,9 +75,9 @@ void ARacketeersGameStateBase::BeginPlay()
 		AddResource(3, EResources::FIBER, ETeams::Team_Panda);
 		AddResource(3, EResources::METAL, ETeams::Team_Racoon);
 		AddResource(3, EResources::METAL, ETeams::Team_Panda);
-		SetMaxHealth(ETeams::Team_Racoon, RacconsMaxHealth);
-		SetMaxHealth(ETeams::Team_Panda, RedPandasMaxHealth);
 	}
+	RacconsBoatHealth = RacconsMaxHealth;
+	RedPandasBoatHealth = RedPandasMaxHealth;
 
 }
 
@@ -169,6 +170,10 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 		UE_LOG(LogTemp, Error, TEXT("ARacketeersGameStateBase::DamageBoat GM is equal to nullptr"));
 		return;
 	}
+	if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "IN STATE DAMAGE BOAT");
+	}
 
 	if (Team == ETeams::Team_Racoon)
 	{
@@ -217,7 +222,7 @@ void ARacketeersGameStateBase::OnRep_PickUp()
 {
 	if(GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "PICKED UP");
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "PICKED UP");
 	}
 	GetGameInstance()->GetSubsystem<UWidgetSubsystem>()->OnPickUp.Broadcast();
 
@@ -227,7 +232,24 @@ void ARacketeersGameStateBase::OnRep_PhaseChange()
 {
 	if(GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "PHASE CHANGE");
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "PHASE CHANGE");
+	}
+
+	UWidgetSubsystem* WS = GetGameInstance()->GetSubsystem<UWidgetSubsystem>();
+	if (WS == nullptr) return;
+	UUserWidget* UserWidget = nullptr;
+	switch (CurrentPhase)
+	{
+		case EPhaseState::Phase_1:
+			WS->ActivateWidget("TeamResources");
+			WS->RemoveWidget("Health");
+		break;
+		case EPhaseState::Phase_2:
+			break;
+		case EPhaseState::Phase_3:
+			WS->ActivateWidget("Health");
+			WS->RemoveWidget("TeamResources");
+			break;
 	}
 }
 
@@ -316,7 +338,7 @@ void ARacketeersGameStateBase::OnRep_HealthChanged()
 {
 	if(GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "HEALTH CHANGED");
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "HEALTH CHANGED");
 	}
 	GetGameInstance()->GetSubsystem<UWidgetSubsystem>()->OnDamaged.Broadcast();
 }
@@ -325,6 +347,6 @@ inline void ARacketeersGameStateBase::CheckOnRepHealthChanged()
 {
 	if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole()  == ENetRole::ROLE_Authority)
 	{
-		OnRep_PickUp();
+		OnRep_HealthChanged();
 	}
 }

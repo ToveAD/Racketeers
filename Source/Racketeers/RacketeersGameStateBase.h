@@ -106,7 +106,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	float RedPandasMaxHealth;
-	UPROPERTY(Replicated, BlueprintReadWrite)
+	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged, BlueprintReadWrite)
 	float RedPandasBoatHealth; // - repnotify
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
