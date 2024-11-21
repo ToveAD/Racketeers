@@ -41,7 +41,7 @@ void ALobbySpawnPoint::SpawnPlayer(ETeams Team)
 	if (Team == ETeams::Team_Panda)
 	{
 		GetWorld()->SpawnActor<AActor>(PandaPlayerClass, ArrowComponent->GetComponentLocation(), ArrowComponent->GetComponentRotation());
-	} else if (Team == ETeams::Team_Racoon)
+	} else if (Team == ETeams::Team_Raccoon)
 	{
 		GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, ArrowComponent->GetComponentLocation(), ArrowComponent->GetComponentRotation());
 	}
