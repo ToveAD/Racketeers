@@ -18,10 +18,10 @@ class RACKETEERS_API AGM_LobbyHost : public AGM_Base
 public:
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<ALobbySpawnPoint*> PandaPositions;
+	TArray<AActor*> PandaPositions;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<ALobbySpawnPoint*> RaccoonPositions;
+	TArray<AActor*> RaccoonPositions;
 
 	UFUNCTION()
 	virtual void BeginPlay() override;
@@ -36,7 +36,8 @@ public:
 	void SetUpSpawnPositions();
 
 	UFUNCTION()
-	void SpawnPlayer(ETeams Team);
-	
-	
+	void SpawnPlayer(APlayerController* PC, ETeams Team);
+
+	UFUNCTION()
+	void RemovePlayer(APlayerController* PC);
 };

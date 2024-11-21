@@ -19,6 +19,9 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "PlayerInfo")
 	ETeams Team;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "PlayerInfo")
+	bool bIsReady = false;
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
