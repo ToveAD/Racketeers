@@ -44,6 +44,9 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetTeamResources(ETeams Team, EResources Resource) const;
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void SetMaxHealth(ETeams Team, int32 MaxHealth);
 	// -- End of Methods
 
 	UFUNCTION(BlueprintCallable)
@@ -58,10 +61,10 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	FResources RedPandasResource;
 	UPROPERTY(ReplicatedUsing=OnRep_PhaseChange, BlueprintReadWrite)
 	TEnumAsByte<EPhaseState> CurrentPhase;
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnRep_PickUp();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnRep_PhaseChange();
 	
 	UFUNCTION(BlueprintCallable)
@@ -82,6 +85,10 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	int32 RacconsMetal;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RacconsRoundsWon;
+
+
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
+	float RacconsMaxHealth;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float RacconsBoatHealth;  // - repnotify
 	
@@ -93,6 +100,9 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	int32 RedPandasMetal;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RedPandasRoundsWon;
+
+	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
+	float RedPandasMaxHealth;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float RedPandasBoatHealth; // - repnotify
 	
