@@ -55,12 +55,12 @@ void UBoatMovement::Accelerate(float Value)
 
     if (GetOwner()->HasAuthority()) // Server processes movement
     {
-        ApplyMovement(Value);
+        ApplyMovement(Value, false);
     }
     else // Client sends input to server
     {
         Server_Accelerate(Value);
-        ApplyMovement(Value); // Client-side prediction
+        ApplyMovement(Value, false); // Client-side prediction
     }
 }
 
@@ -84,18 +84,31 @@ void UBoatMovement::Steer(float Value)
 }
 
 // ApplyMovement Helper Function
-void UBoatMovement::ApplyMovement(float Value)
+void UBoatMovement::ApplyMovement(float Value, bool GoBackwards)
 {
     if (BoatMesh)
     {
         FVector ForwardVector = GetOwner()->GetActorForwardVector();
-        ForwardVector.Z = 0.0f;
+        ForwardVector.Z = 0.0f; // Prevent vertical movement
         ForwardVector.Normalize();
+        
+        // Ensure the boat moves at a fixed speed when input is pressed
+        if (Value == 1) // Value represents forward input
+        {
+            // Calculate the desired velocity
+            FVector DesiredVelocity = ForwardVector * BoatSpeed;
 
-        float DesiredSpeed = Value * MaxBoatSpeed;
-        FVector NewVelocity = ForwardVector * DesiredSpeed;
+            // Set the physics linear velocity directly to achieve constant speed
+            BoatMesh->SetPhysicsLinearVelocity(DesiredVelocity, true);
+        }
+        else if (Value == -1) // Backward Movement Logic
+        {
+            // Calculate the desired velocity
+            FVector DesiredVelocity = ForwardVector * -BoatSpeed;
 
-        BoatMesh->SetPhysicsLinearVelocity(NewVelocity, true);
+            // Set the physics linear velocity directly to achieve constant speed
+            BoatMesh->SetPhysicsLinearVelocity(DesiredVelocity, true);
+        }
 
         // Update replicated values on the server
         if (GetOwner()->HasAuthority())
@@ -125,7 +138,7 @@ void UBoatMovement::ApplySteering(float Value)
 // Server RPCs for Accelerate
 void UBoatMovement::Server_Accelerate_Implementation(float Value)
 {
-    ApplyMovement(Value);
+    ApplyMovement(Value, false);
 }
 
 bool UBoatMovement::Server_Accelerate_Validate(float Value)
