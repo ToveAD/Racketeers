@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameModeStructs.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/Actor.h"
 #include "LobbySpawnPoint.generated.h"
@@ -22,10 +23,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Team")
 	int TeamID;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
+	bool bIsOccupied = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Team")
+	TSubclassOf<AActor> PandaPlayerClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Team")
+	TSubclassOf<AActor> RaccoonPlayerClass;
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SpawnPlayer(AActor* Player);
+	void SpawnPlayer(ETeams Team);
 
 protected:
 	// Called when the game starts or when spawned
