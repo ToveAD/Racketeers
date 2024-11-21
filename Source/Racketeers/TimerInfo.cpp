@@ -5,10 +5,14 @@
 
 #include "Net/UnrealNetwork.h"
 
+float ATimerInfo::Time;
+bool ATimerInfo::bIsActive;
+
 ATimerInfo::ATimerInfo()
 {
-	bIsActive = false;
-	Time = 0;
+	//bIsActive = false;
+	bReplicates = true;
+;
 	UE_LOG(LogTemp, Warning, TEXT("TimerInfo::ATimerInfo()"));
 }
 
@@ -29,24 +33,29 @@ void ATimerInfo::Tick(float DeltaSeconds)
 	}
 }
 
+
 void ATimerInfo::DecreaseTime(float DeltaSeconds)
 {
 	Time -= DeltaSeconds;
 	if(Time <= 0)
 	{
-		bIsActive = false;
+	  Time = 0;
 	}
+}
+
+void ATimerInfo::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//DOREPLIFETIME(ATimerInfo, bIsActive);
 }
 
 void ATimerInfo::SetTimeSeconds(float seconds, bool SetIsActive)
 {
-	if(this == nullptr)
-	{
-		Time = seconds;
-		bIsActive = SetIsActive;
+		ATimerInfo::SetIsActive(SetIsActive);
+		ATimerInfo::SetTime(seconds);
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "TimerInfo::SetTimeSeconds");
-	}
 }
 
 void ATimerInfo::SetTime_Analog(int32 Minutes, int32 Seconds, bool SetIsActive)
@@ -56,30 +65,38 @@ void ATimerInfo::SetTime_Analog(int32 Minutes, int32 Seconds, bool SetIsActive)
 	bIsActive = SetIsActive;
 }
 
-void ATimerInfo::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ATimerInfo, StartTimer);
-}
-
 void ATimerInfo::ActivateTime()
 {
 	bIsActive = true;
 }
 
-void ATimerInfo::On_RepStartTimer()
+void ATimerInfo::DeactivateTime()
 {
-	
+	bIsActive = false;
 }
 
+float ATimerInfo::GetTime()
+{
+	return Time;
+}
 
-
-
-void ATimerInfo::MultiCastActivateTimer_Implementation(float T)
+void ATimerInfo::SetTime(float T)
 {
 	Time = T;
-	bIsActive = true;
+}
+void ATimerInfo::ServerMultiCastActivateTimer_Implementation()
+{
+	MultiCastActivateTimer(GetTime(), GetIsActive());
+	FString string = "SERVER MULTI CAST, " + FString::SanitizeFloat(GetTime()) + " Bool,";
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *string);
+}
+
+void ATimerInfo::MultiCastActivateTimer_Implementation(float T, bool SetIsActive)
+{
+	if(GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "MultiCastActivateTimer_Implementation");
+	SetTimeSeconds(T, SetIsActive);
 }
 
 int32 ATimerInfo::GetMinutes()

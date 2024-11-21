@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "GameModeStructs.h"
+#include "Net/UnrealNetwork.h"
 
 #include "RacketeersController.generated.h"
 
@@ -22,21 +23,30 @@
 class UUserWidget;
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeginPlayerEvent);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerPressedReady);
+
 UCLASS()
 class RACKETEERS_API ARacketeersController : public APlayerController
 {
 	GENERATED_BODY()
 
 	public:
-
-	UPROPERTY(Replicated, EditAnywhere ,BlueprintReadWrite)
+	UPROPERTY(EditAnywhere ,BlueprintReadWrite)
 	bool bhavePressedContinue = false;
-
-
-
-	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
+	FOnBeginPlayerEvent OnBeginPlayerEvent;
+	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
+	FOnPlayerPressedReady OnPlayerPressedReady;
 	
 	UUserWidget* UserWidget;
+
+	
+	
+	void BeginPlay() override;
+	
+	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RequestRemoveWidget();
@@ -75,10 +85,16 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void RemoveWidget(FName Name);
 
+	UFUNCTION(Client, Reliable , BlueprintCallable, Blueprintable)
+	void SetTimeSecondsn(float seconds, bool SetIsActive);
+	UFUNCTION(Client, Reliable , BlueprintCallable, Blueprintable)
+	void SetTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
+
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
-	void SetMultiTimeSeconds(ATimerInfo* timer ,float seconds, bool SetIsActive);
+	void SetServerTimeSeconds(ARacketeersController* Controller ,float seconds, bool SetIsActive);
+	
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
-	void SetMultiTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
+	void SetServerTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
 
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
@@ -86,5 +102,18 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RemoveResource(int Amount, EResources Resource, ETeams Team);
+
+
+	//Called when player wants to check ready, and does so in the server
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void ServerCheckReady();
+	UFUNCTION(Client, Reliable, WithValidation, BlueprintCallable)
+	void ClientCheckReady();
+
+	UFUNCTION(Server, reliable)
+	void ServerMultiCastActivateTimer();
+	
+	UFUNCTION(NetMulticast, reliable, BlueprintCallable)
+	void MultiCastActivateTimer(float T,  bool SetIsActive);
 	
 };

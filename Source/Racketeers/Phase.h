@@ -30,8 +30,9 @@
 	 *		
 	 *
 	 */
-UENUM()
-enum FPhaseState
+
+UENUM(BlueprintType)
+enum EPhaseState
 {
 	Phase_1,
 	Phase_2,
@@ -44,7 +45,7 @@ class RACKETEERS_API UPhase : public UActorComponent
 public:
 	GENERATED_BODY()
 	 UPhase();
-	 UPhase(float P_TimeLimit, FPhaseState P_State);
+	 UPhase(float P_TimeLimit, EPhaseState P_State);
 
 	virtual void BeginPlay() override;
 
@@ -52,9 +53,8 @@ public:
 
 	UPROPERTY()
 	float TimeLimit;
-
 	UPROPERTY(BlueprintReadWrite, Category= "State")
-	TEnumAsByte<FPhaseState> State;
+	TEnumAsByte<EPhaseState> State;
 	FString LevelToLoad;
 	FString StartPhaseName;
 
