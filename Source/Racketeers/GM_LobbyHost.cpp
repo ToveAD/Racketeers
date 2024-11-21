@@ -75,7 +75,7 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 				return;
 			}
 		}
-	} else if (Team == ETeams::Team_Racoon)
+	} else if (Team == ETeams::Team_Raccoon)
 	{
 		for (auto Position : RaccoonPositions)
 		{

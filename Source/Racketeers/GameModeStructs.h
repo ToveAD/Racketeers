@@ -43,7 +43,7 @@ struct FTeam
 UENUM(BlueprintType)
 enum class ETeams : uint8
 {
-	Team_Racoon,
+	Team_Raccoon,
 	Team_Panda,
 	NONE,
 };
