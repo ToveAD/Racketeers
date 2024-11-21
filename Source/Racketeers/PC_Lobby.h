@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
+#include "LobbySpawnPoint.h"
 #include "GameFramework/PlayerController.h"
 #include "PC_Lobby.generated.h"
 
@@ -19,6 +20,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> TeamSelectionWidgetClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> LobbyWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lobby")
+	ALobbySpawnPoint* SpawnPoint;
 
 
 	// Show the team selection widget
