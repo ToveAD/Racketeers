@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
 #include "GS_Base.h"
+#include "Phase.h"
 #include "RacketeersGameStateBase.generated.h"
 
 /**
@@ -18,9 +19,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	public:
 
 	void BeginPlay() override;
-
 	
-
 	//Methods for adding and removing to gathering score
 	UFUNCTION(BlueprintCallable)
 	void AddToWood(int Amount, ETeams Team);
@@ -39,6 +38,12 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	UFUNCTION(BlueprintCallable)
 	void RemoveMetal(int Amount, ETeams Team);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPhase);
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetTeamResources(ETeams Team, EResources Resource) const;
 	// -- End of Methods
 
 	UFUNCTION(BlueprintCallable)
@@ -47,13 +52,21 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UFUNCTION(BlueprintCallable)
 	void RequestToRemoveWidget();
 	
-	UPROPERTY(Replicated, BlueprintReadWrite)
+	UPROPERTY(ReplicatedUsing=OnRep_PickUp, BlueprintReadWrite)
 	FResources RacconResource;
-	UPROPERTY(Replicated, BlueprintReadWrite)
+	UPROPERTY(ReplicatedUsing=OnRep_PickUp, BlueprintReadWrite)
 	FResources RedPandasResource;
+	UPROPERTY(ReplicatedUsing=OnRep_PhaseChange, BlueprintReadWrite)
+	TEnumAsByte<EPhaseState> CurrentPhase;
+	UFUNCTION()
+	void OnRep_PickUp();
 
+	UFUNCTION()
+	void OnRep_PhaseChange();
+	
 	UFUNCTION(BlueprintCallable)
 	void SetRandomNumber(int Number);
+	
 	
 	UFUNCTION(BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
@@ -70,7 +83,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RacconsRoundsWon;
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	float RacconsBoatHealth; 
+	float RacconsBoatHealth;  // - repnotify
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RedPandasWood;
@@ -81,7 +94,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RedPandasRoundsWon;
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	float RedPandasBoatHealth; 
+	float RedPandasBoatHealth; // - repnotify
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	ETeams GameWinner = ETeams::NONE;

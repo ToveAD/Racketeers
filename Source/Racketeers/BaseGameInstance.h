@@ -83,8 +83,6 @@ public:
 	
 	FGameStatsPackage GetDataTransferPackage();
 private:
-
-    	
 	UPROPERTY()
 	FGameStatsPackage TempSavedGameStatsPackage;
 	
