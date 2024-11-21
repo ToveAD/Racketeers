@@ -192,11 +192,11 @@ void ARacketeersController::RemoveWidget_Implementation(FName Name)
 	}
 	if(WS->ActiveWidgetComponents.Contains(Name))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "IT DOES CONTAIN");
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "IT DOES CONTAIN");
 		UUserWidget* Widget= *WS->ActiveWidgetComponents.Find(Name);
 		if(Widget)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "REMOVE FROM PARENT");
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, "REMOVE FROM PARENT");
 			Widget->RemoveFromParent();
 			WS->ActiveWidgetComponents.Remove(Name);
 			bhavePressedContinue = false;
@@ -271,7 +271,7 @@ void ARacketeersController::ServerCheckReady_Implementation()
  {
 	if(!HasAuthority()) return;
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SERVER CHECK READY");
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SERVER CHECK READY");
 	GM->BroadcastOnPlayerPressed();
  }
  
@@ -345,7 +345,7 @@ void ARacketeersController::AddResource_Implementation(int Amount, EResources Re
 	}
 	if(GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "TOTAL AMOUNT TO ADD : " +  FString::FromInt(Amount));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "TOTAL AMOUNT TO ADD : " +  FString::FromInt(Amount));
 	}
 	State->AddResource(Amount, Resource, Team);
 }
