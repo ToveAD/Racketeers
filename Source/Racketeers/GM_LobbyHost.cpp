@@ -90,3 +90,14 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 	}
 	
 }
+
+void AGM_LobbyHost::RemovePlayer(APlayerController* PC)
+{
+	if (APC_Lobby* PlayerController = Cast<APC_Lobby>(PC))
+	{
+		if (PlayerController->SpawnPoint)
+		{
+			PlayerController->SpawnPoint->bIsOccupied = false;
+		}
+	}
+}
