@@ -11,7 +11,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoadWidgetTest, FName, Name);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUnloadTest, FName, Name);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPressReadyButton);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPickUp);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDamaged);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTakeDamage, float, Amount, ETeams, Team, APlayerController*, Controller = nullptr);
@@ -36,10 +36,11 @@ public:
 	/*
 	 * Delegate Called When Someone has taken damage
 	 */
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	UPROPERTY(BlueprintAssignable, BlueprintCallable,Blueprintable)
 	FOnTakeDamage OnTakeDamage;
-
 	
+	UPROPERTY(BlueprintAssignable, BlueprintCallable,Blueprintable)
+	FOnPressReadyButton OnPressReadyButton;
 
 	/*
 	 * Delegate To load a Widget onto the screen and to the WidgetComponents
@@ -66,6 +67,11 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SetCanRunTick(bool b);
 
+	UFUNCTION(BlueprintCallable, Blueprintable)
+	void ActivateWidget(FName Name);
+	UFUNCTION(BlueprintCallable, Blueprintable)
+	void RemoveWidget(FName Name);
+	
 	bool CanRun = true;
 
 	int32 CountOfPlayersPressed;

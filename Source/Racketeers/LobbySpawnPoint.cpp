@@ -36,12 +36,16 @@ void ALobbySpawnPoint::Tick(float DeltaTime)
 
 }
 
-void ALobbySpawnPoint::SpawnPlayer(AActor* Player)
+void ALobbySpawnPoint::SpawnPlayer(ETeams Team)
 {
-	if (Player)
+	if (Team == ETeams::Team_Panda)
 	{
-		Player->SetActorLocation(ArrowComponent->GetComponentLocation());
-		Player->SetActorRotation(ArrowComponent->GetComponentRotation());
+		GetWorld()->SpawnActor<AActor>(PandaPlayerClass, ArrowComponent->GetComponentLocation(), ArrowComponent->GetComponentRotation());
+	} else if (Team == ETeams::Team_Raccoon)
+	{
+		GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, ArrowComponent->GetComponentLocation(), ArrowComponent->GetComponentRotation());
 	}
+
+	bIsOccupied = true;
 }
 

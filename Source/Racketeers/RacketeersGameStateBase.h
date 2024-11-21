@@ -89,7 +89,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	float RacconsMaxHealth;
-	UPROPERTY(Replicated, BlueprintReadWrite)
+	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged, BlueprintReadWrite)
 	float RacconsBoatHealth;  // - repnotify
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
@@ -98,12 +98,15 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	int32 RedPandasFiber;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	int32 RedPandasMetal;
-	UPROPERTY(Replicated, BlueprintReadWrite)
+	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged, BlueprintReadWrite)
 	int32 RedPandasRoundsWon;
+
+	UFUNCTION(BlueprintCallable)
+	void OnRep_HealthChanged();
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
 	float RedPandasMaxHealth;
-	UPROPERTY(Replicated, BlueprintReadWrite)
+	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged, BlueprintReadWrite)
 	float RedPandasBoatHealth; // - repnotify
 	
 	UPROPERTY(Replicated, BlueprintReadWrite)
@@ -113,5 +116,9 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	float Phase2RandomNumber; 
 
 
+private:
+	void CheckOnRepHealthChanged();
+
 	
 };
+

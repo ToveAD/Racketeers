@@ -30,9 +30,74 @@ void AGM_LobbyHost::OnLogout(AController* Exiting)
 
 void AGM_LobbyHost::SetUpSpawnPositions()
 {
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ALobbySpawnPoint::StaticClass(), TEXT("Panda"), PandaPositions);
+	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ALobbySpawnPoint::StaticClass(), TEXT("Raccoon"), RaccoonPositions);
+
+
+	// Sort the spawn points by TeamID
+	PandaPositions.Sort([](const AActor& A, const AActor& B)
+	{
+		const ALobbySpawnPoint* SpawnPointA = Cast<ALobbySpawnPoint>(&A);
+		const ALobbySpawnPoint* SpawnPointB = Cast<ALobbySpawnPoint>(&B);
+
+		if (SpawnPointA && SpawnPointB)
+		{
+			return SpawnPointA->TeamID < SpawnPointB->TeamID;
+		}
+		return false;
+	});
+
+	RaccoonPositions.Sort([](const AActor& A, const AActor& B)
+	{
+		const ALobbySpawnPoint* SpawnPointA = Cast<ALobbySpawnPoint>(&A);
+		const ALobbySpawnPoint* SpawnPointB = Cast<ALobbySpawnPoint>(&B);
+
+		if (SpawnPointA && SpawnPointB)
+		{
+			return SpawnPointA->TeamID < SpawnPointB->TeamID;
+		}
+		return false;
+	});
 }
 
-void AGM_LobbyHost::SpawnPlayer(ETeams Team)
+// Spawn the player at the first available spawn point and set spawn point in player controller
+void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 {
+	if (Team == ETeams::Team_Panda)
+	{
+		for (auto Position : PandaPositions)
+		{
+			if(Cast<ALobbySpawnPoint>(Position)->bIsOccupied == false)
+			{
+				ALobbySpawnPoint* SP = Cast<ALobbySpawnPoint>(Position);
+				SP->SpawnPlayer(Team);
+				Cast<APC_Lobby>(PC)->SpawnPoint = SP;
+				return;
+			}
+		}
+	} else if (Team == ETeams::Team_Raccoon)
+	{
+		for (auto Position : RaccoonPositions)
+		{
+			if (Cast<ALobbySpawnPoint>(Position)->bIsOccupied == false)
+			{
+				ALobbySpawnPoint* SP = Cast<ALobbySpawnPoint>(Position);
+				SP->SpawnPlayer(Team);
+				Cast<APC_Lobby>(PC)->SpawnPoint = SP;
+				return;
+			}
+		}
+	}
 	
+}
+
+void AGM_LobbyHost::RemovePlayer(APlayerController* PC)
+{
+	if (APC_Lobby* PlayerController = Cast<APC_Lobby>(PC))
+	{
+		if (PlayerController->SpawnPoint)
+		{
+			PlayerController->SpawnPoint->bIsOccupied = false;
+		}
+	}
 }
