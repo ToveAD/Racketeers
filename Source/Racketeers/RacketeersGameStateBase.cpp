@@ -25,12 +25,14 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMetal);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsBoatHealth);
+	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMaxHealth);
 
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasWood);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasFiber);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasMetal);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
+	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasMaxHealth);
 
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
 	
@@ -72,6 +74,8 @@ void ARacketeersGameStateBase::BeginPlay()
 		AddResource(3, EResources::FIBER, ETeams::Team_Panda);
 		AddResource(3, EResources::METAL, ETeams::Team_Racoon);
 		AddResource(3, EResources::METAL, ETeams::Team_Panda);
+		SetMaxHealth(ETeams::Team_Racoon, RacconsMaxHealth);
+		SetMaxHealth(ETeams::Team_Panda, RedPandasMaxHealth);
 	}
 
 }
@@ -135,16 +139,25 @@ int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resourc
 {
 	if(Team == ETeams::Team_Racoon)
 	{
-		
 		int Space = (int)Resource;
 		int32* material = (int32*)((&RacconResource.Wood + Space));
 		int32 MaterialAmount = material[0];
 		return MaterialAmount;
 	}
 	int Space = (int)Resource;
-	int8* material = (int8*)((&RedPandasResource.Wood + Space));
+	int32* material = (int32*)((&RedPandasResource.Wood + Space));
 	int32 MaterialAmount = material[0];
 	return MaterialAmount;
+}
+
+void ARacketeersGameStateBase::SetMaxHealth_Implementation(ETeams Team, int32 MaxHealth)
+{
+	if(Team == ETeams::Team_Racoon)
+	{
+		RacconsMaxHealth = MaxHealth;
+		return;
+	}
+	RedPandasMaxHealth = MaxHealth;
 }
 
 
