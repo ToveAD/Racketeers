@@ -69,11 +69,11 @@ void ARacketeersGameStateBase::BeginPlay()
 
 	if (HasAuthority())
 	{
-		AddResource(3, EResources::WOOD, ETeams::Team_Racoon);
+		AddResource(3, EResources::WOOD, ETeams::Team_Raccoon);
 		AddResource(3, EResources::WOOD, ETeams::Team_Panda);
-		AddResource(3, EResources::FIBER, ETeams::Team_Racoon);
+		AddResource(3, EResources::FIBER, ETeams::Team_Raccoon);
 		AddResource(3, EResources::FIBER, ETeams::Team_Panda);
-		AddResource(3, EResources::METAL, ETeams::Team_Racoon);
+		AddResource(3, EResources::METAL, ETeams::Team_Raccoon);
 		AddResource(3, EResources::METAL, ETeams::Team_Panda);
 	}
 	RacconsBoatHealth = RacconsMaxHealth;
@@ -83,7 +83,7 @@ void ARacketeersGameStateBase::BeginPlay()
 
 void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
 {
-	if (Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Raccoon)
 	{
 		RacconsWood += Amount;
 		return;
@@ -93,7 +93,7 @@ void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
 
 void ARacketeersGameStateBase::AddToFiber(int Amount, ETeams Team)
 {
-	if (Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Raccoon)
 	{
 		RacconsFiber += Amount;
 		return;
@@ -103,7 +103,7 @@ void ARacketeersGameStateBase::AddToFiber(int Amount, ETeams Team)
 
 void ARacketeersGameStateBase::AddToMetal(int Amount, ETeams Team)
 {
-	if (Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Raccoon)
 	{
 		RacconsMetal += Amount;
 		return;
@@ -138,7 +138,7 @@ void ARacketeersGameStateBase::ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPh
 
 int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resource) const
 {
-	if(Team == ETeams::Team_Racoon)
+	if(Team == ETeams::Team_Raccoon)
 	{
 		int Space = (int)Resource;
 		int32* material = (int32*)((&RacconResource.Wood + Space));
@@ -153,7 +153,7 @@ int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resourc
 
 void ARacketeersGameStateBase::SetMaxHealth_Implementation(ETeams Team, int32 MaxHealth)
 {
-	if(Team == ETeams::Team_Racoon)
+	if(Team == ETeams::Team_Raccoon)
 	{
 		RacconsMaxHealth = MaxHealth;
 		return;
@@ -175,7 +175,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "IN STATE DAMAGE BOAT");
 	}
 
-	if (Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Raccoon)
 	{
 		RacconsBoatHealth -= Amount;
 		CheckOnRepHealthChanged();
@@ -260,7 +260,7 @@ void ARacketeersGameStateBase::SetRandomNumber(int Number)
 
 void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETeams Team)
 {
-	if (Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Raccoon)
 	{
 		int Space = (int)Resource;
 		int32* material = (int32*)((&RacconResource.Wood + Space));
@@ -296,7 +296,7 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 //Callas på clienten sen på servern
 void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, ETeams Team)
 {
-	if (Team == ETeams::Team_Racoon)
+	if (Team == ETeams::Team_Raccoon)
 	{
 		int Space = (int)Resource;
 		int32* material = (int32*)((&RacconResource.Wood + Space));
