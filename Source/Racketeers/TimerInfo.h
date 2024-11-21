@@ -13,52 +13,49 @@ UCLASS(BlueprintType, Blueprintable)
 class RACKETEERS_API ATimerInfo : public AInfo
 {
 	GENERATED_BODY()
-
-
 	ATimerInfo();
-
-
-
 	void DecreaseTime(float DeltaSeconds);
-	
-	bool bIsActive;
-	
 	public:
-	virtual void Tick(float DeltaSeconds) override;
+
+	UFUNCTION(BlueprintCallable, Blueprintable)
+	static bool GetIsActive(){return ATimerInfo::bIsActive;};
+	UFUNCTION(BlueprintCallable, Blueprintable)
+	static void SetIsActive(bool active){ATimerInfo::bIsActive = active;};
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
+
+	
+	virtual void Tick(float DeltaSeconds) override;
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void SetTimeSeconds(float seconds, bool SetIsActive);
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void SetTime_Analog(int32 Minutes, int32 Seconds, bool SetIsActive);
-
 	
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	int32 GetMinutes();
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	int32 GetSeconds();
-
-	UFUNCTION()
-	void On_RepStartTimer();
 	
-	UFUNCTION(NetMulticast, reliable)
-	void MultiCastActivateTimer(float T);
+	UFUNCTION(Server, reliable)
+	void ServerMultiCastActivateTimer();
 	
-	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
-
-
-	
-	
+	UFUNCTION(NetMulticast, reliable, BlueprintCallable)
+	void MultiCastActivateTimer(float T,  bool SetIsActive);
 	
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void ActivateTime();
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float Time;
+	UFUNCTION(BlueprintCallable, Blueprintable)
+	void DeactivateTime();
+
+	UFUNCTION(Blueprintable, BlueprintCallable)
+	static float GetTime();
+	UFUNCTION(Blueprintable, BlueprintCallable)
+	static void SetTime(float T);
 
 
-	UPROPERTY(ReplicatedUsing=On_RepStartTimer, BlueprintReadWrite)
-	float StartTimer;
-
-
+private:
+	static bool bIsActive;
+	static float Time;
 };
 

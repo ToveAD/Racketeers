@@ -5,6 +5,8 @@
 
 #include "GameFramework/GameStateBase.h"
 
+
+
 void UWidgetSubsystem::IncrementPlayersPressed_Implementation()
 {
 	if(CanRun)
@@ -17,7 +19,7 @@ void UWidgetSubsystem::IncrementPlayersPressed_Implementation()
 	if(CountOfPlayersPressed == GetWorld()->GetGameState()->PlayerArray.Num())
 	{
 		TArray<FName> Names;
-		WidgetComponents.GetKeys(Names);
+		ActiveWidgetComponents.GetKeys(Names);
 		for (FName Name : Names)
 		{
 			OnUnload.Broadcast(Name);
