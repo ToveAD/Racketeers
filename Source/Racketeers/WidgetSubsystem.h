@@ -36,7 +36,7 @@ public:
 	/*
 	 * Delegate Called When Someone has taken damage
 	 */
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	UPROPERTY(BlueprintAssignable, BlueprintCallable,Blueprintable)
 	FOnTakeDamage OnTakeDamage;
 
 	

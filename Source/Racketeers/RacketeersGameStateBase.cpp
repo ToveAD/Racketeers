@@ -173,20 +173,24 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 	if (Team == ETeams::Team_Racoon)
 	{
 		RacconsBoatHealth -= Amount;
+		CheckOnRepHealthChanged();
 		if (RacconsBoatHealth <= 0)
 		{
 			//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 			RedPandasRoundsWon++;
 			GM->RoundCompletion();
+	
 		}
 		return;
 	}
 	RedPandasBoatHealth -= Amount;
+	CheckOnRepHealthChanged();
 	if (RedPandasBoatHealth <= 0)
 	{
 		//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 		RacconsRoundsWon++;
 		GM->RoundCompletion();
+		
 	}
 }
 
@@ -306,4 +310,21 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 		OnRep_PickUp();
 	}
 
+}
+
+void ARacketeersGameStateBase::OnRep_HealthChanged()
+{
+	if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "HEALTH CHANGED");
+	}
+	GetGameInstance()->GetSubsystem<UWidgetSubsystem>()->OnDamaged.Broadcast();
+}
+
+inline void ARacketeersGameStateBase::CheckOnRepHealthChanged()
+{
+	if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole()  == ENetRole::ROLE_Authority)
+	{
+		OnRep_PickUp();
+	}
 }
