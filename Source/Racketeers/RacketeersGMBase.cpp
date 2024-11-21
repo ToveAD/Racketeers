@@ -379,14 +379,14 @@ bool ARacketeersGMBase::EndGame()
 	};
 	if(Package.RacconsRoundsWon > Package.RedPandasRoundsWon)
 	{
-		Package.WonTeam = ETeams::Team_Racoon;
+		Package.WonTeam = ETeams::Team_Raccoon;
 	}
 	else if (Package.RacconsRoundsWon < Package.RedPandasRoundsWon)
 	{
-		Package.WonTeam = ETeams::Team_Racoon;
+		Package.WonTeam = ETeams::Team_Raccoon;
 	}
 
-	Package.WonTeam = ETeams::Team_Racoon;
+	Package.WonTeam = ETeams::Team_Raccoon;
 	
 	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
 	GI->SetDataToTransfer(Package);
@@ -446,16 +446,7 @@ void ARacketeersGMBase::RespawnPlayers()
 	{
 		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
 		FString TeamName;
-		
-		if(PS->PlayerInfo.Team == ETeams::Team_Racoon)
-		{
-			TeamName = "Team Racoons";
-		}
-		else
-		{
-			TeamName = "Team RedPandas";
-		}
-
+		TeamName = UEnum::GetValueAsString(PS->PlayerInfo.Team);
 		//TeamName = UEnum::GetValueAsString(PS->PlayerInfo.Team);
 		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
 		if(GEngine)

@@ -36,7 +36,7 @@ struct FPlayerInfo
 		PlayerName = FText::FromString("Player");
 		bIsReady = false;
 		PlayerState = nullptr;
-		Team = ETeams::Team_Racoon;
+		Team = ETeams::Team_Raccoon;
 		TeamPlayerID = -1;
 	}
 	
