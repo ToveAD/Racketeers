@@ -430,14 +430,14 @@ void ARacketeersGMBase::UnloadLevel(FName name, FLatentActionInfo& ActionInfo)
 
 void ARacketeersGMBase::LoadLevel()
 {
+	
 	FLatentActionInfo LoadActionInfo;
 	
 	LoadActionInfo.Linkage = 0;
 	LoadActionInfo.CallbackTarget = this;
 	LoadActionInfo.ExecutionFunction = TEXT("RespawnPlayers");
 	LoadActionInfo.UUID = GetUniqueID();
-	
-	
+
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
 	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true , false, LoadActionInfo);
