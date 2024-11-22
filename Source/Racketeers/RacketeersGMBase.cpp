@@ -365,6 +365,7 @@ bool ARacketeersGMBase::EndGame()
 {
 
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+	/*
 	FGameStatsPackage Package{
 		GS->RacconsWood,
 		GS->RacconsFiber,
@@ -377,6 +378,7 @@ bool ARacketeersGMBase::EndGame()
 		GS->RedPandasRoundsWon,
 		GS->RedPandasBoatHealth
 	};
+
 	if(Package.RacconsRoundsWon > Package.RedPandasRoundsWon)
 	{
 		Package.WonTeam = ETeams::Team_Raccoon;
@@ -387,10 +389,12 @@ bool ARacketeersGMBase::EndGame()
 	}
 
 	Package.WonTeam = ETeams::Team_Raccoon;
-	
+
 	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
 	GI->SetDataToTransfer(Package);
+	*/
 	ProcessServerTravel("VictoryMap_GamePlay");
+
 	return true;
 }
 

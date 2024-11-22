@@ -21,22 +21,18 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconResource);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasResource);
-	DOREPLIFETIME(ARacketeersGameStateBase, RacconsWood);
-	DOREPLIFETIME(ARacketeersGameStateBase, RacconsFiber);
-	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMetal);
+	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsGameStats);
+	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasGameStats);
+	
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsBoatHealth);
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMaxHealth);
-
-	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasWood);
-	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasFiber);
-	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasMetal);
+	
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasMaxHealth);
 
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
-	
 	DOREPLIFETIME(ARacketeersGameStateBase, CurrentPhase);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
@@ -48,6 +44,7 @@ void ARacketeersGameStateBase::BeginPlay()
 	Super::BeginPlay();
 
 
+	/*
 	UBaseGameInstance* GI = Cast<UBaseGameInstance>(GetGameInstance());
 	if (GI->CheckIfDataToTransfer())
 	{
@@ -66,6 +63,7 @@ void ARacketeersGameStateBase::BeginPlay()
 		GameWinner = Package.WonTeam;
 		GI->ClearDataStatsPackage();
 	}
+	*/
 
 	if (HasAuthority())
 	{
@@ -80,6 +78,8 @@ void ARacketeersGameStateBase::BeginPlay()
 	RedPandasBoatHealth = RedPandasMaxHealth;
 
 }
+
+/*
 
 void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
 {
@@ -125,6 +125,7 @@ void ARacketeersGameStateBase::RemoveMetal(int Amount, ETeams Team)
 {
 	AddToMetal(-Amount, Team);
 }
+*/
 
 void ARacketeersGameStateBase::ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPhase)
 {
@@ -291,6 +292,26 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 	}
 
 	
+}
+
+void ARacketeersGameStateBase::AddToStats(int Amount, EGameStats Stat, ETeams Team)
+{
+	int Space = (int)Stat;
+	if (Team == ETeams::Team_Raccoon)
+	{
+		int32* Stats = (int32*)((&RaccoonsGameStats.Pushes + Space));
+		if(Stats == nullptr)
+		{
+			return;
+		}
+		Stats[0] += Amount;
+	}
+	int32* Stats = (int32*)((&RedPandasGameStats.Pushes + Space));
+	if(Stats == nullptr)
+	{
+		return;
+	}
+	Stats[0] += Amount;
 }
 
 //Callas på clienten sen på servern
