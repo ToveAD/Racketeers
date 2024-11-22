@@ -93,17 +93,17 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = EPhaseState::Phase_1;
-	Phase_1->TimeLimit = 5.0f;
+	Phase_1->TimeLimit = 30.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
 	Phase_2->State = EPhaseState::Phase_2;
-	Phase_2->TimeLimit = 5.0f;
+	Phase_2->TimeLimit = 30.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
 	
 	Phase_3->State = EPhaseState::Phase_3;
-	Phase_3->TimeLimit = 5.0f;
+	Phase_3->TimeLimit = 30.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
 
@@ -446,8 +446,17 @@ void ARacketeersGMBase::RespawnPlayers()
 	{
 		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
 		FString TeamName;
-		TeamName = UEnum::GetValueAsString(PS->PlayerInfo.Team);
 		//TeamName = UEnum::GetValueAsString(PS->PlayerInfo.Team);
+		//TeamName = UEnum::GetValueAsString(PS->PlayerInfo.Team);
+
+		if(PS->PlayerInfo.Team == ETeams::Team_Raccoon)
+		{
+			TeamName ="Team Raccoon";
+		}
+		else if(PS->PlayerInfo.Team == ETeams::Team_Panda)
+		{
+			TeamName ="Team Panda";
+		}
 		TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *TeamName);
