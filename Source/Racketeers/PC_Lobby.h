@@ -29,18 +29,32 @@ public:
 
 
 	// Show the team selection widget
-	UFUNCTION(Client, Reliable)
+	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_ShowTeamSelectionWidget();
 
 	UFUNCTION()
 	void RequestTeamSelection();
+	
 	//----------------------------------------------------------------------------------------------
 
 	// Set the team on server
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Server_SetTeam(ETeams Team);
 
+	// Set the team on client and spawn lobby UI
 	UFUNCTION(BlueprintCallable)
 	void SetTeam(ETeams Team);
+
+	//----------------------------------------------------------------------------------------------
+
+	// Remove the player from the spawn point on server
+	UFUNCTION(Server, Reliable)
+	void Server_RemovePlayer(APlayerController* PC);
+
+	// ----------------------------------------------------------------------------------------------
+
+	//UFUNCTION()
+	//FString GetSteamPlayerName(APlayerController* PlayerController);
+
 	
 };

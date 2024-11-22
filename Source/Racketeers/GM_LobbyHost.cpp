@@ -97,7 +97,7 @@ void AGM_LobbyHost::RemovePlayer(APlayerController* PC)
 	{
 		if (PlayerController->SpawnPoint)
 		{
-			PlayerController->SpawnPoint->bIsOccupied = false;
+			PlayerController->SpawnPoint->RemovePlayer();
 		}
 	}
 }

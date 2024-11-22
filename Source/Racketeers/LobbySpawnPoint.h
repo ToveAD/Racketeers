@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
 #include "Components/ArrowComponent.h"
+#include "Components/Image.h"
 #include "GameFramework/Actor.h"
 #include "LobbySpawnPoint.generated.h"
 
@@ -18,7 +19,16 @@ public:
 	ALobbySpawnPoint();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	class UArrowComponent* ArrowComponent;
+	UArrowComponent* PlayerSpawnPoint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UArrowComponent* NameTagSpawnPoint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UTexture2D* SteamProfileImage;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	FString SteamName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Team")
 	int TeamID;
@@ -31,11 +41,20 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Team")
 	TSubclassOf<AActor> RaccoonPlayerClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
+	AActor* Player = nullptr;
+
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
 	void SpawnPlayer(ETeams Team);
+
+	UFUNCTION()
+	void RemovePlayer();
+	
 
 protected:
 	// Called when the game starts or when spawned

@@ -10,15 +10,20 @@ ALobbySpawnPoint::ALobbySpawnPoint()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create the Arrow Component
-	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
+	PlayerSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
+	NameTagSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("NameTagSpawnPoint"));
 
 	// Attach the Arrow Component to the Root Component
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-	ArrowComponent->SetupAttachment(RootComponent);
+	PlayerSpawnPoint->SetupAttachment(RootComponent);
+	NameTagSpawnPoint->SetupAttachment(RootComponent);
 
 	// Optional: Customize Arrow Appearance
-	ArrowComponent->ArrowColor = FColor::Green;
-	ArrowComponent->SetRelativeScale3D(FVector(1.0f));
+	PlayerSpawnPoint->ArrowColor = FColor::Green;
+	PlayerSpawnPoint->SetRelativeScale3D(FVector(1.0f));
+
+	NameTagSpawnPoint->ArrowColor = FColor::Red;
+	NameTagSpawnPoint->SetRelativeScale3D(FVector(1.0f));
 
 }
 
@@ -36,16 +41,29 @@ void ALobbySpawnPoint::Tick(float DeltaTime)
 
 }
 
+
+// Spawn the player at the spawn point
 void ALobbySpawnPoint::SpawnPlayer(ETeams Team)
 {
 	if (Team == ETeams::Team_Panda)
 	{
-		GetWorld()->SpawnActor<AActor>(PandaPlayerClass, ArrowComponent->GetComponentLocation(), ArrowComponent->GetComponentRotation());
+		Player = GetWorld()->SpawnActor<AActor>(PandaPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation());
 	} else if (Team == ETeams::Team_Raccoon)
 	{
-		GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, ArrowComponent->GetComponentLocation(), ArrowComponent->GetComponentRotation());
+		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation());
 	}
-
+	
 	bIsOccupied = true;
+}
+
+
+// Remove the player from the spawn point
+void ALobbySpawnPoint::RemovePlayer()
+{
+	bIsOccupied = false;
+
+	SteamName = "";
+	SteamProfileImage = nullptr;
+	Player->Destroy();
 }
 
