@@ -1,6 +1,7 @@
 #include "MovementBoat.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h" 
 #include "Components/PrimitiveComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "InputActionValue.h"
@@ -61,6 +62,13 @@ void UMovementBoat::RotateToFaceDirection(const FVector2D& InputDirection)
 // Move the boat forward
 void UMovementBoat::MoveForward(float DeltaTime)
 {
+    //APlayerCameraManager* CameraManager = UGameplayStatics::GetPlayerCameraManager(this, 0);
+    //const FRotator Rotation = CameraManager->GetCameraRotation();
+    //const FRotator YawRotation(0, Rotation.Yaw, 0);
+    //FRotator RotationCam = CameraManager->GetCameraRotation();
+    //const FVector ForwardDirectionCam = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+    //FVector ForwardDirectionCam = CameraManager->GetActorForwardVector();
+
     FVector ForwardDirection = GetOwner()->GetActorForwardVector();
     FVector NewLocation = GetOwner()->GetActorLocation() + (ForwardDirection * MovementSpeed * DeltaTime);
     GetOwner()->SetActorLocation(NewLocation, true);
