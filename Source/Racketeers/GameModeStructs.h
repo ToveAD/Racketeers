@@ -53,7 +53,8 @@ enum class EResources : uint8
 {
 	WOOD = 0,
 	FIBER = 1,
-	METAL = 2
+	METAL = 2,
+	NONE = 3
 };
 
 UENUM(BlueprintType, Blueprintable)
