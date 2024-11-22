@@ -441,7 +441,7 @@ void ARacketeersGMBase::LoadLevel()
 
 void ARacketeersGMBase::RespawnPlayers()
 {
-	OnloadedMap.Broadcast();
+	
 	for (int i = 0; i < this->GetGameState<AGameState>()->PlayerArray.Num(); ++i)
 	{
 		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
@@ -462,7 +462,7 @@ void ARacketeersGMBase::RespawnPlayers()
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *TeamName);
 
 		AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
-
+		/*
 		AActor* PotentialParent = PS->GetPawn()->GetAttachParentActor();
 		if( PotentialParent== nullptr)
 		{
@@ -471,16 +471,13 @@ void ARacketeersGMBase::RespawnPlayers()
 			FDetachmentTransformRules DETCTMGR = FDetachmentTransformRules(InRule, true);
 			PS->GetPawn()->DetachFromActor(DETCTMGR);
 		}
+		*/
 		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
 		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	}
+	OnloadedMap.Broadcast();
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Respawn Players");
-	
-	
-
-		//TimerInfo->ServerMultiCastActivateTimer();
-	
 	
 }
 
