@@ -135,6 +135,7 @@ void ARacketeersGMBase::BeginPlay()
 	PController->OnPlayerPressedReady.AddDynamic(TransitionComponent, &UTransitionComponent::IncrementPlayerReady);
 
 	TransitionComponent->OnFinished.AddDynamic(this, &ARacketeersGMBase::AllStagesFinished);
+	TransitionComponent->GameState = GetGameState<ARacketeersGameStateBase>();
 	
 }
 
@@ -264,12 +265,12 @@ void ARacketeersGMBase::Transition()
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
 }
 
-void ARacketeersGMBase::BroadcastOnPlayerPressed()
+void ARacketeersGMBase::BroadcastOnPlayerPressed(ETeams Team)
 {
 	if(HasAuthority())
 	{
 		ARacketeersController* PController = Cast<ARacketeersController>(	UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		PController->OnPlayerPressedReady.Broadcast();
+		PController->OnPlayerPressedReady.Broadcast(Team);
 	}
 }
 

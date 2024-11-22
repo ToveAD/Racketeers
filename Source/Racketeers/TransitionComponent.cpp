@@ -20,6 +20,8 @@ UTransitionComponent::UTransitionComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	
+	
 	// ...
 }
 
@@ -33,17 +35,17 @@ void UTransitionComponent::BeginPlay()
 	
 }
 
-void UTransitionComponent::IncrementPlayerReady()
+void UTransitionComponent::IncrementPlayerReady(ETeams Team)
 {
 	
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "IncrementPlayerReady" );
 	if(bIsOn)
 	{
-		CountPlayersReady++;
+		CountPlayer(Team);
 		AGameStateBase* GS = UGameplayStatics::GetGameState(GetWorld());
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "NUM: " + FString::FromInt(GS->PlayerArray.Num()) + " Current Player Count: " + FString::FromInt(CountPlayersReady) );
+
 		if(GS == nullptr) return;
-		
 		if(bIsFinished && CountPlayersReady == GS->PlayerArray.Num())
 		{
 			CountPlayersReady = 0;
@@ -54,6 +56,17 @@ void UTransitionComponent::IncrementPlayerReady()
 	//GM->IncrementPlayerCounter();
 }
 
+void UTransitionComponent::CountPlayer(ETeams Team)
+{
+	CountPlayersReady++;
+	if(Team == ETeams::Team_Raccoon)
+	{
+		//RaccoonsReady++;
+		return;
+	}
+
+	//PandasReady++;
+}
 
 // Called every frame
 void UTransitionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -121,10 +134,15 @@ void UTransitionComponent::LoadingFinished()
 {
 	//bIsOn = false;
 	bIsFinished = true;
-	AGameStateBase* GS = UGameplayStatics::GetGameState(GetWorld());
-	if(GS == nullptr) return;
-	if(CountPlayersReady == GS->PlayerArray.Num())
+	if(GameState == nullptr){
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "On Finished");
+		return;
+	}
+	if(CountPlayersReady == GameState->PlayerArray.Num())
 	{
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "On Finished");
 		OnFinished.Broadcast();
 	}
 }

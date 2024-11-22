@@ -36,6 +36,10 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, CurrentPhase);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
+
+	
+	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsReady);
+	DOREPLIFETIME(ARacketeersGameStateBase, PandasReady);
 }
 
 

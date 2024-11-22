@@ -82,6 +82,12 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	float Phase2RandomNumber; 
 
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	int32 PandasReady;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	int32 RaccoonsReady;
+	
+
 private:
 	void CheckOnRepHealthChanged();
 
