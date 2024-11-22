@@ -28,6 +28,8 @@ bool ARacketeersController::Call_Interact_Validate(const FString &string)
 	return true;
 }
 
+/*
+
 void ARacketeersController::AddToWood_Implementation(int Amount, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
@@ -124,6 +126,7 @@ bool ARacketeersController::RemoveMetal_Validate(int Amount, ETeams Team)
 {
 	return true;
 }
+*/
 
 void ARacketeersController::DamageBoat_Implementation(int Amount, ETeams Team)
 {
@@ -253,6 +256,23 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 
 	//DOREPLIFETIME(ARacketeersController, bhavePressedContinue);
 	
+}
+
+void ARacketeersController::AddToStats_Implementation(int Amount, EGameStats GameStats, ETeams Team)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Game State is NULLPTR in AddTOStats_Implementation in RackeetersController"));
+		return;
+	}
+	State->AddToStats(Amount, GameStats, Team);
+	
+}
+
+bool ARacketeersController::AddToStats_Validate(int Amount, EGameStats GameStats, ETeams Team)
+{
+	return true;
 }
 
 void ARacketeersController::ClientCheckReady_Implementation()

@@ -54,6 +54,7 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	//RPC to interact with a gatherable object
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Call_Interact(const FString &string);
+	/*
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddToWood(int Amount, ETeams Team);
@@ -72,7 +73,7 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RemoveMetal(int Amount, ETeams Team);
-
+	*/
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void DamageBoat(int Amount, ETeams Team);
 
@@ -96,7 +97,9 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
 	void SetServerTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
 
-
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void AddToStats(int Amount, EGameStats GameStats, ETeams Team);
+	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
 
