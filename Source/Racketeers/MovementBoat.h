@@ -4,6 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "InputActionValue.h" // Required for Enhanced Input
+#include "GameFramework/SpringArmComponent.h"
 #include "MovementBoat.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -27,22 +28,30 @@ public:
 private:
 	void RotateToFaceDirection(const FVector2D& InputDirection);
 	void MoveForward(float DeltaTime);
+	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
+	void FindCameraAndSpringArm();
 
 	// Movement properties
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float MovementSpeed = 600.0f;
 
+	float CurrentSpeed = 0.0f; // Current movement speed of the boat
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float DecelerationRate = 50.0f; // Rate at which the boat slows down (units per second)
+
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float RotationSpeed = 5.0f; // Speed of rotation smoothing
 
 	FVector2D MovementInput = FVector2D::ZeroVector;
+	
 	bool bShouldMove = false;
 
-	// Replicated properties for movement
-	FVector ReplicatedLocation;
-	FRotator ReplicatedRotation;
+	// Reference to the spring arm within the camera blueprint
+	UPROPERTY()
+	USpringArmComponent* SpringArm;
 
-	// Interpolation speed for clients
-	UPROPERTY(EditAnywhere, Category = "Replication")
-	float InterpolationSpeed = 5.0f;
+	// Reference to the camera blueprint
+	UPROPERTY()
+	AActor* TeamCamera;
 };
