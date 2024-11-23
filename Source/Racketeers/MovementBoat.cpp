@@ -30,7 +30,7 @@ void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
     if(bShouldMove)
     {
         RotateToFaceDirection(MovementInput);
-        MoveForward(DeltaTime);
+        MoveForward(DeltaTime, bScurryIsActive);
     }else
     {
         // Gradually decrease speed to 0 when input stops
@@ -58,6 +58,11 @@ void UMovementBoat::Move(FVector2D Value, bool bStarted)
     } 
 }
 
+void UMovementBoat::Scurry(bool bIsScurrying)
+{
+    bScurryIsActive = bIsScurrying;
+}
+
 // Rotate the boat to face the input direction
 void UMovementBoat::RotateToFaceDirection(const FVector2D& InputDirection)
 {
@@ -83,7 +88,7 @@ void UMovementBoat::RotateToFaceDirection(const FVector2D& InputDirection)
 }
 
 // Move the boat forward
-void UMovementBoat::MoveForward(float DeltaTime)
+void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
 {
     FVector DesiredDirection = GetWorldSpaceDirection(MovementInput);
     
@@ -91,9 +96,17 @@ void UMovementBoat::MoveForward(float DeltaTime)
     {
         if(!DesiredDirection.IsNearlyZero())
         {
-            // Apply movement to the boat
-            FVector NewLocation = GetOwner()->GetActorLocation() + (DesiredDirection * CurrentSpeed * DeltaTime);
-            GetOwner()->SetActorLocation(NewLocation, true);
+            if(bScurryActive)
+            {
+                FVector NewLocation = GetOwner()->GetActorLocation() + (DesiredDirection * CurrentSpeed * ScurryAmount * DeltaTime);
+                GetOwner()->SetActorLocation(NewLocation, true);
+            }else
+            {
+                // Apply movement to the boat
+                FVector NewLocation = GetOwner()->GetActorLocation() + (DesiredDirection * CurrentSpeed * DeltaTime);
+                GetOwner()->SetActorLocation(NewLocation, true);
+            }
+            
         } else
         {
             UE_LOG(LogTemp, Warning, TEXT("SpringArm is null or input direction is invalid, defaulting to owner forward vector"));

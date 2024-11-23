@@ -25,9 +25,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void Move(FVector2D Value, bool bStarted);
 
+	UFUNCTION(BlueprintCallable, Category="Movement")
+	void Scurry(bool bIsScurrying);
+
 private:
 	void RotateToFaceDirection(const FVector2D& InputDirection);
-	void MoveForward(float DeltaTime);
+	void MoveForward(float DeltaTime, bool bScurryActive);
 	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
 	void FindCameraAndSpringArm();
 
@@ -36,6 +39,9 @@ private:
 	float MovementSpeed = 600.0f;
 
 	float CurrentSpeed = 0.0f; // Current movement speed of the boat
+
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float ScurryAmount = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float DecelerationRate = 50.0f; // Rate at which the boat slows down (units per second)
@@ -47,6 +53,8 @@ private:
 	
 	bool bShouldMove = false;
 
+	bool bScurryIsActive = false;
+	
 	// Reference to the spring arm within the camera blueprint
 	UPROPERTY()
 	USpringArmComponent* SpringArm;
