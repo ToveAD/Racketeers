@@ -47,6 +47,9 @@ void ATimerInfo::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+
+	DOREPLIFETIME(ATimerInfo, PandasReady);
+	DOREPLIFETIME(ATimerInfo, RaccoonsReady);
 	//DOREPLIFETIME(ATimerInfo, bIsActive);
 }
 
