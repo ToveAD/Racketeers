@@ -17,10 +17,11 @@ class RACKETEERS_API AGS_Lobby : public AGS_Base
 public:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Lobby")
-	TArray<APlayerController*> RaccoonPlayers;
-
+	bool bRaccoonFull = false;
+	
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Lobby")
-	TArray<APlayerController*> PandaPlayers;
+	bool bPandaFull = false;
+
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

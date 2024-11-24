@@ -3,6 +3,8 @@
 
 #include "LobbySpawnPoint.h"
 
+#include "PC_Lobby.h"
+
 // Sets default values
 ALobbySpawnPoint::ALobbySpawnPoint()
 {
@@ -27,23 +29,9 @@ ALobbySpawnPoint::ALobbySpawnPoint()
 
 }
 
-// Called when the game starts or when spawned
-void ALobbySpawnPoint::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ALobbySpawnPoint::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 
 // Spawn the player at the spawn point
-void ALobbySpawnPoint::SpawnPlayer(ETeams Team)
+void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 {
 	if (Team == ETeams::Team_Panda)
 	{
@@ -52,18 +40,12 @@ void ALobbySpawnPoint::SpawnPlayer(ETeams Team)
 	{
 		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation());
 	}
-	
-	bIsOccupied = true;
 }
 
 
 // Remove the player from the spawn point
 void ALobbySpawnPoint::RemovePlayer()
 {
-	bIsOccupied = false;
-
-	SteamName = "";
-	SteamProfileImage = nullptr;
 	Player->Destroy();
 }
 

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
 #include "LobbySpawnPoint.h"
+#include "PS_Lobby.h"
 #include "GameFramework/PlayerController.h"
 #include "PC_Lobby.generated.h"
 
@@ -27,34 +28,41 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lobby")
 	ALobbySpawnPoint* SpawnPoint;
 
+	UFUNCTION()
+	virtual void BeginPlay() override;
 
+	// ----------------------------Widget Functions--------------------------------------------
+	
 	// Show the team selection widget
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_ShowTeamSelectionWidget();
 
-	UFUNCTION()
-	void RequestTeamSelection();
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_ShowLobbyWidget();
+
+	// Show the cosmetic widget
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_ShowCosmeticWidget();
+
+	// --------------------------------------------------------------------------------------------
 	
-	//----------------------------------------------------------------------------------------------
+	// Update the player info in PlayerState on server
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_UpdateInfo(APlayerController* PC, FLobbyInfo LobbyInfo);
 
-	// Set the team on server
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void Server_SetTeam(ETeams Team);
+	// Spawn the player on server
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_SpawnPlayer(APlayerController* PC, ETeams Team);
 
-	// Set the team on client and spawn lobby UI
-	UFUNCTION(BlueprintCallable)
-	void SetTeam(ETeams Team);
+	// Toggle the player's ready status
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_ToggleReady();
 
-	//----------------------------------------------------------------------------------------------
 
-	// Remove the player from the spawn point on server
-	UFUNCTION(Server, Reliable)
-	void Server_RemovePlayer(APlayerController* PC);
 
-	// ----------------------------------------------------------------------------------------------
+	
 
-	//UFUNCTION()
-	//FString GetSteamPlayerName(APlayerController* PlayerController);
+
 
 	
 };

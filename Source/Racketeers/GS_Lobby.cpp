@@ -8,6 +8,6 @@ void AGS_Lobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AGS_Lobby, RaccoonPlayers);
-	DOREPLIFETIME(AGS_Lobby, PandaPlayers);
+	DOREPLIFETIME(AGS_Lobby, bRaccoonFull);
+	DOREPLIFETIME(AGS_Lobby, bPandaFull);
 }
