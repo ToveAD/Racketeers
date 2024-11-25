@@ -145,12 +145,12 @@ void UMovementBoat::FindCameraAndSpringArm()
 
     // Determine the team based on the owner's tags
     FName CameraTag;
-    if (GetOwner()->ActorHasTag("BoatPanda"))
+    if (GetOwner()->Tags.Find("BoatPanda")) // OLD VERSION: GetOwner()->ActorHasTag("BoatPanda")
     {
         CameraTag = FName("CameraPanda");
         UE_LOG(LogTemp, Warning, TEXT("Boat belongs to Team Panda."));
     }
-    else if (GetOwner()->ActorHasTag("BoatRaccoon"))
+    else if (GetOwner()->Tags.Find("BoatRaccoon"))
     {
         CameraTag = FName("CameraRaccoon");
         UE_LOG(LogTemp, Warning, TEXT("Boat belongs to Team Raccoon."));
