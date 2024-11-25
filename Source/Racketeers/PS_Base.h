@@ -11,6 +11,7 @@ USTRUCT(BlueprintType)
 struct FPlayerInfo
 {
 	GENERATED_BODY()
+	
 
 	UPROPERTY(BlueprintReadWrite, Category = "PlayerInfo")
 	APlayerController* PlayerController;
@@ -50,6 +51,11 @@ class RACKETEERS_API APS_Base : public APlayerState
 
 public:
 
+	virtual void OverrideWith(APlayerState* PlayerState) override;
+	
+	virtual class APlayerState* Duplicate() override;
+	virtual void DispatchPhysicsCollisionHit(const struct FRigidBodyCollisionInfo& MyInfo, const struct FRigidBodyCollisionInfo& OtherInfo, const FCollisionImpactData& RigidCollisionData) override;
+	virtual void CopyProperties(APlayerState* PlayerState) override;
 	APS_Base();
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
