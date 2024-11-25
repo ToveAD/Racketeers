@@ -5,8 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
 #include "Components/ArrowComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
+#include "Net/UnrealNetwork.h"
 #include "LobbySpawnPoint.generated.h"
+
 
 UCLASS()
 class RACKETEERS_API ALobbySpawnPoint : public AActor
@@ -21,7 +24,7 @@ public:
 	UArrowComponent* PlayerSpawnPoint;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UArrowComponent* NameTagSpawnPoint;
+	UWidgetComponent* LobbyInfoWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
 	APlayerController* PlayerController = nullptr;
@@ -37,13 +40,20 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
 	int TeamID = -1;
-	
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = "OnRep_bShowPlayerInfo")
+	bool bShowPlayerInfo = false;
+	
 	UFUNCTION()
 	void SpawnPlayer(APlayerController* PC, ETeams Team);
 
 	UFUNCTION()
 	void RemovePlayer();
-	
-	
+
+	UFUNCTION()
+	void OnRep_bShowPlayerInfo();
+
+protected:
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

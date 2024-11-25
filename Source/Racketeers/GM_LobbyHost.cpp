@@ -78,8 +78,8 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
     	{
 		    if (ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP); SpawnPoint && SpawnPoint->PlayerController == nullptr)
     		{
+		    	SpawnPoint->bShowPlayerInfo = true;
     			PlayerController->SpawnPoint = SpawnPoint;
-    			SpawnPoint->PlayerController = PlayerController;
     			SpawnPoint->SpawnPlayer(PC, Team);
 		    	
 				UpdateIfTeamFull();
@@ -96,8 +96,8 @@ void AGM_LobbyHost::RemovePlayer(APlayerController* PC)
 	{
 		if (PlayerController->SpawnPoint)
 		{
+			PlayerController->SpawnPoint->bShowPlayerInfo = false;
 			PlayerController->SpawnPoint->RemovePlayer();
-			PlayerController->SpawnPoint->PlayerController = nullptr;
 			PlayerController->SpawnPoint = nullptr;
 		}
 	}
