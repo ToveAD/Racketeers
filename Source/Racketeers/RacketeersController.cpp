@@ -254,8 +254,26 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+
 	//DOREPLIFETIME(ARacketeersController, bhavePressedContinue);
 	
+}
+
+
+void ARacketeersController::AddPart_Implementation(ETeams Team, EPart Part)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Game State is NULLPTR in AddTOStats_Implementation in RackeetersController"));
+		return;
+	}
+	State->AddPart(Team, Part);
+}
+
+bool ARacketeersController::AddPart_Validate(ETeams Team, EPart Part)
+{
+	return true;
 }
 
 void ARacketeersController::AddToStats_Implementation(int Amount, EGameStats GameStats, ETeams Team)
@@ -275,27 +293,27 @@ bool ARacketeersController::AddToStats_Validate(int Amount, EGameStats GameStats
 	return true;
 }
 
-void ARacketeersController::ClientCheckReady_Implementation()
+void ARacketeersController::ClientCheckReady_Implementation(ETeams Team)
 {
 	if(bhavePressedContinue) return;
 	bhavePressedContinue = true;
-	ServerCheckReady();
+	ServerCheckReady(Team);
 }
 
-bool ARacketeersController::ClientCheckReady_Validate()
+bool ARacketeersController::ClientCheckReady_Validate(ETeams Team)
 {
 	return true;
 }
 
-void ARacketeersController::ServerCheckReady_Implementation()
+void ARacketeersController::ServerCheckReady_Implementation(ETeams Team)
  {
 	if(!HasAuthority()) return;
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SERVER CHECK READY");
-	GM->BroadcastOnPlayerPressed();
+	GM->BroadcastOnPlayerPressed(Team);
  }
  
- bool ARacketeersController::ServerCheckReady_Validate()
+ bool ARacketeersController::ServerCheckReady_Validate(ETeams Team)
  {
 	return true;
  }

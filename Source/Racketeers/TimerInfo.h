@@ -24,12 +24,6 @@ class RACKETEERS_API ATimerInfo : public AInfo
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
-	int32 PandasReady;
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
-	int32 RaccoonsReady;
-	
-	
 	virtual void Tick(float DeltaSeconds) override;
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void SetTimeSeconds(float seconds, bool SetIsActive);

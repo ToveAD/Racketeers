@@ -36,6 +36,10 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, CurrentPhase);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
+
+	
+	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsReady);
+	DOREPLIFETIME(ARacketeersGameStateBase, PandasReady);
 }
 
 
@@ -150,6 +154,25 @@ int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resourc
 	int32* material = (int32*)((&RedPandasResource.Wood + Space));
 	int32 MaterialAmount = material[0];
 	return MaterialAmount;
+}
+
+void ARacketeersGameStateBase::AddPart_Implementation(ETeams Team, EPart Part)
+{
+	if(Team == ETeams::Team_Raccoon)
+	{
+		RaccoonParts.Add(Part);
+		return;
+	}
+	PandaParts.Add(Part);
+}
+
+void ARacketeersGameStateBase::RemovePart_Implementation(ETeams Team, EPart Part)
+{
+	if(Team == ETeams::Team_Raccoon)
+	{
+		RaccoonParts.Remove(Part);
+	}
+	PandaParts.Remove(Part);
 }
 
 void ARacketeersGameStateBase::SetMaxHealth_Implementation(ETeams Team, int32 MaxHealth)

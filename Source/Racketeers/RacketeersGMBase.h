@@ -106,7 +106,7 @@ public:
 	void DecreaseTotalRounds();
 	UFUNCTION(BlueprintCallable)
 	void RoundCompletion();
-	void BroadcastOnPlayerPressed();
+	void BroadcastOnPlayerPressed(ETeams Team);
 	void IncrementPlayerCounter();
 	int8 GetTotalRounds();
 
@@ -137,7 +137,7 @@ private:
 	void Transition();
 
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void AllStagesFinished();
 	
 };
