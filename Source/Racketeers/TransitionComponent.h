@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RacketeersGameStateBase.h"
 #include "Components/ActorComponent.h"
 #include "TransitionComponent.generated.h"
 
@@ -26,12 +27,16 @@ public:
 	UFUNCTION()
 	void LoadingFinished();
 	UFUNCTION()
-	void IncrementPlayerReady();
+	void IncrementPlayerReady(ETeams Team);
+	
 
 	UPROPERTY(Blueprintable, BlueprintAssignable, BlueprintCallable)
 	FOnFinished OnFinished;
 	UPROPERTY(Blueprintable, BlueprintAssignable, BlueprintCallable)
 	FOnBeginTransition OnBeginTransition;
+
+private:
+	void CountPlayer(ETeams Team);
 	
 protected:
 	// Called when the game starts
@@ -46,6 +51,7 @@ public:
 	FName WidgetName;
 	bool bIsFinished;
 	bool bIsOn;
+	ARacketeersGameStateBase* GameState;
 	int32 CountPlayersReady;
 private:
 

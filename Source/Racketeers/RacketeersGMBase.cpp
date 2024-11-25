@@ -135,6 +135,7 @@ void ARacketeersGMBase::BeginPlay()
 	PController->OnPlayerPressedReady.AddDynamic(TransitionComponent, &UTransitionComponent::IncrementPlayerReady);
 
 	TransitionComponent->OnFinished.AddDynamic(this, &ARacketeersGMBase::AllStagesFinished);
+	TransitionComponent->GameState = GetGameState<ARacketeersGameStateBase>();
 	
 }
 
@@ -264,12 +265,12 @@ void ARacketeersGMBase::Transition()
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
 }
 
-void ARacketeersGMBase::BroadcastOnPlayerPressed()
+void ARacketeersGMBase::BroadcastOnPlayerPressed(ETeams Team)
 {
 	if(HasAuthority())
 	{
 		ARacketeersController* PController = Cast<ARacketeersController>(	UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		PController->OnPlayerPressedReady.Broadcast();
+		PController->OnPlayerPressedReady.Broadcast(Team);
 	}
 }
 
@@ -293,12 +294,14 @@ void ARacketeersGMBase::IncrementPlayerCounter()
 
 void ARacketeersGMBase::AllStagesFinished()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED" );
 	SwitchState(); 
 	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
 	ATimerInfo::SetIsActive(true);
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 	if(GS)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED GAME STATE" );
 		GS->ChangeCurrentPhase(CurrentPhase->State);
 	}
 

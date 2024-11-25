@@ -45,6 +45,11 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UFUNCTION(BlueprintCallable)
 	int32 GetTeamResources(ETeams Team, EResources Resource) const;
 	
+	UFUNCTION(NetMulticast, Reliable)
+	void AddPart(ETeams Team, EPart Part);
+	UFUNCTION(NetMulticast, Reliable)
+	void RemovePart(ETeams Team, EPart Part);
+	
 	UPROPERTY(ReplicatedUsing=OnRep_PickUp, BlueprintReadWrite)
 	FResources RacconResource;
 	UPROPERTY(ReplicatedUsing=OnRep_PickUp, BlueprintReadWrite)
@@ -56,6 +61,12 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	FGameStats RaccoonsGameStats;
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FGameStats RedPandasGameStats;
+
+	
+	UPROPERTY(BlueprintReadWrite)
+	TSet<TEnumAsByte<EPart>> RaccoonParts;
+	UPROPERTY(BlueprintReadWrite)
+	TSet<TEnumAsByte<EPart>> PandaParts; 
 
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
@@ -81,6 +92,12 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	float Phase2RandomNumber; 
 
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	int32 PandasReady;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	int32 RaccoonsReady;
+	
 
 private:
 	void CheckOnRepHealthChanged();
