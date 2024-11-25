@@ -294,12 +294,14 @@ void ARacketeersGMBase::IncrementPlayerCounter()
 
 void ARacketeersGMBase::AllStagesFinished()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED" );
 	SwitchState(); 
 	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
 	ATimerInfo::SetIsActive(true);
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 	if(GS)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED GAME STATE" );
 		GS->ChangeCurrentPhase(CurrentPhase->State);
 	}
 

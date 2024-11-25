@@ -97,13 +97,15 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddToStats(int Amount, EGameStats GameStats, ETeams Team);
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void AddPart(ETeams Team, EPart Part);
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RemoveResource(int Amount, EResources Resource, ETeams Team);
-
 
 	//Called when player wants to check ready, and does so in the server
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)

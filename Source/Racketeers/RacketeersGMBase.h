@@ -137,7 +137,7 @@ private:
 	void Transition();
 
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void AllStagesFinished();
 	
 };

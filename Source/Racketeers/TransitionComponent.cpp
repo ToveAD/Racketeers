@@ -58,14 +58,16 @@ void UTransitionComponent::IncrementPlayerReady(ETeams Team)
 
 void UTransitionComponent::CountPlayer(ETeams Team)
 {
+	ARacketeersGameStateBase* GS = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
 	CountPlayersReady++;
+	if(GS == nullptr) return;
 	if(Team == ETeams::Team_Raccoon)
 	{
-		//RaccoonsReady++;
+		GS->RaccoonsReady++;
 		return;
 	}
 
-	//PandasReady++;
+	GS->PandasReady++;
 }
 
 // Called every frame

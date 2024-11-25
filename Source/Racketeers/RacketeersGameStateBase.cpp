@@ -156,6 +156,25 @@ int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resourc
 	return MaterialAmount;
 }
 
+void ARacketeersGameStateBase::AddPart_Implementation(ETeams Team, EPart Part)
+{
+	if(Team == ETeams::Team_Raccoon)
+	{
+		RaccoonParts.Add(Part);
+		return;
+	}
+	PandaParts.Add(Part);
+}
+
+void ARacketeersGameStateBase::RemovePart_Implementation(ETeams Team, EPart Part)
+{
+	if(Team == ETeams::Team_Raccoon)
+	{
+		RaccoonParts.Remove(Part);
+	}
+	PandaParts.Remove(Part);
+}
+
 void ARacketeersGameStateBase::SetMaxHealth_Implementation(ETeams Team, int32 MaxHealth)
 {
 	if(Team == ETeams::Team_Raccoon)

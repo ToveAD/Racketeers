@@ -259,6 +259,23 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 	
 }
 
+
+void ARacketeersController::AddPart_Implementation(ETeams Team, EPart Part)
+{
+	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
+	if(State == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Game State is NULLPTR in AddTOStats_Implementation in RackeetersController"));
+		return;
+	}
+	State->AddPart(Team, Part);
+}
+
+bool ARacketeersController::AddPart_Validate(ETeams Team, EPart Part)
+{
+	return true;
+}
+
 void ARacketeersController::AddToStats_Implementation(int Amount, EGameStats GameStats, ETeams Team)
 {
 	ARacketeersGameStateBase* State = Cast<ARacketeersGameStateBase>(UGameplayStatics::GetGameState(GetWorld()));
