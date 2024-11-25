@@ -46,10 +46,6 @@ void ATimerInfo::DecreaseTime(float DeltaSeconds)
 void ATimerInfo::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-
-	DOREPLIFETIME(ATimerInfo, PandasReady);
-	DOREPLIFETIME(ATimerInfo, RaccoonsReady);
 	//DOREPLIFETIME(ATimerInfo, bIsActive);
 }
 
