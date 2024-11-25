@@ -25,7 +25,7 @@ class UUserWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeginPlayerEvent);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerPressedReady);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerPressedReady, ETeams, Team);
 
 UCLASS()
 class RACKETEERS_API ARacketeersController : public APlayerController
@@ -39,10 +39,8 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	FOnBeginPlayerEvent OnBeginPlayerEvent;
 	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
 	FOnPlayerPressedReady OnPlayerPressedReady;
-	
 	UUserWidget* UserWidget;
 
-	
 	
 	void BeginPlay() override;
 	
@@ -99,6 +97,9 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddToStats(int Amount, EGameStats GameStats, ETeams Team);
+
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void AddPart(ETeams Team, EPart Part);
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
@@ -106,12 +107,11 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 
-
 	//Called when player wants to check ready, and does so in the server
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void ServerCheckReady();
+	void ServerCheckReady(ETeams Team);
 	UFUNCTION(Client, Reliable, WithValidation, BlueprintCallable)
-	void ClientCheckReady();
+	void ClientCheckReady(ETeams Team);
 
 	UFUNCTION(Server, reliable)
 	void ServerMultiCastActivateTimer();
