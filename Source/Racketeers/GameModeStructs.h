@@ -94,6 +94,26 @@ enum EGameStats
 	MISSES = 4
 };
 
+UENUM(BlueprintType)
+enum EPart
+{
+	Hull_1,
+	Hull_2,
+	Cannon_1,
+	Cannon_2,
+	Sail_1,
+	Sail_2,
+};
+
+USTRUCT(BlueprintType)
+struct FParts
+{
+	GENERATED_BODY()
+	EPart Hull;
+	EPart Cannon;
+	EPart Sail;
+};
+
 USTRUCT(BlueprintType)
 struct FGameStats
 {
