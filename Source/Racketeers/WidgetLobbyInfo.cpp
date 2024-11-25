@@ -3,8 +3,7 @@
 
 #include "WidgetLobbyInfo.h"
 
-
-void UWidgetLobbyInfo::SetPlayerController(APlayerController* PC)
+void UWidgetLobbyInfo::UpdateLobbyInfo(FLobbyInfo NewLobbyInfo)
 {
-	AttachedPC = PC;
+	LobbyInfo = NewLobbyInfo;
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PS_Lobby.h"
 #include "Blueprint/UserWidget.h"
 #include "WidgetLobbyInfo.generated.h"
 
@@ -17,9 +18,9 @@ class RACKETEERS_API UWidgetLobbyInfo : public UUserWidget
 public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "LobbyInfo")
-	APlayerController* AttachedPC = nullptr;
+	FLobbyInfo LobbyInfo;
 
 	UFUNCTION(BlueprintCallable, Category = "LobbyInfo")
-	void SetPlayerController(APlayerController* PC);
+	void UpdateLobbyInfo(FLobbyInfo NewLobbyInfo);
 	
 };

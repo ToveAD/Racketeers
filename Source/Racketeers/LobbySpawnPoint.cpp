@@ -4,12 +4,16 @@
 #include "LobbySpawnPoint.h"
 #include "PC_Lobby.h"
 #include "WidgetLobbyInfo.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ALobbySpawnPoint::ALobbySpawnPoint()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Set this actor to replicate
+	bReplicates = true;
 	
 	// Create the Arrow Component
 	PlayerSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
@@ -41,18 +45,29 @@ void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation());
 		PlayerController = PC;
 	}
+
+	if(HasAuthority())
+	{
+		LobbyInfoWidget->SetVisibility(true);
+	}
 }
 
 
 // Remove the player from the spawn point
 void ALobbySpawnPoint::RemovePlayer()
 {
+	if(HasAuthority())
+	{
+		LobbyInfoWidget->SetVisibility(true);
+	}
+	
 	PlayerController = nullptr;
 	Player->Destroy();
 }
 
-void ALobbySpawnPoint::OnRep_bShowPlayerInfo()
+void ALobbySpawnPoint::OnRep_BShowPlayerInfo()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnRep_bShowPlayerInfo"));
 	if (bShowPlayerInfo)
 	{
 		LobbyInfoWidget->SetVisibility(true);

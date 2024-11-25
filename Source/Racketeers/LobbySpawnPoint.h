@@ -7,7 +7,6 @@
 #include "Components/ArrowComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
-#include "Net/UnrealNetwork.h"
 #include "LobbySpawnPoint.generated.h"
 
 
@@ -51,7 +50,7 @@ public:
 	void RemovePlayer();
 
 	UFUNCTION()
-	void OnRep_bShowPlayerInfo();
+	void OnRep_BShowPlayerInfo();
 
 protected:
 
