@@ -85,6 +85,33 @@ struct FTimer
 	
 };
 
+UENUM()
+enum EGameStats
+{
+	PUSHES = 0,
+	FALLS = 1,
+	PARTCONSTRUCTED = 2,
+	BOATDAMAGEDONE = 3,
+	MISSES = 4
+};
+
+USTRUCT(BlueprintType)
+struct FGameStats
+{
+	GENERATED_BODY();
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Pushes;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Falls;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 PartConstructed;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BoatDamageDone;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Misses;
+};
+
+
 
 
 

@@ -192,33 +192,6 @@ void UBoatMovement::Client_InterpolateTransform(float DeltaTime)
     GetOwner()->SetActorRotation(InterpolatedRotation);
 }
 
-void UBoatMovement::SwitchInputMapping(bool IsAttaching, UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove, APlayerController* PlayerController)
-{
-    if (PlayerController)
-    {
-        if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer())
-        {
-            UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
-
-            if (InputSubsystem && InputToAdd && InputToRemove)
-            {
-                if (IsAttaching)
-                {
-                    InputSubsystem->RemoveMappingContext(InputToRemove);
-                    InputSubsystem->AddMappingContext(InputToAdd, 1);
-                    UE_LOG(LogTemp, Log, TEXT("Switched to boat input mapping context: IMC_Boat"));
-                }
-                else
-                {
-                    InputSubsystem->RemoveMappingContext(InputToAdd);
-                    InputSubsystem->AddMappingContext(InputToRemove, 1);
-                    UE_LOG(LogTemp, Log, TEXT("Switched to Player input mapping context: IMC_Default"));
-                }
-            }
-        }
-    }
-}
-
 void UBoatMovement::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
