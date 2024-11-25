@@ -40,10 +40,6 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_Steer(float Value);
 
-	// Function to switch input mappings (for attaching/detaching control)
-	UFUNCTION(BlueprintCallable, Category="Input")
-	void SwitchInputMapping(bool IsAttaching, UInputMappingContext* InputToAdd, UInputMappingContext* InputToRemove, APlayerController* PlayerController);
-
 private:
 	// Helper functions for applying movement and steering
 	void ApplyMovement(float Value, bool GoBackwards);
