@@ -37,7 +37,7 @@ public:
 	//Velocity var, will be used to set projectileComponent velocity
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ProjectileInitialVariables", meta = (ExposeOnSpawn))
 	FVector velocity;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ProjectileInitialVariables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ProjectileInitialVariables", meta = (ExposeOnSpawn))
 	float throwForce = 100000.0f;
 	//ResourceChunk Type
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ResourceInfo")
