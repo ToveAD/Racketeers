@@ -14,6 +14,9 @@ UMovementBoat::UMovementBoat()
 {
     PrimaryComponentTick.bCanEverTick = true;
     SetIsReplicatedByDefault(true);
+
+    bShouldMove = false;
+    bScurryIsActive = false;
 }
 
 void UMovementBoat::BeginPlay()
