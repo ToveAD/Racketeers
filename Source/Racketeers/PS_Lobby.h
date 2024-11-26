@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "PS_Base.h"
 #include "GameModeStructs.h"
-#include "LobbySpawnPoint.h"
 #include "PS_Lobby.generated.h"
 
 /**
  * 
  */
+
+class ALobbySpawnPoint;
 
 USTRUCT(BlueprintType)
 struct FLobbyInfo
@@ -52,7 +53,7 @@ class RACKETEERS_API APS_Lobby : public APS_Base
 public:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Lobby")
-	FLobbyInfo LobbyInfo;
+	FLobbyInfo LobbyInfo = FLobbyInfo();
 
 	
 protected:

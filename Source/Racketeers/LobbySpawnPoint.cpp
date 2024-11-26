@@ -2,9 +2,9 @@
 
 
 #include "LobbySpawnPoint.h"
-#include "PC_Lobby.h"
 #include "WidgetLobbyInfo.h"
-#include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "PS_Lobby.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -60,6 +60,7 @@ void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 			);
 		}
 		LobbyInfoWidget->SetVisibility(true);
+		bShowPlayerInfo = true;
 	}
 }
 
@@ -69,6 +70,32 @@ void ALobbySpawnPoint::RemovePlayer()
 {
 	if (HasAuthority())
 	{
+		LobbyInfoWidget->SetVisibility(false);
+		bShowPlayerInfo = false;
+	}
+
+	PlayerController = nullptr;
+	Player->Destroy();
+}
+
+void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(APlayerState* PS)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UpdateWidgetInfo"));
+		if (LobbyInfoWidget)
+		{
+			if (UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject()))
+			{
+				LobbyInfo->UpdateLobbyInfo(PS);
+			}
+		}
+}
+
+void ALobbySpawnPoint::OnRep_bShowPlayerInfo()
+{
+	
+	if (bShowPlayerInfo)
+	{
+		LobbyInfoWidget->SetVisibility(true);
 		if (SpawnVFX)
 		{
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
@@ -78,43 +105,6 @@ void ALobbySpawnPoint::RemovePlayer()
 				GetActorRotation()
 			);
 		}
-		LobbyInfoWidget->SetVisibility(false);
-	}
-
-	PlayerController = nullptr;
-	Player->Destroy();
-}
-
-/*void ALobbySpawnPoint::UpdateWidgetInfo(FLobbyInfo NewLobbyInfo)
-{
-	if (HasAuthority())
-	{
-		if (LobbyInfoWidget)
-		{
-			UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject());
-			if (LobbyInfo)
-			{
-				LobbyInfo->UpdateLobbyInfo(NewLobbyInfo);
-			}
-		}
-	}
-}*/
-
-void ALobbySpawnPoint::OnRep_bShowPlayerInfo()
-{
-	if (SpawnVFX)
-	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			GetWorld(),
-			SpawnVFX,
-			GetActorLocation(),
-			GetActorRotation()
-		);
-	}
-	
-	if (bShowPlayerInfo)
-	{
-		LobbyInfoWidget->SetVisibility(true);
 	}
 	else
 	{

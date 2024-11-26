@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
 #include "LobbySpawnPoint.h"
-#include "PS_Lobby.h"
 #include "GameFramework/PlayerController.h"
 #include "PC_Lobby.generated.h"
 

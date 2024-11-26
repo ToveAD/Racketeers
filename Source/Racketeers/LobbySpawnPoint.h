@@ -7,9 +7,11 @@
 #include "Components/ArrowComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
-#include "NiagaraFunctionLibrary.h"
 #include "LobbySpawnPoint.generated.h"
 
+
+struct FLobbyInfo;
+class UNiagaraSystem;
 
 UCLASS()
 class RACKETEERS_API ALobbySpawnPoint : public AActor
@@ -57,8 +59,8 @@ public:
 	UFUNCTION()
 	void RemovePlayer();
 
-	//UFUNCTION()
-	//void UpdateWidgetInfo(FLobbyInfo NewLobbyInfo);
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_UpdateWidgetInfo(APlayerState* PS);
 
 	UFUNCTION()
 	void OnRep_bShowPlayerInfo();

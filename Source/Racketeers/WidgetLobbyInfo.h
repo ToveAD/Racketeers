@@ -20,7 +20,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "LobbyInfo")
 	FLobbyInfo LobbyInfo;
 
-	UFUNCTION(BlueprintCallable, Category = "LobbyInfo")
-	void UpdateLobbyInfo(FLobbyInfo NewLobbyInfo);
-	
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "LobbyInfo")
+	void UpdateLobbyInfo(APlayerState* PS);
 };

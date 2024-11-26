@@ -6,6 +6,7 @@
 #include "GS_Lobby.h"
 #include "LobbySpawnPoint.h"
 #include "PC_Lobby.h"
+#include "PS_Lobby.h"
 #include "Kismet/GameplayStatics.h"
 
 void AGM_LobbyHost::BeginPlay()
@@ -61,13 +62,13 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
         {
         	
             // If the player is already on the team, return
-            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team == Team)
+            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team != Team)
             {
                 return;
             }
 
             // If the player already has a spawn point on the other team, remove the player from the spawn point
-            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team != Team)
+            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team == Team)
             {
                 RemovePlayer(PC);
             }
@@ -78,9 +79,11 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
     	{
 		    if (ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP); SpawnPoint && SpawnPoint->PlayerController == nullptr)
     		{
-		    	SpawnPoint->bShowPlayerInfo = true;
     			PlayerController->SpawnPoint = SpawnPoint;
     			SpawnPoint->SpawnPlayer(PC, Team);
+		    	
+		    	// Update the player info in the widget for all players
+		    	SpawnPoint->Multicast_UpdateWidgetInfo(Cast<APS_Lobby>(PlayerController->PlayerState));
 		    	
 				UpdateIfTeamFull();
     			return;
@@ -96,7 +99,6 @@ void AGM_LobbyHost::RemovePlayer(APlayerController* PC)
 	{
 		if (PlayerController->SpawnPoint)
 		{
-			PlayerController->SpawnPoint->bShowPlayerInfo = false;
 			PlayerController->SpawnPoint->RemovePlayer();
 			PlayerController->SpawnPoint = nullptr;
 		}

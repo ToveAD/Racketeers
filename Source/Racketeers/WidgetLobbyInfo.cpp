@@ -3,7 +3,3 @@
 
 #include "WidgetLobbyInfo.h"
 
-void UWidgetLobbyInfo::UpdateLobbyInfo(FLobbyInfo NewLobbyInfo)
-{
-	LobbyInfo = NewLobbyInfo;
-}
