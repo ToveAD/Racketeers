@@ -491,6 +491,26 @@ void ARacketeersGMBase::RespawnPlayers()
 	
 }
 
+void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
+{
+	APS_Base* PS = PController->GetPlayerState<APS_Base>();
+	FString TeamName;
+
+	if(PS->PlayerInfo.Team == ETeams::Team_Raccoon)
+	{
+		TeamName ="Team Raccoon";
+	}
+	else if(PS->PlayerInfo.Team == ETeams::Team_Panda)
+	{
+		TeamName ="Team Panda";
+	}
+	TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
+	
+	AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
+	PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
+	
+}
+
 
 void ARacketeersGMBase::Respawn_Implementation()
 {

@@ -3,6 +3,8 @@
 
 #include "BaseGameInstance.h"
 
+#include "Kismet/GameplayStatics.h"
+
 void UBaseGameInstance::SetDataToTransfer_Implementation(FGameStatsPackage GameStatsPackage)
 {
 	if(TempSavedGameStatsPackage.State == ETransferState::READY)
