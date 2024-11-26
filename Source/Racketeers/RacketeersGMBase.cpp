@@ -93,17 +93,17 @@ void ARacketeersGMBase::BeginPlay()
 	
 	//Declare the variables 
 	Phase_1->State = EPhaseState::Phase_1;
-	Phase_1->TimeLimit = 30.0f;
+	Phase_1->TimeLimit = 120.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
 	
 	Phase_2->State = EPhaseState::Phase_2;
-	Phase_2->TimeLimit = 30.0f;
+	Phase_2->TimeLimit = 120.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
 	
 	Phase_3->State = EPhaseState::Phase_3;
-	Phase_3->TimeLimit = 30.0f;
+	Phase_3->TimeLimit = 120.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
 
@@ -135,6 +135,7 @@ void ARacketeersGMBase::BeginPlay()
 	PController->OnPlayerPressedReady.AddDynamic(TransitionComponent, &UTransitionComponent::IncrementPlayerReady);
 
 	TransitionComponent->OnFinished.AddDynamic(this, &ARacketeersGMBase::AllStagesFinished);
+	TransitionComponent->GameState = GetGameState<ARacketeersGameStateBase>();
 	
 }
 
@@ -264,12 +265,12 @@ void ARacketeersGMBase::Transition()
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
 }
 
-void ARacketeersGMBase::BroadcastOnPlayerPressed()
+void ARacketeersGMBase::BroadcastOnPlayerPressed(ETeams Team)
 {
 	if(HasAuthority())
 	{
 		ARacketeersController* PController = Cast<ARacketeersController>(	UGameplayStatics::GetPlayerController(GetWorld(), 0));
-		PController->OnPlayerPressedReady.Broadcast();
+		PController->OnPlayerPressedReady.Broadcast(Team);
 	}
 }
 
@@ -293,12 +294,16 @@ void ARacketeersGMBase::IncrementPlayerCounter()
 
 void ARacketeersGMBase::AllStagesFinished()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED" );
 	SwitchState(); 
 	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
 	ATimerInfo::SetIsActive(true);
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 	if(GS)
 	{
+		GS->PandasReady = 0;
+		GS->RaccoonsReady = 0;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED GAME STATE" );
 		GS->ChangeCurrentPhase(CurrentPhase->State);
 	}
 
@@ -306,6 +311,7 @@ void ARacketeersGMBase::AllStagesFinished()
 	ARacketeersController* C = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TransitionComponent->RemoveWidgetsFromPlayers();
+	TransitionComponent->CountPlayersReady = 0;
 	if(C->HasAuthority())
 	{
 		C->ServerMultiCastActivateTimer();
@@ -365,6 +371,7 @@ bool ARacketeersGMBase::EndGame()
 {
 
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+	/*
 	FGameStatsPackage Package{
 		GS->RacconsWood,
 		GS->RacconsFiber,
@@ -377,6 +384,7 @@ bool ARacketeersGMBase::EndGame()
 		GS->RedPandasRoundsWon,
 		GS->RedPandasBoatHealth
 	};
+
 	if(Package.RacconsRoundsWon > Package.RedPandasRoundsWon)
 	{
 		Package.WonTeam = ETeams::Team_Raccoon;
@@ -387,10 +395,12 @@ bool ARacketeersGMBase::EndGame()
 	}
 
 	Package.WonTeam = ETeams::Team_Raccoon;
-	
+
 	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
 	GI->SetDataToTransfer(Package);
+	*/
 	ProcessServerTravel("VictoryMap_GamePlay");
+
 	return true;
 }
 
@@ -426,14 +436,14 @@ void ARacketeersGMBase::UnloadLevel(FName name, FLatentActionInfo& ActionInfo)
 
 void ARacketeersGMBase::LoadLevel()
 {
+	
 	FLatentActionInfo LoadActionInfo;
 	
 	LoadActionInfo.Linkage = 0;
 	LoadActionInfo.CallbackTarget = this;
 	LoadActionInfo.ExecutionFunction = TEXT("RespawnPlayers");
 	LoadActionInfo.UUID = GetUniqueID();
-	
-	
+
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
 	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true , false, LoadActionInfo);

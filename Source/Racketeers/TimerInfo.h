@@ -23,9 +23,7 @@ class RACKETEERS_API ATimerInfo : public AInfo
 	static void SetIsActive(bool active){ATimerInfo::bIsActive = active;};
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
-	
 
-	
 	virtual void Tick(float DeltaSeconds) override;
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void SetTimeSeconds(float seconds, bool SetIsActive);

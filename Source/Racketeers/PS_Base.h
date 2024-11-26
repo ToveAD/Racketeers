@@ -11,6 +11,7 @@ USTRUCT(BlueprintType)
 struct FPlayerInfo
 {
 	GENERATED_BODY()
+	
 
 	UPROPERTY(BlueprintReadWrite, Category = "PlayerInfo")
 	APlayerController* PlayerController;
@@ -50,6 +51,7 @@ class RACKETEERS_API APS_Base : public APlayerState
 
 public:
 
+	
 	APS_Base();
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")

@@ -25,12 +25,14 @@ class UUserWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeginPlayerEvent);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerPressedReady);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerPressedReady, ETeams, Team);
 
 UCLASS()
 class RACKETEERS_API ARacketeersController : public APlayerController
 {
 	GENERATED_BODY()
+
+	
 
 	public:
 	UPROPERTY(EditAnywhere ,BlueprintReadWrite)
@@ -39,10 +41,8 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	FOnBeginPlayerEvent OnBeginPlayerEvent;
 	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
 	FOnPlayerPressedReady OnPlayerPressedReady;
-	
 	UUserWidget* UserWidget;
 
-	
 	
 	void BeginPlay() override;
 	
@@ -54,6 +54,7 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	//RPC to interact with a gatherable object
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Call_Interact(const FString &string);
+	/*
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddToWood(int Amount, ETeams Team);
@@ -72,7 +73,7 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RemoveMetal(int Amount, ETeams Team);
-
+	*/
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void DamageBoat(int Amount, ETeams Team);
 
@@ -96,19 +97,23 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
 	void SetServerTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
 
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void AddToStats(int Amount, EGameStats GameStats, ETeams Team);
 
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void AddPart(ETeams Team, EPart Part);
+	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 
-
 	//Called when player wants to check ready, and does so in the server
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void ServerCheckReady();
+	void ServerCheckReady(ETeams Team);
 	UFUNCTION(Client, Reliable, WithValidation, BlueprintCallable)
-	void ClientCheckReady();
+	void ClientCheckReady(ETeams Team);
 
 	UFUNCTION(Server, reliable)
 	void ServerMultiCastActivateTimer();
