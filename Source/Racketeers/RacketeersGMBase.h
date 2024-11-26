@@ -110,16 +110,6 @@ public:
 	void IncrementPlayerCounter();
 	int8 GetTotalRounds();
 
-	virtual void Logout(AController* Exiting) override;
-
-
-
-	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
-	virtual bool FindInactivePlayer(APlayerController* PC) override;
-	virtual void OverridePlayerState(APlayerController* PC, APlayerState* OldPlayerState) override;
-
-	virtual void AddInactivePlayer(APlayerState* PlayerState, APlayerController* PC) override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGameActive;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

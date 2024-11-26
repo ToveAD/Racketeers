@@ -243,15 +243,6 @@ bool ARacketeersController::RequestRemoveWidget_Validate()
 	return true;
 }
 
-void ARacketeersController::Destroyed()
-{
-	Super::Destroyed();
-
-		if(GEngine)
-    	{
-    		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow,  "ARacketeersController::Destroyed");
-    	}
-}
 
 void ARacketeersController::BeginPlay()
 {

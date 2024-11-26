@@ -429,52 +429,6 @@ int8 ARacketeersGMBase::GetTotalRounds()
 	return TotalRounds;
 }
 
-void ARacketeersGMBase::Logout(AController* Exiting)
-{
-	Super::Logout(Exiting);
-
-	if(GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "ARacketeersGMBase::Logout");
-	}
-}
-
-APlayerController* ARacketeersGMBase::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal,
-	const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ARacketeers::Login");
-	
-	for (APlayerState* PS : InactivePlayerArray)
-	{
-
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple,  "Disconnected Player: "+ PS->SavedNetworkAddress + " New PLayer Network Addess: " +  NewPlayer->PlayerController->PlayerState->SavedNetworkAddress);
-		if(	PS->SavedNetworkAddress == NewPlayer->PlayerController->PlayerState->SavedNetworkAddress)
-		{
-			return Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
-	
-		}
-	}
-	return nullptr;
-
-}
-
-bool ARacketeersGMBase::FindInactivePlayer(APlayerController* PC)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ARacketeersGMBase::FindInactivePlayer" );
-	return Super::FindInactivePlayer(PC);
-}
-
-void ARacketeersGMBase::OverridePlayerState(APlayerController* PC, APlayerState* OldPlayerState)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple,  "ARacketeersGMBase::OverridePlayerState");
-	Super::OverridePlayerState(PC, OldPlayerState);
-}
-
-void ARacketeersGMBase::AddInactivePlayer(APlayerState* PlayerState, APlayerController* PC)
-{
-	Super::AddInactivePlayer(PlayerState, PC);
-}
-
 void ARacketeersGMBase::UnloadLevel(FName name, FLatentActionInfo& ActionInfo)
 {
 	UGameplayStatics::UnloadStreamLevel(GetWorld(), name, ActionInfo, false);

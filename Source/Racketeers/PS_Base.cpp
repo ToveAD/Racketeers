@@ -6,43 +6,6 @@
 #include "OnlineSubsystem.h"
 #include "Net/UnrealNetwork.h"
 
-class APlayerState* APS_Base::Duplicate()
-{
-	if(GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "APS_Base::Duplicate()");
-	}
-	return Super::Duplicate();
-
-}
-
-IOnlineSubsystem
-
-void APS_Base::OverrideWith(APlayerState* PlayerState)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple,  "APS_Base::OverrideWith(PlayerState)");
-	Super::OverrideWith(PlayerState);
-}
-
-void APS_Base::DispatchPhysicsCollisionHit(const struct FRigidBodyCollisionInfo& MyInfo,
-                                           const struct FRigidBodyCollisionInfo& OtherInfo, const FCollisionImpactData& RigidCollisionData)
-{
-	Super::DispatchPhysicsCollisionHit(MyInfo, OtherInfo, RigidCollisionData);
-	if(GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "APS_Base::DispatchPhysicsCollisionHit");
-	}
-}
-
-void APS_Base::CopyProperties(APlayerState* PlayerState)
-{
-	Super::CopyProperties(PlayerState);
-	if(GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, "APS_Base::CopyProperties");
-	}
-}
-
 APS_Base::APS_Base()
 {
 	// Enable replication for this actor
