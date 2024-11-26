@@ -32,6 +32,8 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 {
 	GENERATED_BODY()
 
+	
+
 	public:
 	UPROPERTY(EditAnywhere ,BlueprintReadWrite)
 	bool bhavePressedContinue = false;

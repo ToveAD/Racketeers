@@ -243,6 +243,7 @@ bool ARacketeersController::RequestRemoveWidget_Validate()
 	return true;
 }
 
+
 void ARacketeersController::BeginPlay()
 {
 	Super::BeginPlay();
