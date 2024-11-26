@@ -141,7 +141,7 @@ FVector UMovementBoat::GetWorldSpaceDirection(const FVector2D& InputDirection) c
 void UMovementBoat::FindCameraAndSpringArm()
 {
     TeamCamera = nullptr;
-    SpringArm = nullptr;
+    //SpringArm = nullptr;
 
     // Determine the team based on the owner's tags
     FName CameraTag;
