@@ -19,7 +19,7 @@ UMovementBoat::UMovementBoat()
 void UMovementBoat::BeginPlay()
 {
     Super::BeginPlay();
-    FindCameraAndSpringArm();
+    //FindCameraAndSpringArm();
 }
 
 void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -49,6 +49,7 @@ void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 // Function to handle movement input
 void UMovementBoat::Move(FVector2D Value, bool bStarted)
 {
+    FindCameraAndSpringArm();
     bShouldMove = bStarted;
 
     if(bStarted)
@@ -141,16 +142,16 @@ FVector UMovementBoat::GetWorldSpaceDirection(const FVector2D& InputDirection) c
 void UMovementBoat::FindCameraAndSpringArm()
 {
     TeamCamera = nullptr;
-    //SpringArm = nullptr;
+    SpringArm = nullptr;
 
     // Determine the team based on the owner's tags
     FName CameraTag;
-    if (GetOwner()->Tags.Find("BoatPanda")) // OLD VERSION: GetOwner()->ActorHasTag("BoatPanda")
+    if (GetOwner()->ActorHasTag("BoatPanda")) // OLD VERSION: GetOwner()->ActorHasTag("BoatPanda")
     {
         CameraTag = FName("CameraPanda");
         UE_LOG(LogTemp, Warning, TEXT("Boat belongs to Team Panda."));
     }
-    else if (GetOwner()->Tags.Find("BoatRaccoon"))
+    else if (GetOwner()->ActorHasTag("BoatRaccoon")) //GetOwner()->Tags.Find("BoatRaccoon")
     {
         CameraTag = FName("CameraRaccoon");
         UE_LOG(LogTemp, Warning, TEXT("Boat belongs to Team Raccoon."));
@@ -169,6 +170,7 @@ void UMovementBoat::FindCameraAndSpringArm()
         {
             TeamCamera = Actor;
             SpringArm = TeamCamera->FindComponentByClass<USpringArmComponent>();
+            
 
             if (!SpringArm)
             {
