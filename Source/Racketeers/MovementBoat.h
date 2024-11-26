@@ -51,9 +51,8 @@ private:
 
 	FVector2D MovementInput = FVector2D::ZeroVector;
 	
-	bool bShouldMove = false;
-
-	bool bScurryIsActive = false;
+	bool bShouldMove;
+	bool bScurryIsActive;
 	
 	// Reference to the spring arm within the camera blueprint
 	UPROPERTY()
