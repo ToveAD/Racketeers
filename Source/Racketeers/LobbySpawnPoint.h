@@ -7,6 +7,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraFunctionLibrary.h"
 #include "LobbySpawnPoint.generated.h"
 
 
@@ -19,6 +20,8 @@ public:
 	// Sets default values for this actor's properties
 	ALobbySpawnPoint();
 
+	// ----------------------------Variables--------------------------------------------
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UArrowComponent* PlayerSpawnPoint;
 
@@ -37,11 +40,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
 	AActor* Player = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
+	UNiagaraSystem* SpawnVFX;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
 	int TeamID = -1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = "OnRep_bShowPlayerInfo")
 	bool bShowPlayerInfo = false;
+
+	// ----------------------------Functions--------------------------------------------
 	
 	UFUNCTION()
 	void SpawnPlayer(APlayerController* PC, ETeams Team);
@@ -49,8 +57,11 @@ public:
 	UFUNCTION()
 	void RemovePlayer();
 
+	//UFUNCTION()
+	//void UpdateWidgetInfo(FLobbyInfo NewLobbyInfo);
+
 	UFUNCTION()
-	void OnRep_BShowPlayerInfo();
+	void OnRep_bShowPlayerInfo();
 
 protected:
 

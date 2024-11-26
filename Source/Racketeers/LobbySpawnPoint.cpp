@@ -4,17 +4,18 @@
 #include "LobbySpawnPoint.h"
 #include "PC_Lobby.h"
 #include "WidgetLobbyInfo.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
 ALobbySpawnPoint::ALobbySpawnPoint()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Set this actor to replicate
 	bReplicates = true;
-	
+
 	// Create the Arrow Component
 	PlayerSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
 	LobbyInfoWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
@@ -28,7 +29,6 @@ ALobbySpawnPoint::ALobbySpawnPoint()
 	// Optional: Customize Arrow Appearance
 	PlayerSpawnPoint->ArrowColor = FColor::Green;
 	PlayerSpawnPoint->SetRelativeScale3D(FVector(1.0f));
-	
 }
 
 
@@ -37,17 +37,28 @@ void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 {
 	if (Team == ETeams::Team_Panda)
 	{
-		Player = GetWorld()->SpawnActor<AActor>(PandaPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation());
+		Player = GetWorld()->SpawnActor<AActor>(PandaPlayerClass, PlayerSpawnPoint->GetComponentLocation(),
+		                                        PlayerSpawnPoint->GetComponentRotation());
 		PlayerController = PC;
-		
-	} else if (Team == ETeams::Team_Raccoon)
+	}
+	else if (Team == ETeams::Team_Raccoon)
 	{
-		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation());
+		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(),
+		                                        PlayerSpawnPoint->GetComponentRotation());
 		PlayerController = PC;
 	}
 
-	if(HasAuthority())
+	if (HasAuthority())
 	{
+		if (SpawnVFX)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(),
+				SpawnVFX,
+				GetActorLocation(),
+				GetActorRotation()
+			);
+		}
 		LobbyInfoWidget->SetVisibility(true);
 	}
 }
@@ -56,18 +67,51 @@ void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 // Remove the player from the spawn point
 void ALobbySpawnPoint::RemovePlayer()
 {
-	if(HasAuthority())
+	if (HasAuthority())
 	{
-		LobbyInfoWidget->SetVisibility(true);
+		if (SpawnVFX)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				GetWorld(),
+				SpawnVFX,
+				GetActorLocation(),
+				GetActorRotation()
+			);
+		}
+		LobbyInfoWidget->SetVisibility(false);
 	}
-	
+
 	PlayerController = nullptr;
 	Player->Destroy();
 }
 
-void ALobbySpawnPoint::OnRep_BShowPlayerInfo()
+/*void ALobbySpawnPoint::UpdateWidgetInfo(FLobbyInfo NewLobbyInfo)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnRep_bShowPlayerInfo"));
+	if (HasAuthority())
+	{
+		if (LobbyInfoWidget)
+		{
+			UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject());
+			if (LobbyInfo)
+			{
+				LobbyInfo->UpdateLobbyInfo(NewLobbyInfo);
+			}
+		}
+	}
+}*/
+
+void ALobbySpawnPoint::OnRep_bShowPlayerInfo()
+{
+	if (SpawnVFX)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+			GetWorld(),
+			SpawnVFX,
+			GetActorLocation(),
+			GetActorRotation()
+		);
+	}
+	
 	if (bShowPlayerInfo)
 	{
 		LobbyInfoWidget->SetVisibility(true);

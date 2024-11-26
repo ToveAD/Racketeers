@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "LobbySpawnPoint.h"
 #include "PS_Base.h"
 #include "GameModeStructs.h"
+#include "LobbySpawnPoint.h"
 #include "PS_Lobby.generated.h"
 
 /**
