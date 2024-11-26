@@ -301,6 +301,8 @@ void ARacketeersGMBase::AllStagesFinished()
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 	if(GS)
 	{
+		GS->PandasReady = 0;
+		GS->RaccoonsReady = 0;
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED GAME STATE" );
 		GS->ChangeCurrentPhase(CurrentPhase->State);
 	}
@@ -309,6 +311,7 @@ void ARacketeersGMBase::AllStagesFinished()
 	ARacketeersController* C = Cast<ARacketeersController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 
 	TransitionComponent->RemoveWidgetsFromPlayers();
+	TransitionComponent->CountPlayersReady = 0;
 	if(C->HasAuthority())
 	{
 		C->ServerMultiCastActivateTimer();

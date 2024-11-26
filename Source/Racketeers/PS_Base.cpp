@@ -3,6 +3,7 @@
 
 #include "PS_Base.h"
 
+#include "OnlineSubsystem.h"
 #include "Net/UnrealNetwork.h"
 
 APS_Base::APS_Base()
