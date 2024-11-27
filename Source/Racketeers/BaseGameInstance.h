@@ -72,6 +72,7 @@ class RACKETEERS_API UBaseGameInstance : public UAdvancedFriendsGameInstance
 
 
 public:
+	
 	UFUNCTION(Server, Reliable, WithValidation)
 	void SetDataToTransfer(FGameStatsPackage GameStatsPackage);
 	UFUNCTION(Server, Reliable, WithValidation)

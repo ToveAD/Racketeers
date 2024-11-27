@@ -100,6 +100,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RespawnPlayers();
 
+
+	UFUNCTION(BlueprintCallable)
+	void RespawnPlayer(APlayerController* PController);
 	UFUNCTION(BlueprintCallable)
 	void IncreaseTotalRounds();
 	UFUNCTION(BlueprintCallable)
