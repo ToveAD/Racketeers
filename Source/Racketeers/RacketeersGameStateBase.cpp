@@ -293,7 +293,8 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 			return;
 		}
 		material[0] += Amount;
-		if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole()  == ENetRole::ROLE_Authority)
+		
+		if(UGameplayStatics::GetGameState(GetWorld())->GetLocalRole()  == ENetRole::ROLE_Authority)
 		{
 			OnRep_PickUp();
 		}
@@ -309,7 +310,7 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 	material[0] += Amount;
 
 
-	if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole() == ENetRole::ROLE_Authority)
+	if(UGameplayStatics::GetGameState(GetWorld())->GetLocalRole()  == ENetRole::ROLE_Authority)
 	{
 		OnRep_PickUp();
 	}

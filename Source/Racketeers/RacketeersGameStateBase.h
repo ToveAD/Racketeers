@@ -11,6 +11,8 @@
 /**
  * 
  */
+
+
 UCLASS()
 class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 {

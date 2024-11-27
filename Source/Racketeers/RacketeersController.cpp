@@ -248,6 +248,7 @@ void ARacketeersController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
 	OnBeginPlayerEvent.Broadcast();
 }
 
@@ -256,8 +257,25 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 
+	
 	//DOREPLIFETIME(ARacketeersController, bhavePressedContinue);
 	
+}
+
+void ARacketeersController::ServerRespawnPlayer_Implementation(APlayerController* PController)
+{
+	if(HasAuthority())
+	{
+		ARacketeersGMBase* GMBase = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
+
+		if(GMBase == nullptr) return;
+		GMBase->RespawnPlayer(PController);
+	}
+}
+
+bool ARacketeersController::ServerRespawnPlayer_Validate(APlayerController* PController)
+{
+	return true;
 }
 
 
@@ -311,6 +329,7 @@ void ARacketeersController::ServerCheckReady_Implementation(ETeams Team)
 	if(!HasAuthority()) return;
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "SERVER CHECK READY");
+	
 	GM->BroadcastOnPlayerPressed(Team);
  }
  
