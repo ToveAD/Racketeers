@@ -456,9 +456,6 @@ void ARacketeersGMBase::RespawnPlayers()
 	{
 		APS_Base* PS = Cast<APS_Base>(this->GetGameState<AGameState>()->PlayerArray[i]);
 		FString TeamName;
-		//TeamName = UEnum::GetValueAsString(PS->PlayerInfo.Team);
-		//TeamName = UEnum::GetValueAsString(PS->PlayerInfo.Team);
-
 		if(PS->PlayerInfo.Team == ETeams::Team_Raccoon)
 		{
 			TeamName ="Team Raccoon";
@@ -472,22 +469,35 @@ void ARacketeersGMBase::RespawnPlayers()
 			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, *TeamName);
 
 		AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
-		/*
-		AActor* PotentialParent = PS->GetPawn()->GetAttachParentActor();
-		if( PotentialParent== nullptr)
-		{
-			EDetachmentRule InRule = EDetachmentRule();
-			InRule = EDetachmentRule::KeepWorld;
-			FDetachmentTransformRules DETCTMGR = FDetachmentTransformRules(InRule, true);
-			PS->GetPawn()->DetachFromActor(DETCTMGR);
-		}
-		*/
+
+
 		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
 		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	}
+	TransitionComponent->bIsFinished = true;
 	OnloadedMap.Broadcast();
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Respawn Players");
+	
+}
+
+void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
+{
+	APS_Base* PS = PController->GetPlayerState<APS_Base>();
+	FString TeamName;
+
+	if(PS->PlayerInfo.Team == ETeams::Team_Raccoon)
+	{
+		TeamName ="Team Raccoon";
+	}
+	else if(PS->PlayerInfo.Team == ETeams::Team_Panda)
+	{
+		TeamName ="Team Panda";
+	}
+	TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
+	
+	AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
+	PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	
 }
 
