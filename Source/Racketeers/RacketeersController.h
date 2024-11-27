@@ -21,6 +21,7 @@
 
 
 class UUserWidget;
+class ATimerInfo;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBeginPlayerEvent);
@@ -40,12 +41,13 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	FOnBeginPlayerEvent OnBeginPlayerEvent;
 	UPROPERTY(EditAnywhere ,BlueprintReadWrite, BlueprintCallable, BlueprintAssignable)
 	FOnPlayerPressedReady OnPlayerPressedReady;
+	UPROPERTY(EditAnywhere ,BlueprintReadWrite)
 	UUserWidget* UserWidget;
 
 	
-	void BeginPlay() override;
+	virtual void BeginPlay() override;
 	
-	void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void RequestRemoveWidget();
@@ -53,26 +55,6 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	//RPC to interact with a gatherable object
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void Call_Interact(const FString &string);
-	/*
-
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void AddToWood(int Amount, ETeams Team);
-
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void AddToFiber(int Amount, ETeams Team);
-
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void AddToMetal(int Amount, ETeams Team);
-	
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void RemoveWood(int Amount, ETeams Team);
-
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void RemoveFiber(int Amount, ETeams Team);
-
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void RemoveMetal(int Amount, ETeams Team);
-	*/
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void DamageBoat(int Amount, ETeams Team);
 
@@ -86,15 +68,15 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	void RemoveWidget(FName Name);
 
 	UFUNCTION(Client, Reliable , BlueprintCallable, Blueprintable)
-	void SetTimeSecondsn(float seconds, bool SetIsActive);
+	void SetTimeSeconds(float Seconds, bool SetIsActive);
 	UFUNCTION(Client, Reliable , BlueprintCallable, Blueprintable)
-	void SetTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
+	void SetTime_Analog(ATimerInfo* Timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
 
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
-	void SetServerTimeSeconds(ARacketeersController* Controller ,float seconds, bool SetIsActive);
+	void SetServerTimeSeconds(ARacketeersController* Controller ,float Seconds, bool SetIsActive);
 	
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
-	void SetServerTime_Analog(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
+	void SetServerTime_Analog(ATimerInfo* Timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddToStats(int Amount, EGameStats GameStats, ETeams Team);

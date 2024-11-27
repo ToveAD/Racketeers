@@ -216,12 +216,12 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 	{
 		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 		if(GS == nullptr) return false;
-		if(GS->RacconsBoatHealth > GS->RedPandasBoatHealth)
+		if(GS->RaccoonsBoatHealth > GS->RedPandasBoatHealth)
 		{
 			GS->RacconsRoundsWon++;
 			return true;
 		}
-		if(GS->RedPandasBoatHealth > GS->RacconsBoatHealth)
+		if(GS->RedPandasBoatHealth > GS->RaccoonsBoatHealth)
 		{
 			GS->RedPandasBoatHealth++;
 			return true;
@@ -504,26 +504,4 @@ void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
 	AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
 	PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	
-}
-
-
-void ARacketeersGMBase::Respawn_Implementation()
-{
-	//Respawn the player at valid spawn location
-}
-
-bool ARacketeersGMBase::Respawn_Validate()
-{
-	return true;
-}
-
-void ARacketeersGMBase::SpawnTeams_Implementation()
-{
-	RestartGame();
-	//Spawn the entier team at there valid locations
-}
-
-bool ARacketeersGMBase::SpawnTeams_Validate()
-{
-	return true;
 }
