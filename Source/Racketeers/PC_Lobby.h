@@ -27,20 +27,41 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lobby")
 	ALobbySpawnPoint* SpawnPoint;
 
+	UFUNCTION()
+	virtual void BeginPlay() override;
 
+	// ----------------------------Widget Functions--------------------------------------------
+	
 	// Show the team selection widget
-	UFUNCTION(Client, Reliable)
+	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_ShowTeamSelectionWidget();
 
-	UFUNCTION()
-	void RequestTeamSelection();
-	//----------------------------------------------------------------------------------------------
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_ShowLobbyWidget();
 
-	// Set the team on server
-	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void Server_SetTeam(ETeams Team);
+	// Show the cosmetic widget
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_ShowCosmeticWidget();
 
-	UFUNCTION(BlueprintCallable)
-	void SetTeam(ETeams Team);
+	// --------------------------------------------------------------------------------------------
+	
+	// Update the player info in PlayerState on server
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_UpdateInfo(APlayerController* PC, FLobbyInfo LobbyInfo);
+
+	// Spawn the player on server
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_SpawnPlayer(APlayerController* PC, ETeams Team);
+
+	// Toggle the player's ready status
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_ToggleReady();
+
+
+
+	
+
+
+
 	
 };

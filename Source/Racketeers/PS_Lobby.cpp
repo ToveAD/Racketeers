@@ -8,6 +8,5 @@ void APS_Lobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APS_Lobby, Team);
-	DOREPLIFETIME(APS_Lobby, bIsReady);
+	DOREPLIFETIME(APS_Lobby, LobbyInfo);
 }
