@@ -33,7 +33,6 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	GENERATED_BODY()
 
 	
-
 	public:
 	UPROPERTY(EditAnywhere ,BlueprintReadWrite)
 	bool bhavePressedContinue = false;
@@ -120,5 +119,8 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	
 	UFUNCTION(NetMulticast, reliable, BlueprintCallable)
 	void MultiCastActivateTimer(float T,  bool SetIsActive);
+	
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
+	void ServerRespawnPlayer(APlayerController* PController);
 	
 };
