@@ -17,6 +17,8 @@ void AGM_LobbyHost::BeginPlay()
 
 void AGM_LobbyHost::OnLogout(AController* Exiting)
 {
+	RemovePlayer(Cast<APC_Lobby>(Exiting));
+
 }
 
 void AGM_LobbyHost::SetUpSpawnPositions()
@@ -80,8 +82,10 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 		    if (ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP); SpawnPoint && SpawnPoint->PlayerController == nullptr)
     		{
     			PlayerController->SpawnPoint = SpawnPoint;
+		    	Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team = Team;
     			SpawnPoint->SpawnPlayer(PC, Team);
-		    	
+
+		    	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Player %s spawned on team %s"), *PlayerController->PlayerState->GetPlayerName(), Team == ETeams::Team_Panda ? TEXT("Panda") : TEXT("Raccoon")));
 		    	// Update the player info in the widget for all players
 		    	SpawnPoint->Multicast_UpdateWidgetInfo(Cast<APS_Lobby>(PlayerController->PlayerState));
 		    	

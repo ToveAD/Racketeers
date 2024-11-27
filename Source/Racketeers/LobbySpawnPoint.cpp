@@ -80,7 +80,6 @@ void ALobbySpawnPoint::RemovePlayer()
 
 void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(APlayerState* PS)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UpdateWidgetInfo"));
 		if (LobbyInfoWidget)
 		{
 			if (UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject()))

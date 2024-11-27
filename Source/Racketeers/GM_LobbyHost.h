@@ -31,6 +31,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bEnoughPlayersToStart;
 
+	UPROPERTY()
+	int NumPlayers = 0;
+
 	// ----------------- Functions -----------------
 	
 	UFUNCTION()
@@ -53,5 +56,4 @@ public:
 
 	UFUNCTION()
 	void UpdateIfTeamFull();
-	
 };
