@@ -444,6 +444,11 @@ void ARacketeersGMBase::LoadLevel()
 	LoadActionInfo.ExecutionFunction = TEXT("RespawnPlayers");
 	LoadActionInfo.UUID = GetUniqueID();
 
+	if(CurrentPhase->State == EPhaseState::Phase_2)
+	{
+		
+	}
+
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
 	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true , false, LoadActionInfo);
