@@ -34,24 +34,16 @@ USTRUCT(BlueprintType)
 struct FGameStatsPackage
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY(BlueprintReadWrite)
-	int32 RacconsWood = 0;
-	UPROPERTY(BlueprintReadWrite)
-	int32 RacconsFiber = 0;
-	UPROPERTY(BlueprintReadWrite)
-	int32 RacconsMetal = 0;
+	FResources RaccoonResources;
 	UPROPERTY(BlueprintReadWrite)
 	int32 RacconsRoundsWon = 0;
 	UPROPERTY(BlueprintReadWrite)
 	float RacconsBoatHealth = 0; 
-	
+
 	UPROPERTY(BlueprintReadWrite)
-	int32 RedPandasWood = 0;
-	UPROPERTY(BlueprintReadWrite)
-	int32 RedPandasFiber = 0;
-	UPROPERTY(BlueprintReadWrite)
-	int32 RedPandasMetal = 0;
+	FResources PandaResources;
 	UPROPERTY(BlueprintReadWrite)
 	int32 RedPandasRoundsWon = 0;
 	UPROPERTY(BlueprintReadWrite)
