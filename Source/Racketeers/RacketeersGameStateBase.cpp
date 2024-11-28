@@ -184,7 +184,7 @@ void ARacketeersGameStateBase::SetMaxHealth_Implementation(ETeams Team, int32 Ma
 void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 {
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GM == nullptr)
+	if (GM == nullptr || RaccoonsBoatHealth <= 0  ||RedPandasBoatHealth <= 0)
 	{
 		UE_LOG(LogTemp, Error, TEXT("ARacketeersGameStateBase::DamageBoat GM is equal to nullptr"));
 		return;

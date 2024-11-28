@@ -107,7 +107,7 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 
 // 
-/*	Class LoadManager
+/*	Class LoadManager 
  *	static void AddWork();
  *	static void FinishedWork();
  *	static int32 WorkLoadInteger;
