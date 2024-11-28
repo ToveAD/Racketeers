@@ -64,7 +64,7 @@ void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options,
 
 void ARacketeersGMBase::BeginPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::BeginPlay"));
+	//UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::BeginPlay"));
 	
 	//Set the GameState in GameMode
 	//GameState = Cast<AGS_Base>(UGameplayStatics::GetGameState(GetWorld()));
@@ -81,12 +81,12 @@ void ARacketeersGMBase::BeginPlay()
 	FVector* V = new FVector(0,0,0);
 	FRotator* RO = new FRotator(0,0,0);
 	
-	UE_LOG(LogTemp, Warning, TEXT("About To Spawn Timer Info"));
+	//UE_LOG(LogTemp, Warning, TEXT("About To Spawn Timer Info"));
 	TimerInfo = Cast<ATimerInfo>(UGameplayStatics::GetActorOfClass(GetWorld(), ATimerInfo::StaticClass()));
 	
 	if(TimerInfo == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::SpawnActor is nullptr"));
+		//UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::SpawnActor is nullptr"));
 	}
 
 
@@ -120,8 +120,8 @@ void ARacketeersGMBase::BeginPlay()
 	TotalRounds = 3;
 	if(TimerInfo != nullptr)
 	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Activate Time ");
+		//if(GEngine)
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Activate Time ");
 		ATimerInfo::SetTime(Phase_1->TimeLimit);
 		TimerInfo->SetIsActive(true);
 	}
@@ -178,25 +178,25 @@ void ARacketeersGMBase::RoundCompletion()
 
 	TimerInfo->SetIsActive(false);
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check If Game Is Over");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check If Game Is Over");
 	if(CheckIfGameIsOver())
 	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "End Game");
+		//if(GEngine)
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "End Game");
 		EndGame();
 		return;
 	}
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check Winner of Round");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check Winner of Round");
 	CheckWinnerOfRound();
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Transition stats");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Transition stats");
 	LoadTransitionStats();
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Transition");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Transition");
 	Transition();
 }
 
@@ -252,8 +252,8 @@ void ARacketeersGMBase::Transition()
 	ActionInfo.ExecutionFunction = TEXT("LoadLevel");
 	ActionInfo.UUID = GetUniqueID();	
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Unload Level");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Unload Level");
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
 }
 
@@ -268,12 +268,12 @@ void ARacketeersGMBase::BroadcastOnPlayerPressed(ETeams Team)
 
 void ARacketeersGMBase::IncrementPlayerCounter()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "IncrementPlayerReady" );
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "IncrementPlayerReady" );
 	if(TransitionComponent->bIsOn)
 	{
 		TransitionComponent->CountPlayersReady++;
 		AGameStateBase* GS = UGameplayStatics::GetGameState(GetWorld());
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "NUM: " + FString::FromInt(GS->PlayerArray.Num()) + " Current Player Count: " + FString::FromInt(TransitionComponent->CountPlayersReady) );
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "NUM: " + FString::FromInt(GS->PlayerArray.Num()) + " Current Player Count: " + FString::FromInt(TransitionComponent->CountPlayersReady) );
 		if(GS == nullptr) return;
 		
 		if(TransitionComponent->bIsFinished && TransitionComponent->CountPlayersReady == GS->PlayerArray.Num())
@@ -286,7 +286,7 @@ void ARacketeersGMBase::IncrementPlayerCounter()
 
 void ARacketeersGMBase::AllStagesFinished()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED" );
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED" );
 	SwitchState(); 
 	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
 	ATimerInfo::SetIsActive(true);
@@ -295,7 +295,7 @@ void ARacketeersGMBase::AllStagesFinished()
 	{
 		GS->PandasReady = 0;
 		GS->RaccoonsReady = 0;
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED GAME STATE" );
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED GAME STATE" );
 		GS->ChangeCurrentPhase(CurrentPhase->State);
 	}
 
