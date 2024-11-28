@@ -103,3 +103,18 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	void ServerRespawnPlayer(APlayerController* PController);
 	
 };
+
+
+
+// 
+/*	Class LoadManager
+ *	static void AddWork();
+ *	static void FinishedWork();
+ *	static int32 WorkLoadInteger;
+ *
+ *	void Reset();
+ *	OnFinishedWork;
+ *	
+ *
+ *  
+*/

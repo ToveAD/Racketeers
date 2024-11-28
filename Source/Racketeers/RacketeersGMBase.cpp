@@ -175,13 +175,6 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 
 void ARacketeersGMBase::RoundCompletion()
 {
-	//CheckIfGameIsOver
-	//EndGame
-
-	//CheckWinnerOfRound
-	//LoadTransitionScreen (Eller en Level) - Show Scores, Everyone Press button to continue
-		
-	//Unload, Loads And Reset Players
 
 	CurrentTime = 0;
 
@@ -219,6 +212,7 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 		if(GS->RaccoonsBoatHealth > GS->RedPandasBoatHealth)
 		{
 			GS->RacconsRoundsWon++;
+			
 			return true;
 		}
 		if(GS->RedPandasBoatHealth > GS->RaccoonsBoatHealth)
@@ -371,16 +365,12 @@ bool ARacketeersGMBase::EndGame()
 {
 
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
-	/*
+	
 	FGameStatsPackage Package{
-		GS->RacconsWood,
-		GS->RacconsFiber,
-		GS->RacconsMetal,
+		GS->RacconResource,
 		GS->RacconsRoundsWon,
-		GS->RacconsBoatHealth,
-		GS->RedPandasWood,
-		GS->RedPandasFiber,
-		GS->RedPandasMetal,
+		GS->RaccoonsBoatHealth,
+		GS->RedPandasResource,
 		GS->RedPandasRoundsWon,
 		GS->RedPandasBoatHealth
 	};
@@ -398,7 +388,6 @@ bool ARacketeersGMBase::EndGame()
 
 	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
 	GI->SetDataToTransfer(Package);
-	*/
 	ProcessServerTravel("VictoryMap_GamePlay");
 
 	return true;
