@@ -74,9 +74,6 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 
 	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
 	void SetServerTimeSeconds(ARacketeersController* Controller ,float Seconds, bool SetIsActive);
-	
-	UFUNCTION(Server, Reliable , BlueprintCallable, Blueprintable)
-	void SetServerTime_Analog(ATimerInfo* Timer ,int32 Minutes, int32 Seconds, bool SetIsActive);
 
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
 	void AddToStats(int Amount, EGameStats GameStats, ETeams Team);
