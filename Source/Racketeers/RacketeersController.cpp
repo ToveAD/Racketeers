@@ -346,7 +346,7 @@ void ARacketeersController::ServerMultiCastActivateTimer_Implementation()
 	{
 		ARacketeersController* PController = Cast<ARacketeersController>(PState->GetPlayerController());
 		
-		PController->SetTimeSecondsn(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
+		PController->SetTimeSeconds(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
 	}
 }
 
@@ -355,10 +355,10 @@ void ARacketeersController::MultiCastActivateTimer_Implementation(float T, bool 
 
 	ATimerInfo::SetIsActive(SetIsActive);
 	ATimerInfo::SetTime(T);
-	SetTimeSecondsn(T, SetIsActive);
+	SetTimeSeconds(T, SetIsActive);
 }
 
-void ARacketeersController::SetTimeSecondsn_Implementation(float seconds, bool SetIsActive)
+void ARacketeersController::SetTimeSeconds_Implementation(float seconds, bool SetIsActive)
 {
 	
 	ATimerInfo::SetTime(seconds);
@@ -413,18 +413,13 @@ bool ARacketeersController::AddResource_Validate(int Amount, EResources Resource
 	return true;
 }
 
-inline void ARacketeersController::SetServerTimeSeconds_Implementation(ARacketeersController* Controller ,float seconds, bool SetIsActive)
+void ARacketeersController::SetServerTimeSeconds_Implementation(ARacketeersController* Controller ,float seconds, bool SetIsActive)
 {
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	if(GM == nullptr)
 	{
 		return;
 	}
-	Controller->SetTimeSecondsn(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
+	Controller->SetTimeSeconds(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
 	
-}
-
-inline void ARacketeersController::SetServerTime_Analog_Implementation(ATimerInfo* timer ,int32 Minutes, int32 Seconds, bool SetIsActive)
-{
-
 }

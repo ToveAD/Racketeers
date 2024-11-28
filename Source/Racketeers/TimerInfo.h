@@ -20,13 +20,13 @@ class RACKETEERS_API ATimerInfo : public AInfo
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	static bool GetIsActive(){return ATimerInfo::bIsActive;};
 	UFUNCTION(BlueprintCallable, Blueprintable)
-	static void SetIsActive(bool active){ATimerInfo::bIsActive = active;};
+	static void SetIsActive(const bool Active){ATimerInfo::bIsActive = Active;};
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void Tick(float DeltaSeconds) override;
 	UFUNCTION(BlueprintCallable, Blueprintable)
-	void SetTimeSeconds(float seconds, bool SetIsActive);
+	void SetTimeSeconds(float Seconds, bool SetIsActive);
 	UFUNCTION(BlueprintCallable, Blueprintable)
 	void SetTime_Analog(int32 Minutes, int32 Seconds, bool SetIsActive);
 	

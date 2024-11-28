@@ -64,20 +64,14 @@ public:
 	*/
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnUnloadingMap OnUnloadingMap;
-	
+
+	UPROPERTY()
 	UWidgetSubsystem* WidgetSubsystem;
+	UPROPERTY()
+	int8 UnloadWidgetCount;
 	
 	UFUNCTION(BlueprintCallable)
 	void UnloadWidget();
-
-	int8 UnloadWidgetCount;
-	
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void Respawn();
-	
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void SpawnTeams();
-
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	virtual void BeginPlay() override;
@@ -109,6 +103,7 @@ public:
 	void DecreaseTotalRounds();
 	UFUNCTION(BlueprintCallable)
 	void RoundCompletion();
+	
 	void BroadcastOnPlayerPressed(ETeams Team);
 	void IncrementPlayerCounter();
 	int8 GetTotalRounds();
@@ -119,13 +114,13 @@ public:
 	UPhase* CurrentPhase;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UPhase*> Phases;
-
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 TotalRounds;
 
 private:
 
-	UPROPERTY(EditAnywhere)
-	int8 TotalRounds;
+
+	UPROPERTY()
 	float CurrentTime;
 
 	int GetNextPhaseNumber();

@@ -216,12 +216,12 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 	{
 		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 		if(GS == nullptr) return false;
-		if(GS->RacconsBoatHealth > GS->RedPandasBoatHealth)
+		if(GS->RaccoonsBoatHealth > GS->RedPandasBoatHealth)
 		{
 			GS->RacconsRoundsWon++;
 			return true;
 		}
-		if(GS->RedPandasBoatHealth > GS->RacconsBoatHealth)
+		if(GS->RedPandasBoatHealth > GS->RaccoonsBoatHealth)
 		{
 			GS->RedPandasBoatHealth++;
 			return true;
@@ -444,6 +444,11 @@ void ARacketeersGMBase::LoadLevel()
 	LoadActionInfo.ExecutionFunction = TEXT("RespawnPlayers");
 	LoadActionInfo.UUID = GetUniqueID();
 
+	if(CurrentPhase->State == EPhaseState::Phase_2)
+	{
+		
+	}
+
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
 	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true , false, LoadActionInfo);
@@ -499,26 +504,4 @@ void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
 	AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
 	PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	
-}
-
-
-void ARacketeersGMBase::Respawn_Implementation()
-{
-	//Respawn the player at valid spawn location
-}
-
-bool ARacketeersGMBase::Respawn_Validate()
-{
-	return true;
-}
-
-void ARacketeersGMBase::SpawnTeams_Implementation()
-{
-	RestartGame();
-	//Spawn the entier team at there valid locations
-}
-
-bool ARacketeersGMBase::SpawnTeams_Validate()
-{
-	return true;
 }
