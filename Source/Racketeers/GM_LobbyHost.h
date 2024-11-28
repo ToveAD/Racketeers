@@ -31,10 +31,15 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bEnoughPlayersToStart;
 
+	int NumPlayers = 0;
+
 	// ----------------- Functions -----------------
 	
 	UFUNCTION()
 	virtual void BeginPlay() override;
+
+	//UFUNCTION()
+	virtual void OnPostLogin(AController* NewPlayer) override;
 
 	UFUNCTION()
 	virtual void OnLogout(AController* Exiting);
@@ -53,5 +58,4 @@ public:
 
 	UFUNCTION()
 	void UpdateIfTeamFull();
-	
 };

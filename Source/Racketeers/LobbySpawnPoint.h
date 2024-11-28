@@ -10,6 +10,7 @@
 #include "LobbySpawnPoint.generated.h"
 
 
+class APS_Lobby;
 struct FLobbyInfo;
 class UNiagaraSystem;
 
@@ -60,7 +61,7 @@ public:
 	void RemovePlayer();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_UpdateWidgetInfo(APlayerState* PS);
+	void Multicast_UpdateWidgetInfo(const FString& Name, APS_Lobby* PS);
 
 	UFUNCTION()
 	void OnRep_bShowPlayerInfo();
