@@ -136,7 +136,7 @@ void ARacketeersController::DamageBoat_Implementation(int Amount, ETeams Team)
 		UE_LOG(LogTemp, Error, TEXT("Could Not DamageBoat in ARacketeersController"));
 		return;
 	}
-	State->DamageBoat(50, Team);
+	State->DamageBoat(Amount, Team);
 }
 
 bool ARacketeersController::DamageBoat_Validate(int Amount, ETeams Team)

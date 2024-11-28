@@ -465,6 +465,7 @@ void ARacketeersGMBase::RespawnPlayers()
 
 		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
 		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
+		PS->GetPawn()->SetActorRotation(PlayerStart->GetActorRotation());
 	}
 	TransitionComponent->bIsFinished = true;
 	OnloadedMap.Broadcast();
