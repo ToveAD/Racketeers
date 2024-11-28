@@ -78,54 +78,6 @@ void ARacketeersGameStateBase::BeginPlay()
 
 }
 
-/*
-
-void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
-{
-	if (Team == ETeams::Team_Raccoon)
-	{
-		RacconsWood += Amount;
-		return;
-	}
-	RedPandasWood += Amount;
-}
-
-void ARacketeersGameStateBase::AddToFiber(int Amount, ETeams Team)
-{
-	if (Team == ETeams::Team_Raccoon)
-	{
-		RacconsFiber += Amount;
-		return;
-	}
-	RedPandasFiber += Amount;
-}
-
-void ARacketeersGameStateBase::AddToMetal(int Amount, ETeams Team)
-{
-	if (Team == ETeams::Team_Raccoon)
-	{
-		RacconsMetal += Amount;
-		return;
-	}
-	RedPandasMetal += Amount;
-}
-
-void ARacketeersGameStateBase::RemoveWood(int Amount, ETeams Team)
-{
-	AddToWood(-Amount, Team);
-}
-
-void ARacketeersGameStateBase::RemoveFiber(int Amount, ETeams Team)
-{
-	AddToFiber(-Amount, Team);
-}
-
-void ARacketeersGameStateBase::RemoveMetal(int Amount, ETeams Team)
-{
-	AddToMetal(-Amount, Team);
-}
-*/
-
 void ARacketeersGameStateBase::ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPhase)
 {
 	CurrentPhase = NewPhase;
@@ -186,12 +138,12 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (GM == nullptr || RaccoonsBoatHealth <= 0  ||RedPandasBoatHealth <= 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ARacketeersGameStateBase::DamageBoat GM is equal to nullptr"));
+		//UE_LOG(LogTemp, Error, TEXT("ARacketeersGameStateBase::DamageBoat GM is equal to nullptr"));
 		return;
 	}
 	if(GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "IN STATE DAMAGE BOAT");
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "IN STATE DAMAGE BOAT");
 	}
 
 	if (Team == ETeams::Team_Raccoon)
@@ -214,7 +166,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 		//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 		//RacconsRoundsWon++;
 		GM->RoundCompletion();
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::FromInt(RacconsRoundsWon));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::FromInt(RacconsRoundsWon));
 		
 	}
 }

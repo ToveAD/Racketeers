@@ -2,15 +2,16 @@
 
 
 #include "PC_Lobby.h"
+
+#include "AdvancedSessions.h"
 #include "GM_LobbyHost.h"
+#include "OnlineSubsystem.h"
 #include "PS_Lobby.h"
 #include "Blueprint/UserWidget.h"
 
 void APC_Lobby::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Client_ShowTeamSelectionWidget_Implementation();
 }
 
 // Show the team selection widget
@@ -46,24 +47,14 @@ void APC_Lobby::Client_ShowCosmeticWidget_Implementation()
   // Create the cosmetic selection widget
 }
 
-
-void APC_Lobby::Server_UpdateInfo_Implementation(APlayerController* PC, FLobbyInfo LobbyInfo)
-{
-	if (APS_Lobby* LobbyPlayerState = Cast<APS_Lobby>(PC->PlayerState))
-	{
-		LobbyPlayerState->LobbyInfo = LobbyInfo;
-	}
-}
-
 void APC_Lobby::Server_SpawnPlayer_Implementation(APlayerController* PC, ETeams Team)
 {
+	
 	if (AGM_LobbyHost* GameMode = Cast<AGM_LobbyHost>(GetWorld()->GetAuthGameMode()))
 	{
 		GameMode->SpawnPlayer(PC, Team);
 	}
-
 	Cast<APC_Lobby>(PC)->Client_ShowLobbyWidget();
-
 }
 
 void APC_Lobby::Server_ToggleReady_Implementation()
