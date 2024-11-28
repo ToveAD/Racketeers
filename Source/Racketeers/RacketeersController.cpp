@@ -346,7 +346,7 @@ void ARacketeersController::ServerMultiCastActivateTimer_Implementation()
 	{
 		ARacketeersController* PController = Cast<ARacketeersController>(PState->GetPlayerController());
 		
-		PController->SetTimeSecondsn(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
+		PController->SetTimeSeconds(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
 	}
 }
 
@@ -355,10 +355,10 @@ void ARacketeersController::MultiCastActivateTimer_Implementation(float T, bool 
 
 	ATimerInfo::SetIsActive(SetIsActive);
 	ATimerInfo::SetTime(T);
-	SetTimeSecondsn(T, SetIsActive);
+	SetTimeSeconds(T, SetIsActive);
 }
 
-void ARacketeersController::SetTimeSecondsn_Implementation(float seconds, bool SetIsActive)
+void ARacketeersController::SetTimeSeconds_Implementation(float seconds, bool SetIsActive)
 {
 	
 	ATimerInfo::SetTime(seconds);
@@ -420,6 +420,6 @@ void ARacketeersController::SetServerTimeSeconds_Implementation(ARacketeersContr
 	{
 		return;
 	}
-	Controller->SetTimeSecondsn(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
+	Controller->SetTimeSeconds(ATimerInfo::GetTime(), ATimerInfo::GetIsActive());
 	
 }

@@ -25,8 +25,8 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasGameStats);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsRoundsWon);
-	DOREPLIFETIME(ARacketeersGameStateBase, RacconsBoatHealth);
-	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMaxHealth);
+	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsBoatHealth);
+	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsMaxHealth);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
@@ -36,7 +36,7 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ARacketeersGameStateBase, CurrentPhase);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
-
+	DOREPLIFETIME(ARacketeersGameStateBase, Phase3RandomNumber);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsReady);
 	DOREPLIFETIME(ARacketeersGameStateBase, PandasReady);
@@ -78,7 +78,7 @@ void ARacketeersGameStateBase::BeginPlay()
 		AddResource(3, EResources::METAL, ETeams::Team_Raccoon);
 		AddResource(3, EResources::METAL, ETeams::Team_Panda);
 	}
-	RacconsBoatHealth = RacconsMaxHealth;
+	RaccoonsBoatHealth = RaccoonsMaxHealth;
 	RedPandasBoatHealth = RedPandasMaxHealth;
 
 }
@@ -179,7 +179,7 @@ void ARacketeersGameStateBase::SetMaxHealth_Implementation(ETeams Team, int32 Ma
 {
 	if(Team == ETeams::Team_Raccoon)
 	{
-		RacconsMaxHealth = MaxHealth;
+		RaccoonsMaxHealth = MaxHealth;
 		return;
 	}
 	RedPandasMaxHealth = MaxHealth;
@@ -201,9 +201,9 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 
 	if (Team == ETeams::Team_Raccoon)
 	{
-		RacconsBoatHealth -= Amount;
+		RaccoonsBoatHealth -= Amount;
 		CheckOnRepHealthChanged();
-		if (RacconsBoatHealth <= 0)
+		if (RaccoonsBoatHealth <= 0)
 		{
 			//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 			RedPandasRoundsWon++;
@@ -265,12 +265,15 @@ void ARacketeersGameStateBase::OnRep_PhaseChange()
 	switch (CurrentPhase)
 	{
 		case EPhaseState::Phase_1:
+			OnPhaseOneActive.Broadcast();
 			WS->ActivateWidget("TeamResources");
 			WS->RemoveWidget("Health");
 		break;
 		case EPhaseState::Phase_2:
+			OnPhaseTwoActive.Broadcast();
 			break;
 		case EPhaseState::Phase_3:
+			OnPhaseThreeActive.Broadcast();
 			WS->ActivateWidget("Health");
 			WS->RemoveWidget("TeamResources");
 			break;

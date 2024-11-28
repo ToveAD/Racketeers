@@ -13,12 +13,23 @@
  */
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseOneActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseTwoActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseThreeActive);
+
 UCLASS()
 class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 {
 	GENERATED_BODY()
 
 	public:
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnPhaseOneActive OnPhaseOneActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnPhaseTwoActive OnPhaseTwoActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnPhaseThreeActive OnPhaseThreeActive;
 
 	void BeginPlay() override;
 	
@@ -75,9 +86,9 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	int32 RacconsRoundsWon;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
-	float RacconsMaxHealth;
+	float RaccoonsMaxHealth;
 	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged, BlueprintReadWrite)
-	float RacconsBoatHealth;  // - repnotify
+	float RaccoonsBoatHealth;  // - repnotify
 	
 
 	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged, BlueprintReadWrite)
@@ -99,49 +110,11 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	int32 PandasReady;
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	int32 RaccoonsReady;
-	
 
+	
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	int32 Phase3RandomNumber;
 private:
 	void CheckOnRepHealthChanged();
-
-
-
-	/*
-	 *
-	*UFUNCTION(BlueprintCallable)
-	void AddToWood(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void AddToFiber(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void AddToMetal(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void RemoveWood(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void RemoveFiber(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void RemoveMetal(int Amount, ETeams Team);
-	
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RacconsWood;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RacconsFiber;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RacconsMetal;
-
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RedPandasWood;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RedPandasFiber;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RedPandasMetal;
-
-	*/
-
-	
 };
 
