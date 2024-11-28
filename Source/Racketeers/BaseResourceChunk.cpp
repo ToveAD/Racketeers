@@ -3,6 +3,7 @@
 
 #include "BaseResourceChunk.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 ABaseResourceChunk::ABaseResourceChunk()
 {
@@ -19,6 +20,8 @@ ABaseResourceChunk::ABaseResourceChunk()
 	ProjectileMovement->bAutoActivate = false;
 	ProjectileMovement->InitialSpeed = 1000.0f;
 	ProjectileMovement->MaxSpeed = 10000.0f;
+
+	bReplicates = true;
 	
 }
 
@@ -38,6 +41,13 @@ void ABaseResourceChunk::BeginPlay()
 	// 	ProjectileMovement->Velocity = velocity*throwForce;
 	// else
 	// 	ProjectileMovement->Velocity = GetActorUpVector()* throwForce;
+}
+
+void ABaseResourceChunk::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABaseResourceChunk, LastOwner);
 }
 
 // Called every frame
