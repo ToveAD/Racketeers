@@ -44,10 +44,6 @@ public:
 	void Client_ShowCosmeticWidget();
 
 	// --------------------------------------------------------------------------------------------
-	
-	// Update the player info in PlayerState on server
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_UpdateInfo(APlayerController* PC, FLobbyInfo LobbyInfo);
 
 	// Spawn the player on server
 	UFUNCTION(Server, Reliable, BlueprintCallable)

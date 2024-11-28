@@ -35,7 +35,7 @@ struct FLobbyInfo
 
 	FLobbyInfo()
 	{
-		PlayerName = "";
+		PlayerName = "DEFAULT NAME";
 		Team = ETeams::NONE;
 		TeamID = -1;
 		bIsReady = false;
@@ -51,6 +51,8 @@ class RACKETEERS_API APS_Lobby : public APS_Base
 	GENERATED_BODY()
 
 public:
+
+	APS_Lobby();
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Lobby")
 	FLobbyInfo LobbyInfo = FLobbyInfo();
