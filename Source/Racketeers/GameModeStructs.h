@@ -70,18 +70,18 @@ struct FWidgetClassAndName
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FName Name;
+	FName Name = "";
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UUserWidget*  Widget;
+	UUserWidget*  Widget = nullptr;
 };
 USTRUCT(BlueprintType)
 struct FTimer
 {
 	GENERATED_BODY();
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Minutes;
+	int Minutes = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Seconds;
+	int Seconds = 0;
 	
 };
 
@@ -104,15 +104,16 @@ enum EPart
 	Cannon_2,
 	Sail_1,
 	Sail_2,
+	NONE,
 };
 
 USTRUCT(BlueprintType)
 struct FParts
 {
 	GENERATED_BODY()
-	EPart Hull;
-	EPart Cannon;
-	EPart Sail;
+	EPart Hull = NONE;
+	EPart Cannon = NONE;
+	EPart Sail = NONE;
 };
 
 USTRUCT(BlueprintType)
@@ -120,15 +121,15 @@ struct FGameStats
 {
 	GENERATED_BODY();
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Pushes;
+	int32 Pushes = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Falls;
+	int32 Falls = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 PartConstructed;
+	int32 PartConstructed = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BoatDamageDone;
+	int32 BoatDamageDone = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Misses;
+	int32 Misses = 0;
 };
 
 

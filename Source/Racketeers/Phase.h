@@ -39,7 +39,7 @@ enum EPhaseState
 	Phase_3
 };
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable, BlueprintType)
 class RACKETEERS_API UPhase : public UActorComponent
 {
 public:
@@ -53,9 +53,11 @@ public:
 
 	UPROPERTY()
 	float TimeLimit;
-	UPROPERTY(BlueprintReadWrite, Category= "State")
+	UPROPERTY(BlueprintReadWrite, Category= "Phase Data")
 	TEnumAsByte<EPhaseState> State;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category= "Phase Data")
 	FString LevelToLoad;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Phase Data")
 	FString StartPhaseName;
 
 	//TArray<FTransform> SpawnsTeamA;
