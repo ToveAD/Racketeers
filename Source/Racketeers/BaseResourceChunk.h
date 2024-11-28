@@ -24,6 +24,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -46,7 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ResourceInfo")
 	int value;
 	//ResourceChunk LastOwner, is used to remember the last actor who held the ResourceChunk 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ResourceInfo")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ResourceInfo", Replicated)
 	AActor* LastOwner = nullptr;
 	//Bool to prevent multiple actors to hold the ResourceChunk
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ResourceInfo")
