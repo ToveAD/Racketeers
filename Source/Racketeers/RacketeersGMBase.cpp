@@ -103,7 +103,7 @@ void ARacketeersGMBase::BeginPlay()
 	Phase_2->StartPhaseName = "P2";
 	
 	Phase_3->State = EPhaseState::Phase_3;
-	Phase_3->TimeLimit = 120.0f;
+	Phase_3->TimeLimit = 180.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
 
@@ -172,17 +172,8 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 		//CurrentTime += DeltaSeconds;
 	}
 }
-
 void ARacketeersGMBase::RoundCompletion()
 {
-	//CheckIfGameIsOver
-	//EndGame
-
-	//CheckWinnerOfRound
-	//LoadTransitionScreen (Eller en Level) - Show Scores, Everyone Press button to continue
-		
-	//Unload, Loads And Reset Players
-
 	CurrentTime = 0;
 
 	TimerInfo->SetIsActive(false);
@@ -219,6 +210,7 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 		if(GS->RaccoonsBoatHealth > GS->RedPandasBoatHealth)
 		{
 			GS->RacconsRoundsWon++;
+			
 			return true;
 		}
 		if(GS->RedPandasBoatHealth > GS->RaccoonsBoatHealth)
@@ -342,7 +334,7 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 	{
 		int AvailibleRounds = TotalRounds - (GS->RacconsRoundsWon + GS->RedPandasRoundsWon);
 		int8 RoundsPlayed = GS->RacconsRoundsWon + GS->RedPandasRoundsWon;
-		if(RoundsPlayed == GetTotalRounds())
+		if(RoundsPlayed >= GetTotalRounds())
 		{
 			return true; 
 		}
@@ -371,16 +363,12 @@ bool ARacketeersGMBase::EndGame()
 {
 
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
-	/*
+	
 	FGameStatsPackage Package{
-		GS->RacconsWood,
-		GS->RacconsFiber,
-		GS->RacconsMetal,
+		GS->RacconResource,
 		GS->RacconsRoundsWon,
-		GS->RacconsBoatHealth,
-		GS->RedPandasWood,
-		GS->RedPandasFiber,
-		GS->RedPandasMetal,
+		GS->RaccoonsBoatHealth,
+		GS->RedPandasResource,
 		GS->RedPandasRoundsWon,
 		GS->RedPandasBoatHealth
 	};
@@ -394,11 +382,10 @@ bool ARacketeersGMBase::EndGame()
 		Package.WonTeam = ETeams::Team_Raccoon;
 	}
 
-	Package.WonTeam = ETeams::Team_Raccoon;
+	Package.WonTeam = ETeams::NONE;
 
 	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
 	GI->SetDataToTransfer(Package);
-	*/
 	ProcessServerTravel("VictoryMap_GamePlay");
 
 	return true;
@@ -478,6 +465,7 @@ void ARacketeersGMBase::RespawnPlayers()
 
 		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
 		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
+		PS->GetPawn()->SetActorRotation(PlayerStart->GetActorRotation());
 	}
 	TransitionComponent->bIsFinished = true;
 	OnloadedMap.Broadcast();
