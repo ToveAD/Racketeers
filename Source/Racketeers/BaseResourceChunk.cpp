@@ -62,7 +62,7 @@ bool ABaseResourceChunk::GroundCheck_Implementation()
 	if(!GetWorld()) return false;
 
 	FVector Start = GetActorLocation();
-	FVector End = Start - FVector(0, 0, 25.0f);
+	FVector End = Start - FVector(0, 0, 100.0f);
 
 	FHitResult HitResult;
 

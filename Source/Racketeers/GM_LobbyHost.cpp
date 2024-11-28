@@ -15,8 +15,20 @@ void AGM_LobbyHost::BeginPlay()
 	SetUpSpawnPositions();
 }
 
+void AGM_LobbyHost::OnPostLogin(AController* NewPlayer)
+{
+	if (APC_Lobby* LobbyPC = Cast<APC_Lobby>(NewPlayer))
+	{
+		// Call the client RPC on the specific PlayerController
+		LobbyPC->Client_ShowTeamSelectionWidget();
+	}
+}
+
+
 void AGM_LobbyHost::OnLogout(AController* Exiting)
 {
+	RemovePlayer(Cast<APC_Lobby>(Exiting));
+
 }
 
 void AGM_LobbyHost::SetUpSpawnPositions()
@@ -62,13 +74,13 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
         {
         	
             // If the player is already on the team, return
-            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team != Team)
+            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team == Team)
             {
                 return;
             }
 
             // If the player already has a spawn point on the other team, remove the player from the spawn point
-            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team == Team)
+            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team != Team)
             {
                 RemovePlayer(PC);
             }
@@ -80,10 +92,15 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 		    if (ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP); SpawnPoint && SpawnPoint->PlayerController == nullptr)
     		{
     			PlayerController->SpawnPoint = SpawnPoint;
-    			SpawnPoint->SpawnPlayer(PC, Team);
+    			SpawnPoint->SpawnPlayer(PlayerController, Team);
+
+		    	APS_Lobby* PS = Cast<APS_Lobby>(PlayerController->PlayerState);
+		    	
+		    	PS->LobbyInfo.Team = Team;
+		    	PS->LobbyInfo.PlayerName = PlayerController->PlayerState->GetPlayerName();
 		    	
 		    	// Update the player info in the widget for all players
-		    	SpawnPoint->Multicast_UpdateWidgetInfo(Cast<APS_Lobby>(PlayerController->PlayerState));
+		    	SpawnPoint->Multicast_UpdateWidgetInfo(PS->LobbyInfo.PlayerName, PS);
 		    	
 				UpdateIfTeamFull();
     			return;
