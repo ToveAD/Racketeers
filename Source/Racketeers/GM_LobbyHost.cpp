@@ -15,6 +15,16 @@ void AGM_LobbyHost::BeginPlay()
 	SetUpSpawnPositions();
 }
 
+void AGM_LobbyHost::OnPostLogin(AController* NewPlayer)
+{
+	if (APC_Lobby* LobbyPC = Cast<APC_Lobby>(NewPlayer))
+	{
+		// Call the client RPC on the specific PlayerController
+		LobbyPC->Client_ShowTeamSelectionWidget();
+	}
+}
+
+
 void AGM_LobbyHost::OnLogout(AController* Exiting)
 {
 	RemovePlayer(Cast<APC_Lobby>(Exiting));
@@ -64,13 +74,13 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
         {
         	
             // If the player is already on the team, return
-            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team != Team)
+            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team == Team)
             {
                 return;
             }
 
             // If the player already has a spawn point on the other team, remove the player from the spawn point
-            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team == Team)
+            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team != Team)
             {
                 RemovePlayer(PC);
             }
@@ -82,12 +92,15 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 		    if (ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP); SpawnPoint && SpawnPoint->PlayerController == nullptr)
     		{
     			PlayerController->SpawnPoint = SpawnPoint;
-		    	Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team = Team;
-    			SpawnPoint->SpawnPlayer(PC, Team);
+    			SpawnPoint->SpawnPlayer(PlayerController, Team);
 
-		    	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Player %s spawned on team %s"), *PlayerController->PlayerState->GetPlayerName(), Team == ETeams::Team_Panda ? TEXT("Panda") : TEXT("Raccoon")));
+		    	APS_Lobby* PS = Cast<APS_Lobby>(PlayerController->PlayerState);
+		    	
+		    	PS->LobbyInfo.Team = Team;
+		    	PS->LobbyInfo.PlayerName = PlayerController->PlayerState->GetPlayerName();
+		    	
 		    	// Update the player info in the widget for all players
-		    	SpawnPoint->Multicast_UpdateWidgetInfo(Cast<APS_Lobby>(PlayerController->PlayerState));
+		    	SpawnPoint->Multicast_UpdateWidgetInfo(PS->LobbyInfo.PlayerName, PS);
 		    	
 				UpdateIfTeamFull();
     			return;
