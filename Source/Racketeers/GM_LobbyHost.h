@@ -51,6 +51,9 @@ public:
 	void SpawnPlayer(APlayerController* PC, ETeams Team);
 
 	UFUNCTION()
+	static UTexture2D* GetSteamAvatar(APlayerController* PC);
+
+	UFUNCTION()
 	void RemovePlayer(APlayerController* PC);
 
 	UFUNCTION()

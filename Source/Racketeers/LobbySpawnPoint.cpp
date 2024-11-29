@@ -78,14 +78,13 @@ void ALobbySpawnPoint::RemovePlayer()
 	Player->Destroy();
 }
 
-void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(const FString& Name, APS_Lobby* PS)
+void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(const FLobbyInfo& NewLobbyInfo)
 {
 		if (LobbyInfoWidget)
 		{
 			if (UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject()))
 			{
-				//GEngine->AddOnScreenDebugMessage( -1, 5.f, FColor::Green, Cast<APS_Lobby>(PS)->LobbyInfo.PlayerName + " has joined the " + (Cast<APS_Lobby>(PS)->LobbyInfo.Team == ETeams::Team_Panda ? "Panda" : "Raccoon") + " team");
-				LobbyInfo->UpdateLobbyInfo(Name, PS);
+				LobbyInfo->UpdateLobbyInfo(NewLobbyInfo);
 			}
 		}
 }
