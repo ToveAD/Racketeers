@@ -28,15 +28,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void Scurry(bool bIsScurrying);
 
+	// Movement properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float MovementSpeed = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float RotationSpeed = 5.0f; // Speed of rotation smoothing
+
 private:
 	void RotateToFaceDirection(const FVector2D& InputDirection);
 	void MoveForward(float DeltaTime, bool bScurryActive);
 	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
 	void FindCameraAndSpringArm();
-
-	// Movement properties
-	UPROPERTY(EditAnywhere, Category = "Movement")
-	float MovementSpeed = 600.0f;
 
 	float CurrentSpeed = 0.0f; // Current movement speed of the boat
 
@@ -45,10 +48,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float DecelerationRate = 50.0f; // Rate at which the boat slows down (units per second)
-
-	UPROPERTY(EditAnywhere, Category = "Movement")
-	float RotationSpeed = 5.0f; // Speed of rotation smoothing
-
+	
 	FVector2D MovementInput = FVector2D::ZeroVector;
 	
 	bool bShouldMove;
