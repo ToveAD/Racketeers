@@ -48,7 +48,7 @@ void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 		PlayerController = PC;
 	}
 
-	if (HasAuthority())
+if (HasAuthority() && GetNetMode() == NM_ListenServer)
 	{
 		if (SpawnVFX)
 		{
@@ -68,14 +68,17 @@ void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 // Remove the player from the spawn point
 void ALobbySpawnPoint::RemovePlayer()
 {
-	if (HasAuthority())
+	if(Player != nullptr && PlayerController != nullptr)
 	{
-		LobbyInfoWidget->SetVisibility(false);
-		bShowPlayerInfo = false;
-	}
+		if (HasAuthority() && GetNetMode() == NM_ListenServer)
+		{
+			LobbyInfoWidget->SetVisibility(false);
+			bShowPlayerInfo = false;
+		}
 
-	PlayerController = nullptr;
-	Player->Destroy();
+		PlayerController = nullptr;
+		Player->Destroy();
+	}
 }
 
 void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(const FLobbyInfo& NewLobbyInfo)

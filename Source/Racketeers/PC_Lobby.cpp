@@ -14,6 +14,15 @@ void APC_Lobby::BeginPlay()
 	Super::BeginPlay();
 }
 
+void APC_Lobby::AnotherPlayerJoined_Implementation(const FString& TestString)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TestString);
+
+	// Add logic for the client to show that a new player has joined
+}
+
+
+
 // Show the team selection widget
 void APC_Lobby::Client_ShowTeamSelectionWidget_Implementation()
 {
