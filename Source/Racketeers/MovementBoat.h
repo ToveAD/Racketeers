@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float RotationSpeed = 5.0f; // Speed of rotation smoothing
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
+	float DecelerationRate = 50.0f; // Rate at which the boat slows down (units per second)
+	
 private:
 	void RotateToFaceDirection(const FVector2D& InputDirection);
 	void MoveForward(float DeltaTime, bool bScurryActive);
@@ -46,8 +49,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float ScurryAmount = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Movement")
-	float DecelerationRate = 50.0f; // Rate at which the boat slows down (units per second)
 	
 	FVector2D MovementInput = FVector2D::ZeroVector;
 	
