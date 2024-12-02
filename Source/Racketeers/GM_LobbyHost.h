@@ -7,6 +7,8 @@
 #include "LobbySpawnPoint.h"
 #include "GM_LobbyHost.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerJoined, const FString&, PlayerName);
+
 /**
  * 
  */
@@ -17,6 +19,11 @@ class RACKETEERS_API AGM_LobbyHost : public AGM_Base
 
 public:
 
+	// ----------------- Delegates -----------------
+
+	UPROPERTY()
+	FOnPlayerJoined OnPlayerJoined;
+	
 	// ----------------- Variables -----------------
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -51,7 +58,10 @@ public:
 	void SpawnPlayer(APlayerController* PC, ETeams Team);
 
 	UFUNCTION()
-	void RemovePlayer(APlayerController* PC);
+	static UTexture2D* GetSteamAvatar(APlayerController* PC);
+
+	UFUNCTION()
+	static void RemovePlayer(APlayerController* PC);
 
 	UFUNCTION()
 	void UpdatePlayerPositions(ETeams Team);

@@ -2,7 +2,8 @@
 
 
 #include "GM_LobbyHost.h"
-
+#include "AdvancedSessionsLibrary.h"
+#include "AdvancedSteamFriendsLibrary.h"
 #include "GS_Lobby.h"
 #include "LobbySpawnPoint.h"
 #include "PC_Lobby.h"
@@ -19,6 +20,7 @@ void AGM_LobbyHost::OnPostLogin(AController* NewPlayer)
 {
 	if (APC_Lobby* LobbyPC = Cast<APC_Lobby>(NewPlayer))
 	{
+		OnPlayerJoined.AddDynamic(LobbyPC, &APC_Lobby::AnotherPlayerJoined);
 		// Call the client RPC on the specific PlayerController
 		LobbyPC->Client_ShowTeamSelectionWidget();
 	}
@@ -27,7 +29,8 @@ void AGM_LobbyHost::OnPostLogin(AController* NewPlayer)
 
 void AGM_LobbyHost::OnLogout(AController* Exiting)
 {
-	RemovePlayer(Cast<APC_Lobby>(Exiting));
+	
+	//RemovePlayer(Cast<APC_Lobby>(Exiting));
 
 }
 
@@ -66,9 +69,9 @@ void AGM_LobbyHost::SetUpSpawnPositions()
 // Spawn the player at the first available spawn point and set spawn point in player controller
 void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 {
+	
     if (APC_Lobby* PlayerController = Cast<APC_Lobby>(PC))
     {
-    	
         // Handle the case where the player has a spawn point
         if (PlayerController->SpawnPoint != nullptr)
         {
@@ -100,7 +103,7 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 		    	PS->LobbyInfo.PlayerName = PlayerController->PlayerState->GetPlayerName();
 		    	
 		    	// Update the player info in the widget for all players
-		    	SpawnPoint->Multicast_UpdateWidgetInfo(PS->LobbyInfo.PlayerName, PS);
+		    	SpawnPoint->Multicast_UpdateWidgetInfo(PS->LobbyInfo);
 		    	
 				UpdateIfTeamFull();
     			return;
@@ -109,9 +112,28 @@ void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
     }
 }
 
+UTexture2D* AGM_LobbyHost::GetSteamAvatar(APlayerController* PC)
+{
+	FBPUniqueNetId NetID;
+	//UAdvancedSessionsLibrary::GetUniqueNetIDFromPlayerState(PC->PlayerState, NetID);
+	//EBlueprintAsyncResultSwitch ResultSwitch;
+	//UTexture2D* AvatarTexture = UAdvancedSteamFriendsLibrary::GetSteamFriendAvatar(NetID, ResultSwitch, SteamAvatarSize::SteamAvatar_Medium);
+
+	/*if(ResultSwitch == EBlueprintAsyncResultSwitch::OnSuccess)
+	{
+		return AvatarTexture;
+	}
+	else
+	{
+		return UAdvancedSteamFriendsLibrary::GetSteamFriendAvatar(NetID, ResultSwitch, SteamAvatarSize::SteamAvatar_Medium);
+	}*/
+	return nullptr;
+}
+
 
 void AGM_LobbyHost::RemovePlayer(APlayerController* PC)
 {
+	
 	if (APC_Lobby* PlayerController = Cast<APC_Lobby>(PC))
 	{
 		if (PlayerController->SpawnPoint)
