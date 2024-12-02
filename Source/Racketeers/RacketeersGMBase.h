@@ -107,6 +107,7 @@ public:
 	void BroadcastOnPlayerPressed(ETeams Team);
 	void IncrementPlayerCounter();
 	int8 GetTotalRounds();
+	TEnumAsByte<EPhaseState> SwitchIncomingState();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGameActive;
