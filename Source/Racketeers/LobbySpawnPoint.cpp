@@ -35,16 +35,17 @@ ALobbySpawnPoint::ALobbySpawnPoint()
 // Spawn the player at the spawn point
 void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 {
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
 	if (Team == ETeams::Team_Panda)
 	{
-		Player = GetWorld()->SpawnActor<AActor>(PandaPlayerClass, PlayerSpawnPoint->GetComponentLocation(),
-		                                        PlayerSpawnPoint->GetComponentRotation());
+		Player = GetWorld()->SpawnActor<AActor>(PandaPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation(), SpawnParams);
 		PlayerController = PC;
 	}
 	else if (Team == ETeams::Team_Raccoon)
 	{
-		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(),
-		                                        PlayerSpawnPoint->GetComponentRotation());
+		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation(), SpawnParams);
 		PlayerController = PC;
 	}
 
@@ -81,13 +82,13 @@ void ALobbySpawnPoint::RemovePlayer()
 	}
 }
 
-void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(const FLobbyInfo& NewLobbyInfo)
+void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(const FLobbyInfo& NewLobbyInfo, APlayerState* PS)
 {
 		if (LobbyInfoWidget)
 		{
 			if (UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject()))
 			{
-				LobbyInfo->UpdateLobbyInfo(NewLobbyInfo);
+				LobbyInfo->UpdateLobbyInfo(NewLobbyInfo, PS);
 			}
 		}
 }

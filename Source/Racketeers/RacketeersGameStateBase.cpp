@@ -34,6 +34,7 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
 	DOREPLIFETIME(ARacketeersGameStateBase, CurrentPhase);
+	DOREPLIFETIME(ARacketeersGameStateBase, IncomingPhase);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase3RandomNumber);
@@ -162,7 +163,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 			//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 			//RedPandasRoundsWon++;
 			GM->RoundCompletion();
-			
+			GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "GAME FINISHED");
 		}
 		return;
 	}
@@ -173,7 +174,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 		//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 		//RacconsRoundsWon++;
 		GM->RoundCompletion();
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::FromInt(RacconsRoundsWon));
+		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "GAME FINISHED");
 		
 	}
 }
@@ -205,6 +206,22 @@ void ARacketeersGameStateBase::OnRep_PickUp()
 	}
 	GetGameInstance()->GetSubsystem<UWidgetSubsystem>()->OnPickUp.Broadcast();
 
+}
+
+void ARacketeersGameStateBase::OnRep_IncomingPhaseChange()
+{
+	switch (IncomingPhase)
+	{
+	case EPhaseState::Phase_1:
+		OnIncomingPhaseOneActive.Broadcast();
+		break;
+	case EPhaseState::Phase_2:
+		OnIncomingPhaseTwoActive.Broadcast();
+		break;
+	case EPhaseState::Phase_3:
+		OnIncomingPhaseThreeActive.Broadcast();
+		break;
+	}
 }
 
 void ARacketeersGameStateBase::OnRep_PhaseChange()
