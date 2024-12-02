@@ -16,6 +16,10 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseOneActive);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseTwoActive);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseThreeActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseOneActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseTwoActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseThreeActive);
+
 
 UCLASS()
 class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
@@ -31,6 +35,13 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnPhaseThreeActive OnPhaseThreeActive;
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseOneActive OnIncomingPhaseOneActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseTwoActive OnIncomingPhaseTwoActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseThreeActive OnIncomingPhaseThreeActive;
+
 	void BeginPlay() override;
 	
 	UFUNCTION(BlueprintCallable)
@@ -45,6 +56,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	void OnRep_PickUp();
 	UFUNCTION(BlueprintCallable)
 	void OnRep_PhaseChange();
+	UFUNCTION(BlueprintCallable)
+	void OnRep_IncomingPhaseChange();
 	UFUNCTION(BlueprintCallable)
 	void OnRep_HealthChanged();
 	UFUNCTION(BlueprintCallable)
@@ -69,6 +82,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	FResources RedPandasResource;
 	UPROPERTY(ReplicatedUsing=OnRep_PhaseChange, BlueprintReadWrite)
 	TEnumAsByte<EPhaseState> CurrentPhase;
+	UPROPERTY(ReplicatedUsing=OnRep_IncomingPhaseChange, BlueprintReadWrite)
+	TEnumAsByte<EPhaseState> IncomingPhase;
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FGameStats RaccoonsGameStats;
