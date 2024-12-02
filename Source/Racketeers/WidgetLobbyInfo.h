@@ -21,5 +21,5 @@ public:
 	FLobbyInfo LobbyInfo;
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "LobbyInfo")
-	void UpdateLobbyInfo(const FString& PlayerName, APS_Lobby* PS);
+	void UpdateLobbyInfo(const FLobbyInfo& NewLobbyInfo);
 };

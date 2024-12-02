@@ -30,6 +30,11 @@ public:
 	UFUNCTION()
 	virtual void BeginPlay() override;
 
+	// ----------------------------Delegate Called--------------------------------------------
+	
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void AnotherPlayerJoined(const FString& TestString);
+
 	// ----------------------------Widget Functions--------------------------------------------
 	
 	// Show the team selection widget

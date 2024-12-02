@@ -34,6 +34,7 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
 	DOREPLIFETIME(ARacketeersGameStateBase, CurrentPhase);
+	DOREPLIFETIME(ARacketeersGameStateBase, IncomingPhase);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase3RandomNumber);
@@ -46,6 +47,13 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 void ARacketeersGameStateBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	AddPart(ETeams::Team_Raccoon, EPart::Cannon_0);
+	AddPart(ETeams::Team_Raccoon, EPart::Hull_0);
+	AddPart(ETeams::Team_Raccoon, EPart::Sail_0);
+	AddPart(ETeams::Team_Panda, EPart::Cannon_0);
+	AddPart(ETeams::Team_Panda, EPart::Hull_0);
+	AddPart(ETeams::Team_Panda, EPart::Sail_0);
 
 
 	
@@ -155,7 +163,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 			//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 			//RedPandasRoundsWon++;
 			GM->RoundCompletion();
-			
+			GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "GAME FINISHED");
 		}
 		return;
 	}
@@ -166,7 +174,7 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 		//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
 		//RacconsRoundsWon++;
 		GM->RoundCompletion();
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::FromInt(RacconsRoundsWon));
+		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "GAME FINISHED");
 		
 	}
 }
@@ -198,6 +206,22 @@ void ARacketeersGameStateBase::OnRep_PickUp()
 	}
 	GetGameInstance()->GetSubsystem<UWidgetSubsystem>()->OnPickUp.Broadcast();
 
+}
+
+void ARacketeersGameStateBase::OnRep_IncomingPhaseChange()
+{
+	switch (IncomingPhase)
+	{
+	case EPhaseState::Phase_1:
+		OnIncomingPhaseOneActive.Broadcast();
+		break;
+	case EPhaseState::Phase_2:
+		OnIncomingPhaseTwoActive.Broadcast();
+		break;
+	case EPhaseState::Phase_3:
+		OnIncomingPhaseThreeActive.Broadcast();
+		break;
+	}
 }
 
 void ARacketeersGameStateBase::OnRep_PhaseChange()
@@ -233,7 +257,7 @@ void ARacketeersGameStateBase::SetRandomNumber(int Number)
 	Phase2RandomNumber = Number;
 }
 
-void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETeams Team)
+void ARacketeersGameStateBase::AddResource_Implementation(int Amount, EResources Resource, ETeams Team)
 {
 	if (Team == ETeams::Team_Raccoon)
 	{
@@ -290,7 +314,7 @@ void ARacketeersGameStateBase::AddToStats(int Amount, EGameStats Stat, ETeams Te
 }
 
 //Callas på clienten sen på servern
-void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, ETeams Team)
+void ARacketeersGameStateBase::RemoveResource_Implementation(int Amount, EResources Resource, ETeams Team)
 {
 	if (Team == ETeams::Team_Raccoon)
 	{
@@ -305,7 +329,7 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 		{
 			material[0] = 0;
 		}
-		if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole() == ENetRole::ROLE_Authority)
+		if(this->GetLocalRole() == ENetRole::ROLE_Authority)
 		{
 			OnRep_PickUp();
 		}
@@ -323,7 +347,7 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 	{
 		material[0] = 0;
 	}
-	if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole()  == ENetRole::ROLE_Authority)
+	if(this->GetLocalRole() == ENetRole::ROLE_Authority)
 	{
 		OnRep_PickUp();
 	}

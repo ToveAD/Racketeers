@@ -10,6 +10,7 @@
 #include "RacketeersGameStateBase.h"
 #include "TransitionComponent.h"
 #include "WidgetSubsystem.h"
+#include "Engine/LevelStreamingDynamic.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
@@ -189,6 +190,7 @@ void ARacketeersGMBase::RoundCompletion()
 	}
 	//if(GEngine)
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check Winner of Round");
+	SwitchIncomingState();
 	CheckWinnerOfRound();
 
 	//if(GEngine)
@@ -416,6 +418,23 @@ int8 ARacketeersGMBase::GetTotalRounds()
 	return TotalRounds;
 }
 
+TEnumAsByte<EPhaseState> ARacketeersGMBase::SwitchIncomingState()
+{
+	TEnumAsByte<EPhaseState> NewPhase = CurrentPhase->State;
+	if(NewPhase == EPhaseState::Phase_3)
+	{
+		NewPhase = EPhaseState::Phase_1;
+	}else
+	{
+		NewPhase = Phases[CurrentPhase->State+1]->State;
+	}
+	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+	GS->IncomingPhase = NewPhase;
+	GS->OnRep_IncomingPhaseChange();
+
+	return NewPhase;
+}
+
 void ARacketeersGMBase::UnloadLevel(FName name, FLatentActionInfo& ActionInfo)
 {
 	UGameplayStatics::UnloadStreamLevel(GetWorld(), name, ActionInfo, false);
@@ -436,9 +455,12 @@ void ARacketeersGMBase::LoadLevel()
 		
 	}
 
+	bool bStreamingSucceded = false;
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
-	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true , false, LoadActionInfo);
+	//ULevelStreamingDynamic::LoadLevelInstance(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, FVector::ZeroVector,FRotator::ZeroRotator,bStreamingSucceded);
+
+	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true,false, LoadActionInfo);
 }
 
 void ARacketeersGMBase::RespawnPlayers()
@@ -474,9 +496,10 @@ void ARacketeersGMBase::RespawnPlayers()
 	
 }
 
-void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
+void ARacketeersGMBase::RespawnPlayer(APlayerState* PState)
 {
-	APS_Base* PS = PController->GetPlayerState<APS_Base>();
+	if(PState == nullptr) return;
+	APS_Base* PS = Cast<APS_Base>(PState);
 	FString TeamName;
 
 	if(PS->PlayerInfo.Team == ETeams::Team_Raccoon)
@@ -493,3 +516,4 @@ void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
 	PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	
 }
+
