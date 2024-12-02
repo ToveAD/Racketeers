@@ -474,9 +474,10 @@ void ARacketeersGMBase::RespawnPlayers()
 	
 }
 
-void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
+void ARacketeersGMBase::RespawnPlayer(APlayerState* PState)
 {
-	APS_Base* PS = PController->GetPlayerState<APS_Base>();
+	if(PState == nullptr) return;
+	APS_Base* PS = Cast<APS_Base>(PState);
 	FString TeamName;
 
 	if(PS->PlayerInfo.Team == ETeams::Team_Raccoon)
@@ -493,3 +494,4 @@ void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
 	PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	
 }
+

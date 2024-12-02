@@ -233,7 +233,7 @@ void ARacketeersGameStateBase::SetRandomNumber(int Number)
 	Phase2RandomNumber = Number;
 }
 
-void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETeams Team)
+void ARacketeersGameStateBase::AddResource_Implementation(int Amount, EResources Resource, ETeams Team)
 {
 	if (Team == ETeams::Team_Raccoon)
 	{
@@ -290,7 +290,7 @@ void ARacketeersGameStateBase::AddToStats(int Amount, EGameStats Stat, ETeams Te
 }
 
 //Callas på clienten sen på servern
-void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, ETeams Team)
+void ARacketeersGameStateBase::RemoveResource_Implementation(int Amount, EResources Resource, ETeams Team)
 {
 	if (Team == ETeams::Team_Raccoon)
 	{
@@ -305,7 +305,7 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 		{
 			material[0] = 0;
 		}
-		if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole() == ENetRole::ROLE_Authority)
+		if(this->GetLocalRole() == ENetRole::ROLE_Authority)
 		{
 			OnRep_PickUp();
 		}
@@ -323,7 +323,7 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 	{
 		material[0] = 0;
 	}
-	if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole()  == ENetRole::ROLE_Authority)
+	if(this->GetLocalRole() == ENetRole::ROLE_Authority)
 	{
 		OnRep_PickUp();
 	}

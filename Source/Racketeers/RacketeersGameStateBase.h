@@ -49,12 +49,12 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	void OnRep_HealthChanged();
 	UFUNCTION(BlueprintCallable)
 	void SetRandomNumber(int Number);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 	UFUNCTION(BlueprintCallable)
 	void AddToStats(int Amount, EGameStats Stat, ETeams Team);
-	UFUNCTION(BlueprintCallable)
-	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 	UFUNCTION(BlueprintCallable)
 	int32 GetTeamResources(ETeams Team, EResources Resource) const;
 	
