@@ -48,6 +48,13 @@ void ARacketeersGameStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AddPart(ETeams::Team_Raccoon, EPart::Cannon_0);
+	AddPart(ETeams::Team_Raccoon, EPart::Hull_0);
+	AddPart(ETeams::Team_Raccoon, EPart::Sail_0);
+	AddPart(ETeams::Team_Panda, EPart::Cannon_0);
+	AddPart(ETeams::Team_Panda, EPart::Hull_0);
+	AddPart(ETeams::Team_Panda, EPart::Sail_0);
+
 
 	
 	UBaseGameInstance* GI = Cast<UBaseGameInstance>(GetGameInstance());

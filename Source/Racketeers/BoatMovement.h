@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "BoatSettings.h"
 #include "InputMappingContext.h" // Include for input mapping contexts
 #include "BoatMovement.generated.h"
 
@@ -18,6 +19,10 @@ protected:
 
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	// Struct variable exposed to Blueprints
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boat Settings")
+	FBoatSettings BoatSettings;
 
 	// BlueprintCallable functions for Acceleration and Steering
 	UFUNCTION(BlueprintCallable, Category="Movement")
