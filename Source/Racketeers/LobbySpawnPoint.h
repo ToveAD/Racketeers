@@ -61,7 +61,7 @@ public:
 	void RemovePlayer();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_UpdateWidgetInfo(const FLobbyInfo& NewLobbyInfo);
+	void Multicast_UpdateWidgetInfo(const FLobbyInfo& NewLobbyInfo, APlayerState* PS);
 
 	UFUNCTION()
 	void OnRep_bShowPlayerInfo();

@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
-#include "LobbySpawnPoint.h"
 #include "GameFramework/PlayerController.h"
 #include "PC_Lobby.generated.h"
 
+class ALobbySpawnPoint;
 /**
  * 
  */
@@ -29,11 +29,6 @@ public:
 
 	UFUNCTION()
 	virtual void BeginPlay() override;
-
-	// ----------------------------Delegate Called--------------------------------------------
-	
-	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void AnotherPlayerJoined(const FString& TestString);
 
 	// ----------------------------Widget Functions--------------------------------------------
 	
@@ -57,12 +52,5 @@ public:
 	// Toggle the player's ready status
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_ToggleReady();
-
-
-
-	
-
-
-
 	
 };
