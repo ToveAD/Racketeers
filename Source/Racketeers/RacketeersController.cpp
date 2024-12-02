@@ -163,18 +163,18 @@ void ARacketeersController::GetLifetimeReplicatedProps(TArray<class FLifetimePro
 	
 }
 
-void ARacketeersController::ServerRespawnPlayer_Implementation(APlayerController* PController)
+void ARacketeersController::ServerRespawnPlayer_Implementation(APlayerState* PSState)
 {
 	if(HasAuthority())
 	{
 		ARacketeersGMBase* GMBase = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
 
 		if(GMBase == nullptr) return;
-		GMBase->RespawnPlayer(PController);
+		GMBase->RespawnPlayer(PSState);
 	}
 }
 
-bool ARacketeersController::ServerRespawnPlayer_Validate(APlayerController* PController)
+bool ARacketeersController::ServerRespawnPlayer_Validate(APlayerState* PSState)
 {
 	return true;
 }
