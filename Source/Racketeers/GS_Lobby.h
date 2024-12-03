@@ -22,6 +22,9 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Lobby")
 	bool bPandaFull = false;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Lobby")
+	bool bEnoughPlayersToStart = false;
+
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
