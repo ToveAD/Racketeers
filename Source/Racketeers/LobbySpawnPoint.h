@@ -28,7 +28,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UArrowComponent* PlayerSpawnPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", Replicated)
 	UWidgetComponent* LobbyInfoWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
@@ -40,7 +40,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Team")
 	TSubclassOf<AActor> RaccoonPlayerClass;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team", Replicated)
 	AActor* Player = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
@@ -49,22 +49,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
 	int TeamID = -1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = "OnRep_bShowPlayerInfo")
-	bool bShowPlayerInfo = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Team")
+	ETeams Team;
 
 	// ----------------------------Functions--------------------------------------------
 	
-	UFUNCTION()
-	void SpawnPlayer(APlayerController* PC, ETeams Team);
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnPlayer();
 
-	UFUNCTION()
-	void RemovePlayer();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SpawnVFX();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_UpdateWidgetInfo(const FLobbyInfo& NewLobbyInfo, APlayerState* PS);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_RemovePlayer();
 
-	UFUNCTION()
-	void OnRep_bShowPlayerInfo();
+	void SetPlayerController(APlayerController* PC) { PlayerController = PC; }
 
 protected:
 
