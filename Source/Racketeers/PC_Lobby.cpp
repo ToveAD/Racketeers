@@ -59,7 +59,15 @@ void APC_Lobby::Server_SpawnPlayer_Implementation(APlayerController* PC, ETeams 
 
 void APC_Lobby::Server_ToggleReady_Implementation()
 {
-	// Toggle the player's ready status on the GameMode
+	if (APS_Lobby* PS = Cast<APS_Lobby>(PlayerState))
+	{
+		PS->LobbyInfo.bIsReady = !PS->LobbyInfo.bIsReady;
+	}
+
+	if (AGM_LobbyHost* GameMode = Cast<AGM_LobbyHost>(GetWorld()->GetAuthGameMode()))
+	{
+		GameMode->UpdateIfEnoughPlayersToStart();
+	}
 }
 
 
