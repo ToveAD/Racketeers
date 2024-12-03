@@ -25,6 +25,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void Move(FVector2D Value, bool bStarted);
 
+	// RPC for server
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_Move(FVector2D Value, bool bStarted);
+
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void Scurry(bool bIsScurrying);
 
@@ -41,19 +45,47 @@ public:
 private:
 	void RotateToFaceDirection(const FVector2D& InputDirection);
 	void MoveForward(float DeltaTime, bool bScurryActive);
+	void SimulateWaves(float DeltaTime, float WaveHeight, float WaveFrequency);
 	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
 	void FindCameraAndSpringArm();
+	void Client_InterpolateTransform(float DeltaTime);
 
+	// Server-side transform updates
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_UpdateTransform(float DeltaTime);
+
+	UPROPERTY(Replicated)
 	float CurrentSpeed = 0.0f; // Current movement speed of the boat
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float ScurryAmount = 0.0f;
+	float ScurryAmount = 14.0f;
 
-	
+	UPROPERTY(Replicated)
 	FVector2D MovementInput = FVector2D::ZeroVector;
 	
+	UPROPERTY(Replicated)
 	bool bShouldMove;
+
+	UPROPERTY(Replicated)
 	bool bScurryIsActive;
+
+	UPROPERTY(Replicated)
+	FVector ReplicatedLocation;
+
+	UPROPERTY(Replicated)
+	FRotator ReplicatedRotation;
+
+	//Wave simulation
+	float WaveTimeAccumulator = 0.0f; // Tracks the elapsed time for wave calculation
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float MovingWaveHeight = 1.0f; // Maximum height of the wave
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float MovingWaveFrequency = 10.0f; // Speed of the wave oscillation
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float PassiveWaveHeight = 1.0f; // Maximum height of the wave
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float PassiveWaveFrequency = 2.0f; // Speed of the wave oscillation
 	
 	// Reference to the spring arm within the camera blueprint
 	UPROPERTY()
@@ -62,4 +94,16 @@ private:
 	// Reference to the camera blueprint
 	UPROPERTY()
 	AActor* TeamCamera;
+	
+	float InterpolationSpeed = 5.0f;
+	float UpdateThreshold = 10.0f; // Threshold to trigger replication updates
+	
+	FVector PredictedPosition;
+
+	// Reference to the boat’s mesh component
+	UPROPERTY()
+	UPrimitiveComponent* BoatMesh;
+
+	// Replication
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
