@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PS_Base.h"
 #include "GameModeStructs.h"
+#include "PC_Lobby.h"
 #include "PS_Lobby.generated.h"
 
 /**
@@ -25,9 +26,6 @@ struct FLobbyInfo
 	ETeams Team;
 
 	UPROPERTY(BlueprintReadWrite, Category = "LobbyInfo")
-	UTexture2D* SteamAvatar;
-
-	UPROPERTY(BlueprintReadWrite, Category = "LobbyInfo")
 	int TeamID;
 
 	UPROPERTY(BlueprintReadWrite, Category = "LobbyInfo")
@@ -40,7 +38,6 @@ struct FLobbyInfo
 	{
 		PlayerName = "DEFAULT NAME";
 		Team = ETeams::NONE;
-		SteamAvatar = nullptr;
 		TeamID = -1;
 		bIsReady = false;
 		SpawnPoint = nullptr;

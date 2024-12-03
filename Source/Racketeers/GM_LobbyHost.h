@@ -7,8 +7,6 @@
 #include "LobbySpawnPoint.h"
 #include "GM_LobbyHost.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerJoined, const FString&, PlayerName);
-
 /**
  * 
  */
@@ -21,8 +19,7 @@ public:
 
 	// ----------------- Delegates -----------------
 
-	UPROPERTY()
-	FOnPlayerJoined OnPlayerJoined;
+
 	
 	// ----------------- Variables -----------------
 	
@@ -40,11 +37,14 @@ public:
 
 	int NumPlayers = 0;
 
+	UPROPERTY()
+	TArray<APlayerController*> Players;
+
 	// ----------------- Functions -----------------
 	
 	UFUNCTION()
 	virtual void BeginPlay() override;
-
+	
 	//UFUNCTION()
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
@@ -56,9 +56,6 @@ public:
 
 	UFUNCTION()
 	void SpawnPlayer(APlayerController* PC, ETeams Team);
-
-	UFUNCTION()
-	static UTexture2D* GetSteamAvatar(APlayerController* PC);
 
 	UFUNCTION()
 	static void RemovePlayer(APlayerController* PC);
