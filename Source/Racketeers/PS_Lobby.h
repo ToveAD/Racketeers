@@ -58,6 +58,8 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Lobby")
 	FLobbyInfo LobbyInfo = FLobbyInfo();
 
+	virtual void CopyProperties(APlayerState* PlayerState) override;
+
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
