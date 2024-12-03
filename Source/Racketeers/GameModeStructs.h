@@ -86,13 +86,14 @@ struct FTimer
 };
 
 UENUM()
-enum EGameStats
+enum EGameStats : uint8
 {
-	PUSHES = 0,
-	FALLS = 1,
-	PARTCONSTRUCTED = 2,
-	BOATDAMAGEDONE = 3,
-	MISSES = 4
+	ALIVE = 0,
+	PUSHES = 1,
+	FALLS = 2,
+	PARTCONSTRUCTED = 3,
+	BOATDAMAGEDONE = 4,
+	MISSES = 5
 };
 
 UENUM(BlueprintType)
@@ -120,9 +121,11 @@ struct FParts
 };
 
 USTRUCT(BlueprintType)
-struct FGameStats
+struct FTeamGameStats
 {
 	GENERATED_BODY();
+	UPROPERTY(BlueprintReadWrite)
+	int32 TeamAlive = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	int32 Pushes = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -136,6 +139,13 @@ struct FGameStats
 };
 
 
-
-
+USTRUCT(BlueprintType)
+struct FGameStats
+{
+	GENERATED_BODY()
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FTeamGameStats Raccoons;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FTeamGameStats Pandas;
+};
 

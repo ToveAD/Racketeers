@@ -87,9 +87,15 @@ void ARacketeersGMBase::BeginPlay()
 	
 	if(TimerInfo == nullptr)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::SpawnActor is nullptr"));
+		UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::SpawnActor is nullptr"));
 	}
+	
+	LevelLoadingManager = Cast<ALevelLoadingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLoadingManager::StaticClass()));
 
+	if(LevelLoadingManager == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ERROR: LevelLoadingManager Return nullptr, ARacketeersGMBase::BeginPlay"));
+	}
 
 	
 	//Declare the variables 
@@ -97,16 +103,19 @@ void ARacketeersGMBase::BeginPlay()
 	Phase_1->TimeLimit = 90.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
+	Phase_1->MainParentLevel = "Phase1Parent";
 	
 	Phase_2->State = EPhaseState::Phase_2;
 	Phase_2->TimeLimit = 120.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
+	Phase_2->MainParentLevel = "Phase2Parent";
 	
 	Phase_3->State = EPhaseState::Phase_3;
 	Phase_3->TimeLimit = 180.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
+	Phase_3->MainParentLevel = "Phase3Parent";
 
 	Phases.Push(Phase_1);
 	Phases.Push(Phase_2);
@@ -246,6 +255,10 @@ void ARacketeersGMBase::SwitchState()
 void ARacketeersGMBase::Transition()
 {
 
+
+	//LoadLevel();
+
+	
 	OnUnloadingMap.Broadcast();
 	
 	FLatentActionInfo ActionInfo;
@@ -257,6 +270,7 @@ void ARacketeersGMBase::Transition()
 	//if(GEngine)
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Unload Level");
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
+	
 }
 
 void ARacketeersGMBase::BroadcastOnPlayerPressed(ETeams Team)
@@ -458,8 +472,12 @@ void ARacketeersGMBase::LoadLevel()
 	bool bStreamingSucceded = false;
 	if(GEngine)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
-	//ULevelStreamingDynamic::LoadLevelInstance(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, FVector::ZeroVector,FRotator::ZeroRotator,bStreamingSucceded);
+	//LevelLoadingManager->MulticastLoadLevel(Phases[GetNextPhaseNumber()]);
+	//LevelLoadingManager->OnLoadingLevelCompleted.AddDynamic(this, &ARacketeersGMBase::RespawnPlayers);
 
+	
+	//ULevelStreamingDynamic::LoadLevelInstance(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, FVector::ZeroVector,FRotator::ZeroRotator,bStreamingSucceded);
+	//RespawnPlayers();
 	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true,false, LoadActionInfo);
 }
 
@@ -513,6 +531,7 @@ void ARacketeersGMBase::RespawnPlayer(APlayerState* PState)
 	TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
 	
 	AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
+	if(PlayerStart == nullptr || PS == nullptr || PS->GetPawn() == nullptr) return;
 	PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	
 }
