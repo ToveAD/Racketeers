@@ -16,36 +16,24 @@ class RACKETEERS_API AGM_LobbyHost : public AGM_Base
 	GENERATED_BODY()
 
 public:
-
-	// ----------------- Delegates -----------------
-
-
 	
 	// ----------------- Variables -----------------
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<AActor*> PandaPositions;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<AActor*> RaccoonPositions;
+	TArray<AActor*> SpawnPositions;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bAllowUnbalancedTeams;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bEnoughPlayersToStart;
-
-	int NumPlayers = 0;
-
-	UPROPERTY()
-	TArray<APlayerController*> Players;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
+	FString MapName = "World_P";
 
 	// ----------------- Functions -----------------
 	
 	UFUNCTION()
 	virtual void BeginPlay() override;
 	
-	//UFUNCTION()
+	UFUNCTION()
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
 	UFUNCTION()
@@ -58,11 +46,16 @@ public:
 	void SpawnPlayer(APlayerController* PC, ETeams Team);
 
 	UFUNCTION()
-	static void RemovePlayer(APlayerController* PC);
-
-	UFUNCTION()
-	void UpdatePlayerPositions(ETeams Team);
+	void UpdatePlayers();
 
 	UFUNCTION()
 	void UpdateIfTeamFull();
+
+	UFUNCTION()
+	void UpdateIfEnoughPlayersToStart() const;
+
+	UFUNCTION(BlueprintCallable)
+	void StartTheMatch();
+
+	
 };

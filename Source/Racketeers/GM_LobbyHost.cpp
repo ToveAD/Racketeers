@@ -22,38 +22,29 @@ void AGM_LobbyHost::OnPostLogin(AController* NewPlayer)
 		// Call the client RPC on the specific PlayerController
 		LobbyPC->Client_ShowTeamSelectionWidget();
 
-		// Add the player to the list of players
-		Players.Add(LobbyPC);
-		
+		UpdatePlayers();
 	}
 }
 
 void AGM_LobbyHost::OnLogout(AController* Exiting)
 {
-	// Remove the player from the list of players
-	Players.Remove(Cast<APC_Lobby>(Exiting));
+	if (APC_Lobby* LobbyPC = Cast<APC_Lobby>(Exiting))
+	{
+		if (ALobbySpawnPoint* SpawnPoint = LobbyPC->SpawnPoint)
+		{
+			SpawnPoint->SetPlayerController(nullptr);
+		}
+	}
+
+	UpdatePlayers();
+	UpdateIfTeamFull();
 }
 
 void AGM_LobbyHost::SetUpSpawnPositions()
 {
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ALobbySpawnPoint::StaticClass(), TEXT("Panda"), PandaPositions);
-	UGameplayStatics::GetAllActorsOfClassWithTag(GetWorld(), ALobbySpawnPoint::StaticClass(), TEXT("Raccoon"), RaccoonPositions);
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALobbySpawnPoint::StaticClass(), SpawnPositions);
 
-
-	// Sort the spawn points by TeamID
-	PandaPositions.Sort([](const AActor& A, const AActor& B)
-	{
-		const ALobbySpawnPoint* SpawnPointA = Cast<ALobbySpawnPoint>(&A);
-		const ALobbySpawnPoint* SpawnPointB = Cast<ALobbySpawnPoint>(&B);
-
-		if (SpawnPointA && SpawnPointB)
-		{
-			return SpawnPointA->TeamID < SpawnPointB->TeamID;
-		}
-		return false;
-	});
-
-	RaccoonPositions.Sort([](const AActor& A, const AActor& B)
+	SpawnPositions.Sort([](const AActor& A, const AActor& B)
 	{
 		const ALobbySpawnPoint* SpawnPointA = Cast<ALobbySpawnPoint>(&A);
 		const ALobbySpawnPoint* SpawnPointB = Cast<ALobbySpawnPoint>(&B);
@@ -69,98 +60,90 @@ void AGM_LobbyHost::SetUpSpawnPositions()
 // Spawn the player at the first available spawn point and set spawn point in player controller
 void AGM_LobbyHost::SpawnPlayer(APlayerController* PC, ETeams Team)
 {
-	
-    if (APC_Lobby* PlayerController = Cast<APC_Lobby>(PC))
-    {
-        // Handle the case where the player has a spawn point
-        if (PlayerController->SpawnPoint != nullptr)
-        {
-        	
-            // If the player is already on the team, return
-            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team == Team)
-            {
-                return;
-            }
-
-            // If the player already has a spawn point on the other team, remove the player from the spawn point
-            if (Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team != Team)
-            {
-                RemovePlayer(PC);
-            }
-        }
-
-    	// Find the first available spawn point for the team
-        for (const TArray<AActor*>& SpawnPositions = (Team == ETeams::Team_Panda) ? PandaPositions : RaccoonPositions; const auto SP : SpawnPositions)
-    	{
-		    if (ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP); SpawnPoint && SpawnPoint->PlayerController == nullptr)
-    		{
-    			PlayerController->SpawnPoint = SpawnPoint;
-    			SpawnPoint->SpawnPlayer(PlayerController, Team);
-
-		    	APS_Lobby* PS = Cast<APS_Lobby>(PlayerController->PlayerState);
-		    	
-		    	PS->LobbyInfo.Team = Team;
-		    	PS->LobbyInfo.PlayerName = PlayerController->PlayerState->GetPlayerName();
-		    	
-		    	// Update the player info in the widget for all players
-		    	SpawnPoint->Multicast_UpdateWidgetInfo(PS->LobbyInfo, PS);
-		    	
-				UpdateIfTeamFull();
-    			return;
-    		}
-    	}
-    }
-}
-
-
-void AGM_LobbyHost::RemovePlayer(APlayerController* PC)
-{
-
-
-	
 	if (APC_Lobby* PlayerController = Cast<APC_Lobby>(PC))
 	{
-		if (PlayerController->SpawnPoint)
+		// Handle the case where the player is already on the team
+		if (PlayerController->SpawnPoint != nullptr && Cast<APS_Lobby>(PlayerController->PlayerState)->LobbyInfo.Team ==
+			Team)
 		{
-			PlayerController->SpawnPoint->RemovePlayer();
-			PlayerController->SpawnPoint = nullptr;
+			return;
 		}
+
+		// Remove the player from the previous spawn point
+		if (PlayerController->SpawnPoint != nullptr)
+		{
+			PlayerController->SpawnPoint->SetPlayerController(nullptr);
+		}
+
+		// Find the first available spawn point for the team
+		for (const auto SP : SpawnPositions)
+		{
+			ALobbySpawnPoint* CurrentSP = Cast<ALobbySpawnPoint>(SP);
+
+			// Check if the spawn point is available and the player is on the correct team
+			if (CurrentSP->Team == Team && CurrentSP->PlayerController == nullptr)
+			{
+				// Set the player's new info
+				APS_Lobby* PS = Cast<APS_Lobby>(PlayerController->PlayerState);
+				PS->LobbyInfo.Team = Team;
+				PS->LobbyInfo.PlayerName = PS->GetPlayerName();
+				PS->LobbyInfo.SpawnPoint = CurrentSP;
+				PS->LobbyInfo.TeamID = CurrentSP->TeamID;
+
+				PlayerController->SpawnPoint = CurrentSP;
+				CurrentSP->SetPlayerController(PlayerController);
+				CurrentSP->Server_SpawnPlayer();
+
+				UpdatePlayers();
+				break;
+			}
+		}
+
+		UpdateIfTeamFull();
 	}
 }
 
-void AGM_LobbyHost::UpdatePlayerPositions(ETeams Team)
+void AGM_LobbyHost::UpdatePlayers()
 {
+	// Iterate through all spawn points and update the player info
+	for (const auto SP : SpawnPositions)
+	{
+		ALobbySpawnPoint* CurrentSP = Cast<ALobbySpawnPoint>(SP);
 
+		// Update the player info for all occupied spawn points
+		if (CurrentSP && CurrentSP->PlayerController)
+		{
+			APS_Lobby* PS = Cast<APS_Lobby>(CurrentSP->PlayerController->PlayerState);
+			CurrentSP->Multicast_UpdateWidgetInfo(PS->LobbyInfo, PS);
+		}
+
+		// Remove the player info for all unoccupied spawn points
+		if (CurrentSP && !CurrentSP->PlayerController)
+		{
+			CurrentSP->Server_RemovePlayer();
+		}
+	}
 }
 
 void AGM_LobbyHost::UpdateIfTeamFull()
 {
-	// Variables to track if teams are full
-	bool bPandaTeamFull = true;
-	bool bRaccoonTeamFull = true;
+	int NumPandaPlayers = 0;
+	int NumRaccoonPlayers = 0;
 
-	// Check Panda team spawn points
-	for (const auto SP : PandaPositions)
+	for (const auto SP : SpawnPositions)
 	{
-		if (ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP))
+		if (const ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP))
 		{
-			if (SpawnPoint->PlayerController == nullptr) // Empty spawn point found
+			if (SpawnPoint->PlayerController)
 			{
-				bPandaTeamFull = false;
-				break;
-			}
-		}
-	}
-
-	// Check Raccoon team spawn points
-	for (const auto SP : RaccoonPositions)
-	{
-		if (ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(SP))
-		{
-			if (SpawnPoint->PlayerController == nullptr) // Empty spawn point found
-			{
-				bRaccoonTeamFull = false;
-				break;
+				if (SpawnPoint->Team == ETeams::Team_Panda)
+				{
+					NumPandaPlayers++;
+				}
+				else if (SpawnPoint->Team == ETeams::Team_Raccoon)
+				{
+					NumRaccoonPlayers++;
+				}
 			}
 		}
 	}
@@ -168,7 +151,34 @@ void AGM_LobbyHost::UpdateIfTeamFull()
 	// Update the game state
 	if (AGS_Lobby* GS = GetGameState<AGS_Lobby>())
 	{
-		GS->bPandaFull = bPandaTeamFull;
-		GS->bRaccoonFull = bRaccoonTeamFull;
+		GS->bPandaFull = NumPandaPlayers >= 3;
+		GS->bRaccoonFull = NumRaccoonPlayers >= 3;
 	}
 }
+
+void AGM_LobbyHost::UpdateIfEnoughPlayersToStart() const
+{
+	int NumOfReadyPlayers = 0;
+
+	AGS_Lobby* GS = GetGameState<AGS_Lobby>();
+
+	for(const auto player : GS->PlayerArray)
+	{
+		if(APS_Lobby* PS = Cast<APS_Lobby>(player))
+		{
+			if(PS->LobbyInfo.bIsReady)
+			{
+				NumOfReadyPlayers++;
+			}
+		}
+	}
+	
+	GS->bEnoughPlayersToStart = (NumOfReadyPlayers == GS->PlayerArray.Num());
+}
+
+void AGM_LobbyHost::StartTheMatch()
+{
+	ProcessServerTravel(MapName);
+}
+
+
