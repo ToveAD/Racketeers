@@ -23,7 +23,7 @@ UMovementBoat::UMovementBoat()
 void UMovementBoat::BeginPlay()
 {
     Super::BeginPlay();
-    FindCameraAndSpringArm();
+    //FindCameraAndSpringArm();
 
     // Get BoatMesh for all transform updates
     BoatMesh = Cast<UPrimitiveComponent>(GetOwner()->GetComponentByClass(UPrimitiveComponent::StaticClass()));
@@ -42,7 +42,7 @@ void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    if (GetOwner()->HasAuthority()) // Server side
+    if (GetOwner()->HasAuthority() && BoatMesh->IsCollisionEnabled()) // Server side
     {
         if (bShouldMove)
         {
@@ -52,7 +52,7 @@ void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
         Server_UpdateTransform(DeltaTime); // Send transform updates to clients
     }
-    else // Client side
+    else if(bShouldMove && BoatMesh->IsCollisionEnabled())// Client side
     {
         Client_InterpolateTransform(DeltaTime); // Smooth client-side interpolation
     }
@@ -109,7 +109,7 @@ void UMovementBoat::RotateToFaceDirection(const FVector2D& InputDirection)
 
         // Smoothly interpolate to the target rotation
         FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), RotationSpeed);
-        BoatMesh->SetWorldRotation(NewRotation);
+        BoatMesh->SetWorldRotation(NewRotation, true);
     }
 }
 
@@ -119,10 +119,15 @@ void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
 
     if (!DesiredDirection.IsNearlyZero())
     {
-        float ScurryMultiplier = bScurryActive ? ScurryAmount : 1.0f;
+        // Gradually adjust the ScurryMultiplier
+        static float CurrentScurryMultiplier = 1.0f; // Start at normal speed
+        float TargetScurryMultiplier = bScurryActive ? ScurryAmount : 1.0f;
+
+        // Smoothly interpolate to the target multiplier
+        CurrentScurryMultiplier = FMath::FInterpTo(CurrentScurryMultiplier, TargetScurryMultiplier, DeltaTime, 2.0f);
 
         // Update the boat's position
-        FVector NewLocation = BoatMesh->GetComponentLocation() + (DesiredDirection * CurrentSpeed * ScurryMultiplier * DeltaTime);
+        FVector NewLocation = BoatMesh->GetComponentLocation() + (DesiredDirection * CurrentSpeed * CurrentScurryMultiplier * DeltaTime);
         BoatMesh->SetWorldLocation(NewLocation, true);
 
         // Update replicated transform for clients
@@ -131,6 +136,9 @@ void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
             ReplicatedLocation = NewLocation;
             ReplicatedRotation = BoatMesh->GetComponentRotation();
         }
+
+        // Debugging: Log the multiplier value
+        UE_LOG(LogTemp, Log, TEXT("Current Scurry Multiplier: %f"), CurrentScurryMultiplier);
     }
 }
 
@@ -188,15 +196,39 @@ void UMovementBoat::FindCameraAndSpringArm()
 
 void UMovementBoat::Client_InterpolateTransform(float DeltaTime)
 {
+    if (!BoatMesh)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("BoatMesh is null in Client_InterpolateTransform!"));
+        return;
+    }
+
+    // Accumulate time since last interpolation
+    static float TimeSinceLastUpdate = 0.0f;
+    TimeSinceLastUpdate += DeltaTime;
+
+    // Define a lerp alpha to control smoothing
+    const float LerpSpeed = 5.0f; // Adjust for smoother transitions
+    float Alpha = FMath::Clamp(TimeSinceLastUpdate * LerpSpeed, 0.0f, 1.0f);
+
+    // Current position and rotation
     FVector CurrentLocation = BoatMesh->GetComponentLocation();
     FRotator CurrentRotation = BoatMesh->GetComponentRotation();
 
-    // Interpolate location and rotation towards the server's replicated values
-    FVector InterpolatedLocation = FMath::VInterpTo(CurrentLocation, ReplicatedLocation, DeltaTime, InterpolationSpeed);
-    FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, ReplicatedRotation, DeltaTime, InterpolationSpeed);
+    // Interpolate location and rotation
+    FVector InterpolatedLocation = FMath::Lerp(CurrentLocation, ReplicatedLocation, Alpha);
+    FRotator InterpolatedRotation = FMath::Lerp(CurrentRotation, ReplicatedRotation, Alpha);
 
-    BoatMesh->SetWorldLocation(InterpolatedLocation);
-    BoatMesh->SetWorldRotation(InterpolatedRotation);
+    // Update the boat mesh
+    BoatMesh->SetWorldLocation(InterpolatedLocation, true);
+    BoatMesh->SetWorldRotation(InterpolatedRotation, true);
+
+    UpdateComponentToWorld();
+
+    // Reset the interpolation time when fully updated
+    if (Alpha >= 1.0f)
+    {
+        TimeSinceLastUpdate = 0.0f;
+    }
 }
 
 void UMovementBoat::Server_UpdateTransform_Implementation(float DeltaTime)
@@ -206,9 +238,10 @@ void UMovementBoat::Server_UpdateTransform_Implementation(float DeltaTime)
         FVector DesiredDirection = GetWorldSpaceDirection(MovementInput);
         FVector NewLocation = BoatMesh->GetComponentLocation() + (DesiredDirection * CurrentSpeed * DeltaTime);
 
-        BoatMesh->SetWorldLocation(NewLocation);
+        BoatMesh->SetWorldLocation(NewLocation, true);
         ReplicatedLocation = NewLocation;
         ReplicatedRotation = BoatMesh->GetComponentRotation();
+        UpdateComponentToWorld();
     }
 }
 

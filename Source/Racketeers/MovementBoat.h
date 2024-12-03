@@ -82,7 +82,7 @@ private:
 	UPROPERTY()
 	AActor* TeamCamera;
 	
-	float InterpolationSpeed = 50.0f;
+	float InterpolationSpeed = 5.0f;
 	float UpdateThreshold = 10.0f; // Threshold to trigger replication updates
 	
 	FVector PredictedPosition;
