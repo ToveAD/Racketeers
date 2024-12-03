@@ -130,12 +130,6 @@ void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
         // Smoothly interpolate to the target multiplier
         CurrentScurryMultiplier = FMath::FInterpTo(CurrentScurryMultiplier, TargetScurryMultiplier, DeltaTime, 2.0f);
 
-        // Update the wave time accumulator
-        //WaveTimeAccumulator += DeltaTime * MovingWaveFrequency;
-
-        // Calculate the wave offset
-       // float WaveOffset = FMath::Sin(WaveTimeAccumulator) * MovingWaveHeight;
-
         // Calculate the new location
         FVector CurrentLocation = BoatMesh->GetComponentLocation();
         FVector NewLocation = CurrentLocation + (DesiredDirection * CurrentSpeed * CurrentScurryMultiplier * DeltaTime);
@@ -151,9 +145,6 @@ void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
             ReplicatedLocation = NewLocation;
             ReplicatedRotation = BoatMesh->GetComponentRotation();
         }
-
-        // Debugging: Log wave offset
-        //UE_LOG(LogTemp, Log, TEXT("Wave Offset: %f"), WaveOffset);
     }
 }
 
@@ -285,11 +276,6 @@ bool UMovementBoat::Server_UpdateTransform_Validate(float DeltaTime)
 void UMovementBoat::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-    DOREPLIFETIME(UMovementBoat, bShouldMove);
-    DOREPLIFETIME(UMovementBoat, MovementInput);
-    DOREPLIFETIME(UMovementBoat, CurrentSpeed);
-    DOREPLIFETIME(UMovementBoat, bScurryIsActive);
     DOREPLIFETIME(UMovementBoat, ReplicatedLocation);
     DOREPLIFETIME(UMovementBoat, ReplicatedRotation);
 }

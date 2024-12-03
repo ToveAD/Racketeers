@@ -54,19 +54,19 @@ private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_UpdateTransform(float DeltaTime);
 
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	float CurrentSpeed = 0.0f; // Current movement speed of the boat
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float ScurryAmount = 14.0f;
 
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	FVector2D MovementInput = FVector2D::ZeroVector;
 	
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	bool bShouldMove;
 
-	UPROPERTY(Replicated)
+	UPROPERTY()
 	bool bScurryIsActive;
 
 	UPROPERTY(Replicated)
