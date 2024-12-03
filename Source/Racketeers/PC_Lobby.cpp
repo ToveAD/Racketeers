@@ -5,7 +5,6 @@
 
 #include "AdvancedSessions.h"
 #include "GM_LobbyHost.h"
-#include "OnlineSubsystem.h"
 #include "PS_Lobby.h"
 #include "Blueprint/UserWidget.h"
 
@@ -13,14 +12,6 @@ void APC_Lobby::BeginPlay()
 {
 	Super::BeginPlay();
 }
-
-void APC_Lobby::AnotherPlayerJoined_Implementation(const FString& TestString)
-{
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TestString);
-
-	// Add logic for the client to show that a new player has joined
-}
-
 
 
 // Show the team selection widget
@@ -70,6 +61,8 @@ void APC_Lobby::Server_ToggleReady_Implementation()
 {
 	// Toggle the player's ready status on the GameMode
 }
+
+
 
 
 
