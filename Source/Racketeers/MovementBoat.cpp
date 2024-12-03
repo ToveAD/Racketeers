@@ -48,6 +48,10 @@ void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
         {
             RotateToFaceDirection(MovementInput);
             MoveForward(DeltaTime, bScurryIsActive);
+            SimulateWaves(DeltaTime, MovingWaveHeight, MovingWaveFrequency);
+        }else if(!bShouldMove)
+        {
+            SimulateWaves(DeltaTime, PassiveWaveHeight, PassiveWaveFrequency);
         }
 
         Server_UpdateTransform(DeltaTime); // Send transform updates to clients
@@ -126,9 +130,20 @@ void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
         // Smoothly interpolate to the target multiplier
         CurrentScurryMultiplier = FMath::FInterpTo(CurrentScurryMultiplier, TargetScurryMultiplier, DeltaTime, 2.0f);
 
-        // Update the boat's position
-        FVector NewLocation = BoatMesh->GetComponentLocation() + (DesiredDirection * CurrentSpeed * CurrentScurryMultiplier * DeltaTime);
-        BoatMesh->SetWorldLocation(NewLocation, true);
+        // Update the wave time accumulator
+        //WaveTimeAccumulator += DeltaTime * MovingWaveFrequency;
+
+        // Calculate the wave offset
+       // float WaveOffset = FMath::Sin(WaveTimeAccumulator) * MovingWaveHeight;
+
+        // Calculate the new location
+        FVector CurrentLocation = BoatMesh->GetComponentLocation();
+        FVector NewLocation = CurrentLocation + (DesiredDirection * CurrentSpeed * CurrentScurryMultiplier * DeltaTime);
+        //NewLocation.Z += WaveOffset; // Apply the wave effect to the Z-axis
+
+        // Move the boat with collision
+        FHitResult HitResult;
+        BoatMesh->SetWorldLocation(NewLocation, true, &HitResult);
 
         // Update replicated transform for clients
         if (GetOwnerRole() == ROLE_Authority)
@@ -137,8 +152,8 @@ void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
             ReplicatedRotation = BoatMesh->GetComponentRotation();
         }
 
-        // Debugging: Log the multiplier value
-        UE_LOG(LogTemp, Log, TEXT("Current Scurry Multiplier: %f"), CurrentScurryMultiplier);
+        // Debugging: Log wave offset
+        //UE_LOG(LogTemp, Log, TEXT("Wave Offset: %f"), WaveOffset);
     }
 }
 
@@ -162,6 +177,23 @@ FVector UMovementBoat::GetWorldSpaceDirection(const FVector2D& InputDirection) c
     FVector WorldSpaceDirection = (ForwardVector * InputDirection.X + RightVector * InputDirection.Y).GetClampedToMaxSize(1.0f);
     return WorldSpaceDirection;
 }
+
+void UMovementBoat::SimulateWaves(float DeltaTime, float WaveHeight, float WaveFrequency)
+{
+    FVector CurrentLocation = BoatMesh->GetComponentLocation();
+
+    // Update the wave time accumulator
+    WaveTimeAccumulator += DeltaTime * WaveFrequency;
+
+    // Calculate the wave offset
+    float WaveOffset = FMath::Sin(WaveTimeAccumulator) * WaveHeight;
+
+    // Apply the wave effect to the Z-axis
+    CurrentLocation.Z += WaveOffset;
+
+    BoatMesh->SetWorldLocation(CurrentLocation, true);
+}
+
 
 void UMovementBoat::FindCameraAndSpringArm()
 {
