@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PS_Base.h"
 #include "GameModeStructs.h"
+#include "PC_Lobby.h"
 #include "PS_Lobby.generated.h"
 
 /**

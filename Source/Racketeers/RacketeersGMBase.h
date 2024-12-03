@@ -96,7 +96,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void RespawnPlayer(APlayerController* PController);
+	void RespawnPlayer(APlayerState* PState);
 	UFUNCTION(BlueprintCallable)
 	void IncreaseTotalRounds();
 	UFUNCTION(BlueprintCallable)
@@ -107,6 +107,7 @@ public:
 	void BroadcastOnPlayerPressed(ETeams Team);
 	void IncrementPlayerCounter();
 	int8 GetTotalRounds();
+	TEnumAsByte<EPhaseState> SwitchIncomingState();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGameActive;

@@ -16,6 +16,10 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseOneActive);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseTwoActive);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseThreeActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseOneActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseTwoActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseThreeActive);
+
 
 UCLASS()
 class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
@@ -30,6 +34,13 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	FOnPhaseTwoActive OnPhaseTwoActive;
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnPhaseThreeActive OnPhaseThreeActive;
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseOneActive OnIncomingPhaseOneActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseTwoActive OnIncomingPhaseTwoActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseThreeActive OnIncomingPhaseThreeActive;
 
 	void BeginPlay() override;
 	
@@ -46,19 +57,21 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UFUNCTION(BlueprintCallable)
 	void OnRep_PhaseChange();
 	UFUNCTION(BlueprintCallable)
+	void OnRep_IncomingPhaseChange();
+	UFUNCTION(BlueprintCallable)
 	void OnRep_HealthChanged();
 	UFUNCTION(BlueprintCallable)
 	void SetRandomNumber(int Number);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void RemoveResource(int Amount, EResources Resource, ETeams Team);
 	UFUNCTION(BlueprintCallable)
 	void AddToStats(int Amount, EGameStats Stat, ETeams Team);
 	UFUNCTION(BlueprintCallable)
-	void RemoveResource(int Amount, EResources Resource, ETeams Team);
-	UFUNCTION(BlueprintCallable)
 	int32 GetTeamResources(ETeams Team, EResources Resource) const;
 	
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void AddPart(ETeams Team, EPart Part);
 	UFUNCTION(NetMulticast, Reliable)
 	void RemovePart(ETeams Team, EPart Part);
@@ -69,6 +82,8 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	FResources RedPandasResource;
 	UPROPERTY(ReplicatedUsing=OnRep_PhaseChange, BlueprintReadWrite)
 	TEnumAsByte<EPhaseState> CurrentPhase;
+	UPROPERTY(ReplicatedUsing=OnRep_IncomingPhaseChange, BlueprintReadWrite)
+	TEnumAsByte<EPhaseState> IncomingPhase;
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
 	FGameStats RaccoonsGameStats;

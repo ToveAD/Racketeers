@@ -17,6 +17,10 @@ class RACKETEERS_API AGM_LobbyHost : public AGM_Base
 
 public:
 
+	// ----------------- Delegates -----------------
+
+
+	
 	// ----------------- Variables -----------------
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -33,11 +37,14 @@ public:
 
 	int NumPlayers = 0;
 
+	UPROPERTY()
+	TArray<APlayerController*> Players;
+
 	// ----------------- Functions -----------------
 	
 	UFUNCTION()
 	virtual void BeginPlay() override;
-
+	
 	//UFUNCTION()
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
@@ -51,7 +58,7 @@ public:
 	void SpawnPlayer(APlayerController* PC, ETeams Team);
 
 	UFUNCTION()
-	void RemovePlayer(APlayerController* PC);
+	static void RemovePlayer(APlayerController* PC);
 
 	UFUNCTION()
 	void UpdatePlayerPositions(ETeams Team);

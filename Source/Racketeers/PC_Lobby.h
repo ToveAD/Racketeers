@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
-#include "LobbySpawnPoint.h"
 #include "GameFramework/PlayerController.h"
 #include "PC_Lobby.generated.h"
 
+class ALobbySpawnPoint;
 /**
  * 
  */
@@ -52,12 +52,5 @@ public:
 	// Toggle the player's ready status
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_ToggleReady();
-
-
-
-	
-
-
-
 	
 };

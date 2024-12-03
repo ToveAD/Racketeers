@@ -35,20 +35,21 @@ ALobbySpawnPoint::ALobbySpawnPoint()
 // Spawn the player at the spawn point
 void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 {
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
 	if (Team == ETeams::Team_Panda)
 	{
-		Player = GetWorld()->SpawnActor<AActor>(PandaPlayerClass, PlayerSpawnPoint->GetComponentLocation(),
-		                                        PlayerSpawnPoint->GetComponentRotation());
+		Player = GetWorld()->SpawnActor<AActor>(PandaPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation(), SpawnParams);
 		PlayerController = PC;
 	}
 	else if (Team == ETeams::Team_Raccoon)
 	{
-		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(),
-		                                        PlayerSpawnPoint->GetComponentRotation());
+		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(), PlayerSpawnPoint->GetComponentRotation(), SpawnParams);
 		PlayerController = PC;
 	}
 
-	if (HasAuthority())
+if (HasAuthority() && GetNetMode() == NM_ListenServer)
 	{
 		if (SpawnVFX)
 		{
@@ -68,24 +69,26 @@ void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
 // Remove the player from the spawn point
 void ALobbySpawnPoint::RemovePlayer()
 {
-	if (HasAuthority())
+	if(Player != nullptr && PlayerController != nullptr)
 	{
-		LobbyInfoWidget->SetVisibility(false);
-		bShowPlayerInfo = false;
-	}
+		if (HasAuthority() && GetNetMode() == NM_ListenServer)
+		{
+			LobbyInfoWidget->SetVisibility(false);
+			bShowPlayerInfo = false;
+		}
 
-	PlayerController = nullptr;
-	Player->Destroy();
+		PlayerController = nullptr;
+		Player->Destroy();
+	}
 }
 
-void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(const FString& Name, APS_Lobby* PS)
+void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(const FLobbyInfo& NewLobbyInfo, APlayerState* PS)
 {
 		if (LobbyInfoWidget)
 		{
 			if (UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject()))
 			{
-				//GEngine->AddOnScreenDebugMessage( -1, 5.f, FColor::Green, Cast<APS_Lobby>(PS)->LobbyInfo.PlayerName + " has joined the " + (Cast<APS_Lobby>(PS)->LobbyInfo.Team == ETeams::Team_Panda ? "Panda" : "Raccoon") + " team");
-				LobbyInfo->UpdateLobbyInfo(Name, PS);
+				LobbyInfo->UpdateLobbyInfo(NewLobbyInfo, PS);
 			}
 		}
 }

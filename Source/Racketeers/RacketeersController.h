@@ -100,7 +100,7 @@ class RACKETEERS_API ARacketeersController : public APlayerController
 	void MultiCastActivateTimer(float T,  bool SetIsActive);
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void ServerRespawnPlayer(APlayerController* PController);
+	void ServerRespawnPlayer(APlayerState* PSState);
 	
 };
 
