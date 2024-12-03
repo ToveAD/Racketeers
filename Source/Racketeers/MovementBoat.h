@@ -45,6 +45,7 @@ public:
 private:
 	void RotateToFaceDirection(const FVector2D& InputDirection);
 	void MoveForward(float DeltaTime, bool bScurryActive);
+	void SimulateWaves(float DeltaTime, float WaveHeight, float WaveFrequency);
 	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
 	void FindCameraAndSpringArm();
 	void Client_InterpolateTransform(float DeltaTime);
@@ -57,7 +58,7 @@ private:
 	float CurrentSpeed = 0.0f; // Current movement speed of the boat
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
-	float ScurryAmount = 0.0f;
+	float ScurryAmount = 14.0f;
 
 	UPROPERTY(Replicated)
 	FVector2D MovementInput = FVector2D::ZeroVector;
@@ -73,6 +74,18 @@ private:
 
 	UPROPERTY(Replicated)
 	FRotator ReplicatedRotation;
+
+	//Wave simulation
+	float WaveTimeAccumulator = 0.0f; // Tracks the elapsed time for wave calculation
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float MovingWaveHeight = 1.0f; // Maximum height of the wave
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float MovingWaveFrequency = 10.0f; // Speed of the wave oscillation
+
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float PassiveWaveHeight = 1.0f; // Maximum height of the wave
+	UPROPERTY(EditAnywhere, Category = "Boat Movement")
+	float PassiveWaveFrequency = 2.0f; // Speed of the wave oscillation
 	
 	// Reference to the spring arm within the camera blueprint
 	UPROPERTY()
