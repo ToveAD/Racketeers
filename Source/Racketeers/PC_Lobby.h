@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> LobbyWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UUserWidget* LobbyWidgetREF;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lobby")
 	ALobbySpawnPoint* SpawnPoint;
 
@@ -52,5 +55,10 @@ public:
 	// Toggle the player's ready status
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_ToggleReady();
-	
+
+	UFUNCTION(Client, Reliable)
+	void Client_OnStartMatch();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnStartMatch();
 };

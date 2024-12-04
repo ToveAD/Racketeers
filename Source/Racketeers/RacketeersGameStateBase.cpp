@@ -21,6 +21,8 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconResource);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasResource);
+
+	DOREPLIFETIME(ARacketeersGameStateBase, TeamStats);
 	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsGameStats);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasGameStats);
 	
@@ -96,6 +98,8 @@ void ARacketeersGameStateBase::ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPh
 
 }
 
+
+
 int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resource) const
 {
 	if(Team == ETeams::Team_Raccoon)
@@ -109,6 +113,31 @@ int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resourc
 	int32* material = (int32*)((&RedPandasResource.Wood + Space));
 	int32 MaterialAmount = material[0];
 	return MaterialAmount;
+}
+
+FTeamGameStats ARacketeersGameStateBase::GetTeamStats(ETeams Team) const
+{
+	int TeamSpace = (int)Team;
+	const FTeamGameStats* GameStats = (&TeamStats.Raccoons + TeamSpace); 
+	return GameStats[0];
+}
+
+bool ARacketeersGameStateBase::CheckTeamAlive(ETeams Team)
+{
+	if(GetTeamStats(Team).TeamAlive <= 0)
+	{
+		return false;
+	}
+	return true;
+}
+
+void ARacketeersGameStateBase::CheckRoundEnd(ETeams Team)
+{
+	if(!CheckTeamAlive(Team))
+	{
+		ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		GM->RoundCompletion();
+	}
 }
 
 void ARacketeersGameStateBase::AddPart_Implementation(ETeams Team, EPart Part)
@@ -293,23 +322,14 @@ void ARacketeersGameStateBase::AddResource_Implementation(int Amount, EResources
 	
 }
 
-void ARacketeersGameStateBase::AddToStats(int Amount, EGameStats Stat, ETeams Team)
+void ARacketeersGameStateBase::AddToStats_Implementation(int Amount, EGameStats Stat, ETeams Team)
 {
-	int Space = (int)Stat;
-	if (Team == ETeams::Team_Raccoon)
-	{
-		int32* Stats = (int32*)((&RaccoonsGameStats.Pushes + Space));
-		if(Stats == nullptr)
-		{
-			return;
-		}
-		Stats[0] += Amount;
-	}
-	int32* Stats = (int32*)((&RedPandasGameStats.Pushes + Space));
-	if(Stats == nullptr)
-	{
-		return;
-	}
+	int TeamSpace = (int)Team * sizeof(EGameStats);
+	int StatSpace = (int)Stat;
+	
+	FTeamGameStats* TeamGameStats = ((&TeamStats.Raccoons + TeamSpace));
+	int32* Stats = ((&TeamGameStats->TeamAlive + StatSpace));
+	if(Stats == nullptr) return; 
 	Stats[0] += Amount;
 }
 

@@ -2,8 +2,6 @@
 
 
 #include "PC_Lobby.h"
-
-#include "AdvancedSessions.h"
 #include "GM_LobbyHost.h"
 #include "PS_Lobby.h"
 #include "Blueprint/UserWidget.h"
@@ -25,7 +23,7 @@ void APC_Lobby::Client_ShowTeamSelectionWidget_Implementation()
 		{
 			TeamSelectionWidget->AddToViewport();
 			bShowMouseCursor = true; // Show the cursor for UI interaction
-			SetInputMode(FInputModeUIOnly());
+			SetInputMode(FInputModeGameAndUI());
 		}
 	}
 }
@@ -38,6 +36,7 @@ void APC_Lobby::Client_ShowLobbyWidget_Implementation()
 		if (UUserWidget* LobbyWidget = CreateWidget<UUserWidget>(this, LobbyWidgetClass))
 		{
 			LobbyWidget->AddToViewport();
+			LobbyWidgetREF = LobbyWidget;
 		}
 	}
 }
@@ -69,6 +68,12 @@ void APC_Lobby::Server_ToggleReady_Implementation()
 		GameMode->UpdateIfEnoughPlayersToStart();
 	}
 }
+
+void APC_Lobby::Client_OnStartMatch_Implementation()
+{
+	OnStartMatch();
+}
+
 
 
 

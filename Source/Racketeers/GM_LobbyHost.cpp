@@ -179,6 +179,15 @@ void AGM_LobbyHost::UpdateIfEnoughPlayersToStart() const
 void AGM_LobbyHost::StartTheMatch()
 {
 	ProcessServerTravel(MapName);
+
+	for(const auto player : GetGameState<AGS_Lobby>()->PlayerArray)
+	{
+		if(APS_Lobby* PS = Cast<APS_Lobby>(player))
+		{
+			APC_Lobby* PC = Cast<APC_Lobby>(PS->GetOwner());
+			PC->Client_OnStartMatch();
+		}
+	}
 }
 
 
