@@ -23,14 +23,19 @@ ALevelLoadingManager::ALevelLoadingManager()
 void ALevelLoadingManager::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "ALevelLoadingManager::BeginPlay");
+	CurrentLevelPath = "Phase1Parent";
+	CurrentSubLevelPath = "Phase1_GamePlay";
+	LoadLevel();
+
+	/*
 	CurrentLoadedLevel = ULevelStreamingDynamic::LoadLevelInstance(GetWorld(), "Phase1_GamePlay", FVector::ZeroVector,FRotator::ZeroRotator,bLevelLoadSuccessfull);
 	if(CurrentLoadedLevel != nullptr){
 		CurrentLoadedLevel->OnLevelLoaded.AddDynamic(this, &ALevelLoadingManager::LevelLoaded);
 		CurrentLoadedLevel->OnLevelUnloaded.AddDynamic(this, &ALevelLoadingManager::LevelUnloaded);
 		GetWorld()->AddStreamingLevel(CurrentLoadedLevel); 
 	}
-	CurrentLevelPath = "Phase1_GamePlay";
+	*/
 	
 }
 
@@ -38,12 +43,20 @@ void ALevelLoadingManager::BeginPlay()
 void ALevelLoadingManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,FString::FromInt(GetWorld()->IsStreamingLevelBeingConsidered(CurrentLoadedLevel)));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow,FString::FromInt(GetWorld()->IsStreamingLevelBeingConsidered(CurrentLoadedLevel)));
 }
 
-void ALevelLoadingManager::LoadLevelParent(const UPhase* NewPhase)
+
+void ALevelLoadingManager::MulticastLoadLevel_Implementation(const UPhase* LevelPath)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "LEVEL LOADING MULTICAST LOADING");
+	NextLevelPath = LevelPath->MainParentLevel;
+	NextSubLevelPath = LevelPath->LevelToLoad;
+	UnloadLevel();
+	//LoadLevel(LevelPath);
+}
+
+void ALevelLoadingManager::LoadLevelParent()
 {
 	FLatentActionInfo LoadActionInfo;
 	
@@ -51,14 +64,14 @@ void ALevelLoadingManager::LoadLevelParent(const UPhase* NewPhase)
 	LoadActionInfo.CallbackTarget = this;
 	LoadActionInfo.ExecutionFunction = TEXT("LoadSubLevel");
 	LoadActionInfo.UUID = GetUniqueID();
-	CurrentLevelPath = *NewPhase->LevelToLoad;
-	UGameplayStatics::LoadStreamLevel(GetWorld(), *NewPhase->MainParentLevel, true,false, LoadActionInfo);
+	UGameplayStatics::LoadStreamLevel(GetWorld(), *CurrentLevelPath, true,false, LoadActionInfo);
 }
 void ALevelLoadingManager::LoadSubLevel()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "LOAD SUB LEVEL");
 	bLevelIsLoading = true;
 	OnLoadLevel.Broadcast();
-	CurrentLoadedLevel = ULevelStreamingDynamic::LoadLevelInstance(GetWorld(), CurrentLevelPath, FVector::ZeroVector,FRotator::ZeroRotator,bLevelLoadSuccessfull);
+	CurrentLoadedLevel = ULevelStreamingDynamic::LoadLevelInstance(GetWorld(), CurrentSubLevelPath, FVector::ZeroVector,FRotator::ZeroRotator,bLevelLoadSuccessfull);
 	if(bLevelLoadSuccessfull)
 	{
 		OnLoadingLevelCompleted.Broadcast();
@@ -71,21 +84,27 @@ void ALevelLoadingManager::LoadSubLevel()
 	OnLoadingLevelCompleted.Broadcast();
 }
 
-void ALevelLoadingManager::UnloadLevelParent(UPhase NewPhase)
+void ALevelLoadingManager::UnloadLevelParent()
 {
+
+	FLatentActionInfo LoadActionInfo;
+	
+	LoadActionInfo.Linkage = 0;
+	LoadActionInfo.CallbackTarget = this;
+	LoadActionInfo.ExecutionFunction = TEXT("LoadLevelParent");
+	LoadActionInfo.UUID = GetUniqueID();
+
+	UGameplayStatics::UnloadStreamLevel(GetWorld(), *CurrentLevelPath, LoadActionInfo, false);
 }
 
 
 void ALevelLoadingManager::UnloadSubLevel()
 {
+
+	
+	
 }
 
-void ALevelLoadingManager::MulticastLoadLevel_Implementation(const UPhase* LevelPath)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "LEVEL LOADING MULTICAST LOADING");
-	UnloadLevel();
-	LoadLevel(LevelPath);
-}
 
 bool ALevelLoadingManager::MulticastLoadLevel_Validate(const UPhase* LevelPath)
 {
@@ -93,20 +112,12 @@ bool ALevelLoadingManager::MulticastLoadLevel_Validate(const UPhase* LevelPath)
 }
 
 
-void ALevelLoadingManager::LoadLevel(const UPhase* NewPhase)
+void ALevelLoadingManager::LoadLevel()
 {
-	
-	LoadLevelParent(NewPhase);
-	FLatentActionInfo LoadActionInfo;
-	
-	LoadActionInfo.Linkage = 0;
-	LoadActionInfo.CallbackTarget = this;
-	LoadActionInfo.ExecutionFunction = TEXT("RespawnPlayers");
-	LoadActionInfo.UUID = GetUniqueID();
-
-	UGameplayStatics::LoadStreamLevel(GetWorld(), *NewPhase->MainParentLevel, true,false, LoadActionInfo);
-	
-	
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "LOAD LEVEL");
+	CurrentLevelPath = NextLevelPath;
+	CurrentSubLevelPath = NextSubLevelPath;
+	LoadLevelParent();
 }
 
 void ALevelLoadingManager::UnloadLevel()
@@ -117,8 +128,7 @@ void ALevelLoadingManager::UnloadLevel()
 	LoadActionInfo.CallbackTarget = this;
 	LoadActionInfo.ExecutionFunction = TEXT("LoadLevel");
 	LoadActionInfo.UUID = GetUniqueID();
-
-	UGameplayStatics::UnloadStreamLevel(GetWorld(), *CurrentLevelPath, LoadActionInfo, false);
+	
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "UNLOAD LEVEL");
 	if(CurrentLoadedLevel == nullptr) return;
 	OnUnloadLevel.Broadcast();
@@ -135,6 +145,7 @@ void ALevelLoadingManager::UnloadLevel()
 		// Random Phase 3 Map 
 	
 	GetWorld()->RemoveStreamingLevel(CurrentLoadedLevel);
+	UGameplayStatics::UnloadStreamLevel(GetWorld(), *CurrentLevelPath, LoadActionInfo, false);
 
 }
 

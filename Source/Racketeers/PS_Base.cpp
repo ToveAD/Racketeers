@@ -35,6 +35,7 @@ void APS_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 void APS_Base::DamagePlayerBoat_Implementation(APlayerState* PS, int Amount)
 {
 	APS_Base* PSBase = Cast<APS_Base>(PS);
+	if(PSBase == nullptr) return;
 	PSBase->BoatHealth -= Amount;
 	if(BoatHealth <= 0)
 	{
