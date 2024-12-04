@@ -34,7 +34,9 @@ void APS_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 
 void APS_Base::DamagePlayerBoat_Implementation(APlayerState* PS, int Amount)
 {
+	//UE_LOG(LogTemp, Display, TEXT("Health: %f"), MaxBoatHealth);
 	APS_Base* PSBase = Cast<APS_Base>(PS);
+	GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "Health:" + FString::FromInt(PSBase->MaxBoatHealth));
 	if(PSBase == nullptr) return;
 	PSBase->BoatHealth -= Amount;
 	if(BoatHealth <= 0)
