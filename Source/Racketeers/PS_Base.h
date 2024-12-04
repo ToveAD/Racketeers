@@ -40,7 +40,6 @@ struct FPlayerInfo
 		Team = ETeams::NONE;
 		TeamPlayerID = -1;
 	}
-	
 };
 
 
@@ -59,7 +58,6 @@ public:
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
 };
 
 

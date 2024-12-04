@@ -21,24 +21,25 @@ void AGM_LobbyHost::OnPostLogin(AController* NewPlayer)
 	{
 		// Call the client RPC on the specific PlayerController
 		LobbyPC->Client_ShowTeamSelectionWidget();
-
+		
+		Players.Add(LobbyPC);
 		UpdatePlayers();
 	}
 }
 
-void AGM_LobbyHost::OnLogout(AController* Exiting)
+/*void AGM_LobbyHost::OnLogout(AController* Exiting)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Player Left");
+	
 	if (APC_Lobby* LobbyPC = Cast<APC_Lobby>(Exiting))
 	{
-		if (ALobbySpawnPoint* SpawnPoint = LobbyPC->SpawnPoint)
-		{
-			SpawnPoint->SetPlayerController(nullptr);
-		}
+		Players.Remove(LobbyPC);
+		UpdatePlayers();
 	}
-
+	
 	UpdatePlayers();
 	UpdateIfTeamFull();
-}
+}*/
 
 void AGM_LobbyHost::SetUpSpawnPositions()
 {
@@ -111,18 +112,21 @@ void AGM_LobbyHost::UpdatePlayers()
 		ALobbySpawnPoint* CurrentSP = Cast<ALobbySpawnPoint>(SP);
 
 		// Update the player info for all occupied spawn points
-		if (CurrentSP && CurrentSP->PlayerController)
+		if (CurrentSP && CurrentSP->PlayerController && Players.Contains(CurrentSP->PlayerController))
 		{
 			APS_Lobby* PS = Cast<APS_Lobby>(CurrentSP->PlayerController->PlayerState);
 			CurrentSP->Multicast_UpdateWidgetInfo(PS->LobbyInfo, PS);
 		}
 
 		// Remove the player info for all unoccupied spawn points
-		if (CurrentSP && !CurrentSP->PlayerController)
+		if (CurrentSP && !Players.Contains(CurrentSP->PlayerController))
 		{
 			CurrentSP->Server_RemovePlayer();
 		}
 	}
+
+	UpdateIfTeamFull();
+	UpdateIfEnoughPlayersToStart();
 }
 
 void AGM_LobbyHost::UpdateIfTeamFull()
@@ -180,7 +184,7 @@ void AGM_LobbyHost::StartTheMatch()
 {
 	ProcessServerTravel(MapName);
 
-	for(const auto player : GetGameState<AGS_Lobby>()->PlayerArray)
+	for(const auto player : Players)
 	{
 		if(APS_Lobby* PS = Cast<APS_Lobby>(player))
 		{
