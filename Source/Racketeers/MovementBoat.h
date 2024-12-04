@@ -21,53 +21,78 @@ protected:
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	// Function to handle input
-	UFUNCTION(BlueprintCallable, Category="Movement")
+	// Movement Functions
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void Move(FVector2D Value, bool bStarted);
 
-	// RPC for server
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_Move(FVector2D Value, bool bStarted);
-
-	UFUNCTION(BlueprintCallable, Category="Movement")
+	UFUNCTION(BlueprintCallable, Category = "Movement")
 	void Scurry(bool bIsScurrying);
 
-	// Movement properties
+	// RPCs
+	UFUNCTION(Server, Reliable, WithValidation) //Ta bort validation
+	void Server_Move(FVector2D Value, bool bStarted);
+
+	UFUNCTION(Server, Reliable)
+	void Server_Scurry(bool bIsScurrying);
+
+	UFUNCTION(Client, Reliable)
+	void Client_Scurry(bool bIsScurrying);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_UpdateTransform(float DeltaTime);
+
+	// Movement Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float MovementSpeed = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float RotationSpeed = 5.0f; // Speed of rotation smoothing
+	float RotationSpeed = 5.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float DecelerationRate = 50.0f; // Rate at which the boat slows down (units per second)
-	
-private:
-	void RotateToFaceDirection(const FVector2D& InputDirection);
-	void MoveForward(float DeltaTime, bool bScurryActive);
-	void SimulateWaves(float DeltaTime, float WaveHeight, float WaveFrequency);
-	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
-	void FindCameraAndSpringArm();
-	void Client_InterpolateTransform(float DeltaTime);
-
-	// Server-side transform updates
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_UpdateTransform(float DeltaTime);
-
-	UPROPERTY()
-	float CurrentSpeed = 0.0f; // Current movement speed of the boat
+	float DecelerationRate = 50.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Movement")
 	float ScurryAmount = 14.0f;
 
+	// Wave Simulation Properties
+	UPROPERTY(EditAnywhere, Category = "Wave Simulation")
+	float MovingWaveHeight = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Wave Simulation")
+	float MovingWaveFrequency = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Wave Simulation")
+	float PassiveWaveHeight = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Wave Simulation")
+	float PassiveWaveFrequency = 2.0f;
+
+private:
+	// Movement Helpers
+	void RotateToFaceDirection(const FVector2D& InputDirection);
+	void MoveForward(float DeltaTime, bool bScurryActive);
+	void SimulateWaves(float DeltaTime, float WaveHeight, float WaveFrequency);
+	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
+
+	// Camera and SpringArm Helpers
+	void FindCameraAndSpringArm();
+	void Client_InterpolateTransform(float DeltaTime);
+
+	// Replication
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// State Variables
 	UPROPERTY()
-	FVector2D MovementInput = FVector2D::ZeroVector;
-	
-	UPROPERTY()
-	bool bShouldMove;
+	float CurrentSpeed = 0.0f;
 
 	UPROPERTY()
-	bool bScurryIsActive;
+	FVector2D MovementInput = FVector2D::ZeroVector;
+
+	UPROPERTY()
+	bool bShouldMove = false;
+
+	UPROPERTY()
+	bool bScurryIsActive = false;
 
 	UPROPERTY(Replicated)
 	FVector ReplicatedLocation;
@@ -75,35 +100,23 @@ private:
 	UPROPERTY(Replicated)
 	FRotator ReplicatedRotation;
 
-	//Wave simulation
-	float WaveTimeAccumulator = 0.0f; // Tracks the elapsed time for wave calculation
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
-	float MovingWaveHeight = 1.0f; // Maximum height of the wave
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
-	float MovingWaveFrequency = 10.0f; // Speed of the wave oscillation
+	// Wave Simulation
+	float WaveTimeAccumulator = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
-	float PassiveWaveHeight = 1.0f; // Maximum height of the wave
-	UPROPERTY(EditAnywhere, Category = "Boat Movement")
-	float PassiveWaveFrequency = 2.0f; // Speed of the wave oscillation
-	
-	// Reference to the spring arm within the camera blueprint
+	// Interpolation
+	float InterpolationSpeed = 5.0f;
+	float UpdateThreshold = 10.0f; 
+
+	// Predicted Position
+	FVector PredictedPosition;
+
+	// References
 	UPROPERTY()
 	USpringArmComponent* SpringArm;
 
-	// Reference to the camera blueprint
 	UPROPERTY()
 	AActor* TeamCamera;
-	
-	float InterpolationSpeed = 5.0f;
-	float UpdateThreshold = 10.0f; // Threshold to trigger replication updates
-	
-	FVector PredictedPosition;
 
-	// Reference to the boat’s mesh component
 	UPROPERTY()
 	UPrimitiveComponent* BoatMesh;
-
-	// Replication
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
