@@ -9,6 +9,7 @@
 #include "Net/UnrealNetwork.h"
 #include "InputActionValue.h"
 #include "PS_Base.h"
+#include "Camera/CameraComponent.h"
 
 UMovementBoat::UMovementBoat()
 {
@@ -32,6 +33,9 @@ void UMovementBoat::BeginPlay()
         UE_LOG(LogTemp, Error, TEXT("BoatMesh not found!"));
         return;
     }
+    
+    // Store the default Z location
+    DefaultZLocation = BoatMesh->GetComponentLocation().Z;
 
     // Initialize replication variables
     ReplicatedLocation = BoatMesh->GetComponentLocation();
@@ -64,12 +68,12 @@ void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 void UMovementBoat::Move(FVector2D Value, bool bStarted)
 {
-    FindCameraAndSpringArm();
+    //FindCameraAndSpringArm();
     bShouldMove = bStarted;
 
     if (bStarted)
     {
-        MovementInput = Value;
+        MovementInput = Value.GetSafeNormal();
         CurrentSpeed = MovementSpeed;
     }
 
@@ -122,43 +126,58 @@ void UMovementBoat::Client_Scurry_Implementation(bool bIsScurrying)
 
 void UMovementBoat::RotateToFaceDirection(const FVector2D& InputDirection)
 {
-    if (!InputDirection.IsNearlyZero())
+    if (InputDirection.IsNearlyZero())
     {
-        FVector TargetDirection = GetWorldSpaceDirection(InputDirection);
+        return; // No input, no rotation
+    }
 
-        if (!TargetDirection.IsNearlyZero())
-        {
-            FRotator CurrentRotation = BoatMesh->GetComponentRotation();
-            FRotator TargetRotation = TargetDirection.Rotation();
-            TargetRotation.Pitch = 0.0f; // No pitch rotation
-            TargetRotation.Roll = 0.0f;
+    // Convert the 2D input direction into a world-space direction
+    FVector TargetDirection = GetWorldSpaceDirection(InputDirection).GetSafeNormal();
 
-            // Smoothly interpolate to the target rotation
-            FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), RotationSpeed);
-            BoatMesh->SetWorldRotation(NewRotation, true);
-        }
+    if (!TargetDirection.IsNearlyZero())
+    {
+        FRotator CurrentRotation = BoatMesh->GetComponentRotation();
+        FRotator TargetRotation = TargetDirection.Rotation();
+
+        TargetRotation.Pitch = 0.0f; // Ensure no pitch
+        TargetRotation.Roll = 0.0f; // Ensure no roll
+
+        // Smoothly interpolate to the target rotation
+        FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), RotationSpeed);
+        BoatMesh->SetWorldRotation(NewRotation, true);
     }
 }
 
 void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
 {
-    // Convert MovementInput (2D) to a world-space 3D direction
-    FVector DesiredDirection = GetWorldSpaceDirection(MovementInput);
+    if (MovementInput.IsNearlyZero())
+    {
+        // Reset boat location.z to make z position consistent
+        // Get the current location
+        FVector CurrentLocation = BoatMesh->GetComponentLocation();
+
+        // Reset only the Z component
+        CurrentLocation.Z = DefaultZLocation;
+
+        // Set the new location
+        BoatMesh->SetWorldLocation(CurrentLocation, true);
+        
+        return; // No input, do nothing
+    }
+
+    FVector DesiredDirection = GetWorldSpaceDirection(MovementInput).GetSafeNormal();
 
     if (!DesiredDirection.IsNearlyZero())
     {
-        // Gradually adjust the ScurryMultiplier if scurrying is active
         float CurrentScurryMultiplier = bScurryActive ? ScurryAmount : 1.0f;
 
-        // Calculate the new location
         FVector CurrentLocation = BoatMesh->GetComponentLocation();
         FVector NewLocation = CurrentLocation + (DesiredDirection * CurrentSpeed * CurrentScurryMultiplier * DeltaTime);
 
-        // Move the boat with collision
-        FHitResult HitResult;
-        BoatMesh->SetWorldLocation(NewLocation, true, &HitResult);
+        // Allow Z movement as intended
+        BoatMesh->SetWorldLocation(NewLocation, true);
 
-        // Update replication variables (server-side only)
+        // Update replication variables
         if (GetOwnerRole() == ROLE_Authority)
         {
             ReplicatedLocation = NewLocation;
@@ -169,27 +188,46 @@ void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
 
 FVector UMovementBoat::GetWorldSpaceDirection(const FVector2D& InputDirection) const
 {
-    if (!SpringArm)
-    {
-        UE_LOG(LogTemp, Error, TEXT("SpringArm is null! Using default forward direction."));
-        return FVector::ZeroVector;
-    }
+    /*// Get the player camera's rotation
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (!PlayerController) return FVector::ZeroVector;
 
-    // Get the spring arm's yaw rotation
-    FRotator SpringArmRotation = SpringArm->GetComponentRotation();
-    FRotator YawRotation(0.0f, SpringArmRotation.Yaw, 0.0f);
+    FRotator CameraRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
+    FRotator YawRotation(0.0f, CameraRotation.Yaw, 0.0f);
 
-    // Calculate forward and right vectors based on the spring arm's yaw
+    // Use camera's yaw rotation to calculate forward and right vectors
     FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
     FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-    // Transform the input direction into a world space direction
-    FVector WorldSpaceDirection = (ForwardVector * InputDirection.X + RightVector * InputDirection.Y).GetClampedToMaxSize(1.0f);
+    // Transform input direction into world space
+    FVector WorldSpaceDirection = (ForwardVector * InputDirection.Y + RightVector * InputDirection.X).GetSafeNormal();
+    return WorldSpaceDirection;*/
+
+    // Find the boat's camera component
+    
+    UCameraComponent* BoatCamera = GetOwner()->FindComponentByClass<UCameraComponent>();
+    if (!BoatCamera)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Boat camera not found! Falling back to actor's forward vector."));
+        return FVector::ZeroVector;
+    }
+
+    // Get the camera's rotation
+    FRotator CameraRotation = BoatCamera->GetComponentRotation();
+    FRotator YawRotation(0.0f, CameraRotation.Yaw, 0.0f); // Ignore pitch and roll for movement
+
+    // Calculate forward and right vectors based on the camera's yaw
+    FVector ForwardVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+    FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+    // Combine input directions (X = forward/backward, Y = left/right)
+    FVector WorldSpaceDirection = (ForwardVector * InputDirection.Y + RightVector * InputDirection.X).GetSafeNormal();
     return WorldSpaceDirection;
 }
 
 void UMovementBoat::SimulateWaves(float DeltaTime, float WaveHeight, float WaveFrequency)
 {
+
     FVector CurrentLocation = BoatMesh->GetComponentLocation();
 
     // Update the wave time accumulator
@@ -198,9 +236,10 @@ void UMovementBoat::SimulateWaves(float DeltaTime, float WaveHeight, float WaveF
     // Calculate the wave offset
     float WaveOffset = FMath::Sin(WaveTimeAccumulator) * WaveHeight;
 
-    // Apply the wave effect to the Z-axis
+    // Apply the wave offset to the Z location
     CurrentLocation.Z += WaveOffset;
 
+    // Set the new location
     BoatMesh->SetWorldLocation(CurrentLocation, true);
 }
 

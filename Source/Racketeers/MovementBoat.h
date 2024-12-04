@@ -91,6 +91,8 @@ private:
 	UPROPERTY()
 	bool bShouldMove = false;
 
+	float DefaultZLocation;
+
 	UPROPERTY()
 	bool bScurryIsActive = false;
 
