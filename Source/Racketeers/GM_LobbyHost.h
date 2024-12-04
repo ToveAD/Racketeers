@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
 	FString MapName = "World_P";
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game")
+	TArray<APlayerController*> Players;
+
 	// ----------------- Functions -----------------
 	
 	UFUNCTION()
@@ -36,8 +39,8 @@ public:
 	UFUNCTION()
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
-	UFUNCTION()
-	virtual void OnLogout(AController* Exiting);
+	//UFUNCTION()
+	//virtual void OnLogout(AController* Exiting);
 	
 	UFUNCTION()
 	void SetUpSpawnPositions();
@@ -45,7 +48,7 @@ public:
 	UFUNCTION()
 	void SpawnPlayer(APlayerController* PC, ETeams Team);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void UpdatePlayers();
 
 	UFUNCTION()
