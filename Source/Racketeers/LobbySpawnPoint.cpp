@@ -90,6 +90,11 @@ void ALobbySpawnPoint::Server_RemovePlayer_Implementation()
 	}
 }
 
+void ALobbySpawnPoint::Multicast_ToggleReady_Implementation(bool bReady)
+{
+	ToggleReadyStatus(bReady);
+}
+
 
 void ALobbySpawnPoint::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
