@@ -69,8 +69,8 @@ public:
 
 private:
 	// Movement Helpers
-	void RotateToFaceDirection(const FVector2D& InputDirection);
-	void MoveForward(float DeltaTime, bool bScurryActive);
+	void RotateToFaceDirection(const FVector& TargetDirection);
+	void MoveForward(float DeltaTime, const FVector& TargetDirection, bool bScurryActive);
 	void SimulateWaves(float DeltaTime, float WaveHeight, float WaveFrequency);
 	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
 
@@ -111,8 +111,8 @@ private:
 	FVector PredictedPosition;
 
 	// References
-	UPROPERTY()
-	USpringArmComponent* SpringArm;
+	//UPROPERTY()
+	USpringArmComponent* SpringArm2;
 
 	UPROPERTY()
 	AActor* TeamCamera;
