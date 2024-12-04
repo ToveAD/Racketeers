@@ -35,6 +35,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_Scurry(bool bIsScurrying);
 
+	UFUNCTION(Client, Reliable)
+	void Client_Scurry(bool bIsScurrying);
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_UpdateTransform(float DeltaTime);
 
