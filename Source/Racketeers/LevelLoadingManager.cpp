@@ -149,13 +149,13 @@ void ALevelLoadingManager::UnloadLevel()
 
 }
 
-inline void ALevelLoadingManager::LevelUnloaded()
+void ALevelLoadingManager::LevelUnloaded()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "UNLOAD LEVEL");
 	OnUnloadingLevelCompleted.Broadcast();
 }
 
-inline void ALevelLoadingManager::LevelLoaded()
+void ALevelLoadingManager::LevelLoaded()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "LOADED LEVEL");
 	OnLoadingLevelCompleted.Broadcast();
