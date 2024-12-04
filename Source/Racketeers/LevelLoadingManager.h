@@ -14,6 +14,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadingLevelCompleted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLoadingLevelFailed);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnloadingLevelFailed);
 
+class UPhase;
+
 UCLASS()
 class RACKETEERS_API ALevelLoadingManager : public AActor
 {
@@ -40,12 +42,12 @@ public:
 	UFUNCTION(NetMulticast, Reliable, WithValidation , BlueprintCallable)
 	void MulticastLoadLevel(const UPhase* LevelPath);
 
-	void LoadLevel(const UPhase* NewPhase);
+	void LoadLevel();
 	void UnloadLevel();
 	
-	void LoadLevelParent(const UPhase* NewPhase);
+	void LoadLevelParent();
 
-	void UnloadLevelParent(UPhase NewPhase);
+	void UnloadLevelParent();
 
 	void LoadSubLevel();
 
@@ -67,10 +69,19 @@ public:
 	void LevelUnloaded();
 	UFUNCTION()
 	void LevelLoaded();
-	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString CurrentLevelPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString CurrentSubLevelPath;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString NextLevelPath;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString NextSubLevelPath;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPhase* CurrentPhase;
 
 private:
 	UPROPERTY()

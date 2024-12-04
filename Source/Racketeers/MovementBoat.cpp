@@ -41,8 +41,8 @@ void UMovementBoat::BeginPlay()
 void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-    if (GetOwner()->HasAuthority() && BoatMesh->IsCollisionEnabled()) // Server side
+    
+    if (GetOwner()->HasAuthority()) // Server side
     {
         if (bShouldMove)
         {
@@ -56,7 +56,7 @@ void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
         Server_UpdateTransform(DeltaTime); // Send transform updates to clients
     }
-    else if(bShouldMove && BoatMesh->IsCollisionEnabled())// Client side
+    else if(!GetOwner()->HasAuthority() && bShouldMove)// Client side
     {
         Client_InterpolateTransform(DeltaTime); // Smooth client-side interpolation
     }
@@ -91,8 +91,34 @@ bool UMovementBoat::Server_Move_Validate(FVector2D Value, bool bStarted)
 
 void UMovementBoat::Scurry(bool bIsScurrying)
 {
+    // Apply scurry effect locally on the client immediately
+    if (GetOwnerRole() == ROLE_AutonomousProxy)
+    {
+        bScurryIsActive = bIsScurrying;
+
+        // Send the request to the server to track the change
+        Server_Scurry(bIsScurrying);
+    }
+    
+    // On the server side, handle scurry state for the controlling player
+    if (GetOwner()->HasAuthority())
+    {
+        bScurryIsActive = bIsScurrying;
+    }
+}
+
+void UMovementBoat::Server_Scurry_Implementation(bool bIsScurrying)
+{
+    // Server processes scurry but does not apply it globally.
     bScurryIsActive = bIsScurrying;
 }
+
+void UMovementBoat::Client_Scurry_Implementation(bool bIsScurrying)
+{
+    // This function is executed locally to ensure responsiveness
+    bScurryIsActive = bIsScurrying;
+}
+
 
 void UMovementBoat::RotateToFaceDirection(const FVector2D& InputDirection)
 {
@@ -124,22 +150,25 @@ void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
     if (!DesiredDirection.IsNearlyZero())
     {
         // Gradually adjust the ScurryMultiplier
-        static float CurrentScurryMultiplier = 1.0f; // Start at normal speed
-        float TargetScurryMultiplier = bScurryActive ? ScurryAmount : 1.0f;
+        float CurrentScurryMultiplier = 1.0f; // Start at normal speed
+        if (bScurryIsActive)  // Use the local scurry state here
+        {
+            CurrentScurryMultiplier = ScurryAmount;
+            float TargetScurryMultiplier = ScurryAmount;
 
-        // Smoothly interpolate to the target multiplier
-        CurrentScurryMultiplier = FMath::FInterpTo(CurrentScurryMultiplier, TargetScurryMultiplier, DeltaTime, 2.0f);
+            // Smoothly interpolate to the target multiplier
+            CurrentScurryMultiplier = FMath::FInterpTo(CurrentScurryMultiplier, TargetScurryMultiplier, DeltaTime, 2.0f);
+        }
 
         // Calculate the new location
         FVector CurrentLocation = BoatMesh->GetComponentLocation();
         FVector NewLocation = CurrentLocation + (DesiredDirection * CurrentSpeed * CurrentScurryMultiplier * DeltaTime);
-        //NewLocation.Z += WaveOffset; // Apply the wave effect to the Z-axis
 
         // Move the boat with collision
         FHitResult HitResult;
         BoatMesh->SetWorldLocation(NewLocation, true, &HitResult);
 
-        // Update replicated transform for clients
+        // Only update replication if we are the server
         if (GetOwnerRole() == ROLE_Authority)
         {
             ReplicatedLocation = NewLocation;
@@ -245,8 +274,6 @@ void UMovementBoat::Client_InterpolateTransform(float DeltaTime)
     BoatMesh->SetWorldLocation(InterpolatedLocation, true);
     BoatMesh->SetWorldRotation(InterpolatedRotation, true);
 
-    UpdateComponentToWorld();
-
     // Reset the interpolation time when fully updated
     if (Alpha >= 1.0f)
     {
@@ -264,7 +291,6 @@ void UMovementBoat::Server_UpdateTransform_Implementation(float DeltaTime)
         BoatMesh->SetWorldLocation(NewLocation, true);
         ReplicatedLocation = NewLocation;
         ReplicatedRotation = BoatMesh->GetComponentRotation();
-        UpdateComponentToWorld();
     }
 }
 

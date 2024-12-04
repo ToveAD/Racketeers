@@ -268,14 +268,14 @@ void ARacketeersGameStateBase::OnRep_PhaseChange()
 		case EPhaseState::Phase_1:
 			OnPhaseOneActive.Broadcast();
 			WS->ActivateWidget("TeamResources");
-			WS->RemoveWidget("Health");
+			WS->RemoveWidget("TeamHealth");
 		break;
 		case EPhaseState::Phase_2:
 			OnPhaseTwoActive.Broadcast();
 			break;
 		case EPhaseState::Phase_3:
 			OnPhaseThreeActive.Broadcast();
-			WS->ActivateWidget("Health");
+			WS->ActivateWidget("TeamHealth");
 			WS->RemoveWidget("TeamResources");
 			break;
 	}
