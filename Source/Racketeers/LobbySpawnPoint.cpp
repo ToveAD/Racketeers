@@ -45,6 +45,13 @@ void ALobbySpawnPoint::Server_SpawnPlayer_Implementation()
 		const TSubclassOf<AActor> PlayerClass = (Team == ETeams::Team_Panda) ? PandaPlayerClass : RaccoonPlayerClass;
 
 		Player = GetWorld()->SpawnActor<AActor>(PlayerClass, PlayerSpawnPoint->GetComponentLocation(),PlayerSpawnPoint->GetComponentRotation(), SpawnParams);
+		Player->SetActorEnableCollision(false);
+		
+		// Attach the player to the root component of this actor
+		if (Player && GetRootComponent())
+		{
+			Player->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		}
 
 		Multicast_SpawnVFX();
 	}

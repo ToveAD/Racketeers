@@ -12,12 +12,13 @@ APS_Lobby::APS_Lobby()
 
 void APS_Lobby::CopyProperties(APlayerState* PlayerState)
 {
+	Super::CopyProperties(PlayerState);
+	
 	if(APS_Base* PS_Base = Cast<APS_Base>(PlayerState))
 	{
-		FPlayerInfo PlayerI;
-		PlayerInfo.PlayerName = FText::FromString(LobbyInfo.PlayerName);
-		
-		PS_Base->PlayerInfo = PlayerI;
+		PS_Base->PlayerInfo.Team = LobbyInfo.Team;
+		PS_Base->PlayerInfo.TeamPlayerID = LobbyInfo.TeamID;
+		PS_Base->PlayerInfo.PlayerName = FText::FromString(LobbyInfo.PlayerName);
 	}
 }
 
