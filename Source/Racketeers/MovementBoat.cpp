@@ -23,37 +23,40 @@ UMovementBoat::UMovementBoat()
 void UMovementBoat::BeginPlay()
 {
     Super::BeginPlay();
+    //FindCameraAndSpringArm();
 
     // Get BoatMesh for all transform updates
     BoatMesh = Cast<UPrimitiveComponent>(GetOwner()->GetComponentByClass(UPrimitiveComponent::StaticClass()));
+    if (!BoatMesh)
+    {
+        UE_LOG(LogTemp, Error, TEXT("BoatMesh not found!"));
+        return;
+    }
 
     // Initialize replication variables
-    ReplicatedLocation = GetOwner()->GetActorLocation();
-    ReplicatedRotation = GetOwner()->GetActorRotation();
+    ReplicatedLocation = BoatMesh->GetComponentLocation();
+    ReplicatedRotation = BoatMesh->GetComponentRotation();
 }
 
 void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+    
     if (GetOwner()->HasAuthority()) // Server side
     {
         if (bShouldMove)
         {
-            FVector2D InputDirection = MovementInput;
-            FVector WorldSpaceDirection = GetWorldSpaceDirection(InputDirection);
-            RotateToFaceDirection(WorldSpaceDirection);
-            MoveForward(DeltaTime, WorldSpaceDirection, bScurryIsActive);
+            MoveForward(DeltaTime, bScurryIsActive);
+            RotateToFaceDirection(MovementInput);
             SimulateWaves(DeltaTime, MovingWaveHeight, MovingWaveFrequency);
-        }
-        else
+        }else if(!bShouldMove)
         {
             SimulateWaves(DeltaTime, PassiveWaveHeight, PassiveWaveFrequency);
         }
 
         Server_UpdateTransform(DeltaTime); // Send transform updates to clients
     }
-    else if (!GetOwner()->HasAuthority() && bShouldMove) // Client side
+    else if(!GetOwner()->HasAuthority() && bShouldMove)// Client side
     {
         Client_InterpolateTransform(DeltaTime); // Smooth client-side interpolation
     }
@@ -61,6 +64,7 @@ void UMovementBoat::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 void UMovementBoat::Move(FVector2D Value, bool bStarted)
 {
+    FindCameraAndSpringArm();
     bShouldMove = bStarted;
 
     if (bStarted)
@@ -95,7 +99,7 @@ void UMovementBoat::Scurry(bool bIsScurrying)
         // Send the request to the server to track the change
         Server_Scurry(bIsScurrying);
     }
-
+    
     // On the server side, handle scurry state for the controlling player
     if (GetOwner()->HasAuthority())
     {
@@ -105,7 +109,7 @@ void UMovementBoat::Scurry(bool bIsScurrying)
 
 void UMovementBoat::Server_Scurry_Implementation(bool bIsScurrying)
 {
-    // Server processes scurry
+    // Server processes scurry but does not apply it globally.
     bScurryIsActive = bIsScurrying;
 }
 
@@ -115,60 +119,59 @@ void UMovementBoat::Client_Scurry_Implementation(bool bIsScurrying)
     bScurryIsActive = bIsScurrying;
 }
 
-void UMovementBoat::RotateToFaceDirection(const FVector& TargetDirection)
-{
-    if (!TargetDirection.IsNearlyZero())
-    {
-        // Get the current and target rotations
-        FRotator CurrentRotation = GetOwner()->GetActorRotation();
-        FRotator TargetRotation = TargetDirection.Rotation();
-        TargetRotation.Pitch = 0.0f; // Ensure no pitch rotation
-        TargetRotation.Roll = 0.0f;
 
-        // Smoothly interpolate to the target rotation
-        FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), RotationSpeed);
-        GetOwner()->SetActorRotation(NewRotation);
+void UMovementBoat::RotateToFaceDirection(const FVector2D& InputDirection)
+{
+    if (!InputDirection.IsNearlyZero())
+    {
+        FVector TargetDirection = GetWorldSpaceDirection(InputDirection);
+
+        if (!TargetDirection.IsNearlyZero())
+        {
+            FRotator CurrentRotation = BoatMesh->GetComponentRotation();
+            FRotator TargetRotation = TargetDirection.Rotation();
+            TargetRotation.Pitch = 0.0f; // No pitch rotation
+            TargetRotation.Roll = 0.0f;
+
+            // Smoothly interpolate to the target rotation
+            FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), RotationSpeed);
+            BoatMesh->SetWorldRotation(NewRotation, true);
+        }
     }
 }
 
-void UMovementBoat::MoveForward(float DeltaTime, const FVector& Direction, bool bScurryActive)
+void UMovementBoat::MoveForward(float DeltaTime, bool bScurryActive)
 {
-    if (!Direction.IsNearlyZero())
-    {
-        // Gradually adjust the ScurryMultiplier
-        float CurrentScurryMultiplier = 1.0f; // Start at normal speed
-        if (bScurryActive)  // Use the local scurry state here
-        {
-            CurrentScurryMultiplier = ScurryAmount;
-            float TargetScurryMultiplier = ScurryAmount;
+    // Convert MovementInput (2D) to a world-space 3D direction
+    FVector DesiredDirection = GetWorldSpaceDirection(MovementInput);
 
-            // Smoothly interpolate to the target multiplier
-            CurrentScurryMultiplier = FMath::FInterpTo(CurrentScurryMultiplier, TargetScurryMultiplier, DeltaTime, 2.0f);
-        }
+    if (!DesiredDirection.IsNearlyZero())
+    {
+        // Gradually adjust the ScurryMultiplier if scurrying is active
+        float CurrentScurryMultiplier = bScurryActive ? ScurryAmount : 1.0f;
 
         // Calculate the new location
-        FVector CurrentLocation = GetOwner()->GetActorLocation();
-        FVector NewLocation = CurrentLocation + (Direction * CurrentSpeed * CurrentScurryMultiplier * DeltaTime);
+        FVector CurrentLocation = BoatMesh->GetComponentLocation();
+        FVector NewLocation = CurrentLocation + (DesiredDirection * CurrentSpeed * CurrentScurryMultiplier * DeltaTime);
 
         // Move the boat with collision
-        GetOwner()->SetActorLocation(NewLocation);
+        FHitResult HitResult;
+        BoatMesh->SetWorldLocation(NewLocation, true, &HitResult);
 
-        // Only update replication if we are the server
+        // Update replication variables (server-side only)
         if (GetOwnerRole() == ROLE_Authority)
         {
             ReplicatedLocation = NewLocation;
-            ReplicatedRotation = GetOwner()->GetActorRotation();
+            ReplicatedRotation = BoatMesh->GetComponentRotation();
         }
     }
 }
 
 FVector UMovementBoat::GetWorldSpaceDirection(const FVector2D& InputDirection) const
 {
-    // Find the spring arm attached to the boat
-    USpringArmComponent* SpringArm = GetOwner()->FindComponentByClass<USpringArmComponent>();
     if (!SpringArm)
     {
-        UE_LOG(LogTemp, Error, TEXT("SpringArm not found! Using forward vector as default."));
+        UE_LOG(LogTemp, Error, TEXT("SpringArm is null! Using default forward direction."));
         return FVector::ZeroVector;
     }
 
@@ -181,7 +184,7 @@ FVector UMovementBoat::GetWorldSpaceDirection(const FVector2D& InputDirection) c
     FVector RightVector = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
     // Transform the input direction into a world space direction
-    FVector WorldSpaceDirection = (ForwardVector * InputDirection.Y + RightVector * InputDirection.X).GetClampedToMaxSize(1.0f);
+    FVector WorldSpaceDirection = (ForwardVector * InputDirection.X + RightVector * InputDirection.Y).GetClampedToMaxSize(1.0f);
     return WorldSpaceDirection;
 }
 
@@ -201,8 +204,46 @@ void UMovementBoat::SimulateWaves(float DeltaTime, float WaveHeight, float WaveF
     BoatMesh->SetWorldLocation(CurrentLocation, true);
 }
 
+
+void UMovementBoat::FindCameraAndSpringArm()
+{
+    TeamCamera = nullptr;
+    SpringArm = nullptr;
+
+    //FName CameraTag;
+    //if (GetOwner()->ActorHasTag("BoatPanda"))
+    //{
+    //    CameraTag = FName("CameraPanda");
+    //}
+   // else if (GetOwner()->ActorHasTag("BoatRaccoon"))
+   // {
+   //     CameraTag = FName("CameraRaccoon");
+  // }
+   // else
+   // {
+   //     UE_LOG(LogTemp, Error, TEXT("Boat does not have a valid team tag!"));
+    //    return;
+   // }
+
+   // for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+   // {
+     //   if (It->ActorHasTag(CameraTag))
+    //    {
+    //        TeamCamera = *It;
+      //      return;
+     //   }
+   // }
+    SpringArm = GetOwner()->FindComponentByClass<USpringArmComponent>();
+}
+
 void UMovementBoat::Client_InterpolateTransform(float DeltaTime)
 {
+    if (!BoatMesh)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("BoatMesh is null in Client_InterpolateTransform!"));
+        return;
+    }
+
     // Accumulate time since last interpolation
     static float TimeSinceLastUpdate = 0.0f;
     TimeSinceLastUpdate += DeltaTime;
@@ -220,8 +261,8 @@ void UMovementBoat::Client_InterpolateTransform(float DeltaTime)
     FRotator InterpolatedRotation = FMath::Lerp(CurrentRotation, ReplicatedRotation, Alpha);
 
     // Update the boat mesh
-    GetOwner()->SetActorLocation(InterpolatedLocation);
-    GetOwner()->SetActorRotation(InterpolatedRotation);
+    BoatMesh->SetWorldLocation(InterpolatedLocation, true);
+    BoatMesh->SetWorldRotation(InterpolatedRotation, true);
 
     // Reset the interpolation time when fully updated
     if (Alpha >= 1.0f)
@@ -234,13 +275,12 @@ void UMovementBoat::Server_UpdateTransform_Implementation(float DeltaTime)
 {
     if (bShouldMove)
     {
-        FVector DesiredDirection = GetOwner()->GetActorForwardVector();
+        FVector DesiredDirection = GetWorldSpaceDirection(MovementInput);
         FVector NewLocation = BoatMesh->GetComponentLocation() + (DesiredDirection * CurrentSpeed * DeltaTime);
 
-        GetOwner()->SetActorLocation(NewLocation);
-        
+        BoatMesh->SetWorldLocation(NewLocation, true);
         ReplicatedLocation = NewLocation;
-        ReplicatedRotation = GetOwner()->GetActorRotation();
+        ReplicatedRotation = BoatMesh->GetComponentRotation();
     }
 }
 
