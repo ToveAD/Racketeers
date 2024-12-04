@@ -6,6 +6,7 @@
 #include "GameModeStructs.h"
 #include "GS_Base.h"
 #include "Phase.h"
+#include "PS_Base.h"
 #include "RacketeersGameStateBase.generated.h"
 
 /**
@@ -66,16 +67,21 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	void AddResource(int Amount, EResources Resource, ETeams Team);
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void RemoveResource(int Amount, EResources Resource, ETeams Team);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void AddToStats(int Amount, EGameStats Stat, ETeams Team);
 	UFUNCTION(BlueprintCallable)
 	int32 GetTeamResources(ETeams Team, EResources Resource) const;
+	UFUNCTION(BlueprintCallable)
+	FTeamGameStats GetTeamStats(ETeams Team) const;
 	
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void AddPart(ETeams Team, EPart Part);
 	UFUNCTION(NetMulticast, Reliable)
 	void RemovePart(ETeams Team, EPart Part);
-	
+
+	bool CheckTeamAlive(ETeams Team);
+	void CheckRoundEnd(ETeams Team);
+
 	UPROPERTY(ReplicatedUsing=OnRep_PickUp, BlueprintReadWrite)
 	FResources RacconResource;
 	UPROPERTY(ReplicatedUsing=OnRep_PickUp, BlueprintReadWrite)
@@ -86,9 +92,12 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	TEnumAsByte<EPhaseState> IncomingPhase;
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	FGameStats RaccoonsGameStats;
+	FTeamGameStats RaccoonsGameStats;
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	FGameStats RedPandasGameStats;
+	FTeamGameStats RedPandasGameStats;
+
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	FGameStats TeamStats;
 
 	
 	UPROPERTY(BlueprintReadWrite)

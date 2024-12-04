@@ -54,11 +54,21 @@ public:
 	
 	APS_Base();
 
+	virtual void BeginPlay() override;
+
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
 	FPlayerInfo PlayerInfo;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
+	float BoatHealth;
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
+	float MaxBoatHealth;
+	UFUNCTION(Server, Reliable, WithValidation)
+	void DamagePlayerBoat(APlayerState* PS,int Amount);
+	
 	
 };
 
