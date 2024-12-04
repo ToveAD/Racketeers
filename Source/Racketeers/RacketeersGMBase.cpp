@@ -257,7 +257,6 @@ void ARacketeersGMBase::Transition()
 
 
 	//LoadLevel();
-
 	
 	OnUnloadingMap.Broadcast();
 	
@@ -470,8 +469,6 @@ void ARacketeersGMBase::LoadLevel()
 	}
 
 	bool bStreamingSucceded = false;
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
 	//LevelLoadingManager->MulticastLoadLevel(Phases[GetNextPhaseNumber()]);
 	//LevelLoadingManager->OnLoadingLevelCompleted.AddDynamic(this, &ARacketeersGMBase::RespawnPlayers);
 
