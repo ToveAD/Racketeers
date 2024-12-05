@@ -115,15 +115,53 @@ int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resourc
 	return MaterialAmount;
 }
 
-FTeamGameStats ARacketeersGameStateBase::GetTeamStats(ETeams Team) const
+FTeamGameStats ARacketeersGameStateBase::GetTeamStats(ETeams Team)
 {
 	int TeamSpace = (int)Team;
 	const FTeamGameStats* GameStats = (&TeamStats.Raccoons + TeamSpace); 
 	return GameStats[0];
 }
 
+void ARacketeersGameStateBase::UpdateTeamAlive()
+{
+	int32 RaccoonStat = GetTeamStats(ETeams::Team_Raccoon).TeamAlive;
+	int32 PandaStat = GetTeamStats(ETeams::Team_Panda).TeamAlive;
+	
+	RaccoonStat = 0;
+	PandaStat = 0;
+	
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		for (APlayerState* PS : PlayerArray)
+		{
+			if (PS == nullptr) return; 
+			APS_Base* PSBase = Cast<APS_Base>(PS);
+			if (PSBase == nullptr) return;
+
+			if(PSBase->PlayerInfo.Team == ETeams::Team_Raccoon)
+			{
+				AddToStats(1, EGameStats::ALIVE, ETeams::Team_Raccoon);
+				continue;
+			}
+			if(PSBase->PlayerInfo.Team == ETeams::Team_Panda)
+			{
+				AddToStats(1, EGameStats::ALIVE, ETeams::Team_Panda);
+				continue;
+			}
+		}
+	}
+}
+
+void ARacketeersGameStateBase::UpdateHealth()
+{
+	APS_Base* PSBase = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPlayerState<APS_Base>();
+	if(PSBase == nullptr) return;
+	PSBase->BoatHealth = PSBase->MaxBoatHealth;
+}
+
 bool ARacketeersGameStateBase::CheckTeamAlive(ETeams Team)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Alive" + FString::FromInt(GetTeamStats(Team).TeamAlive));
 	if(GetTeamStats(Team).TeamAlive <= 0)
 	{
 		return false;
@@ -274,11 +312,14 @@ void ARacketeersGameStateBase::OnRep_PhaseChange()
 			OnPhaseTwoActive.Broadcast();
 			break;
 		case EPhaseState::Phase_3:
+			UpdateHealth();
+			UpdateTeamAlive();
 			OnPhaseThreeActive.Broadcast();
 			WS->ActivateWidget("TeamHealth");
 			WS->RemoveWidget("TeamResources");
 			break;
 	}
+	//UpdateTeamAlive();
 }
 
 void ARacketeersGameStateBase::SetRandomNumber(int Number)
