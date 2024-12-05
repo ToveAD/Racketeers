@@ -69,7 +69,7 @@ public:
 
 private:
 	// Movement Helpers
-	void RotateToFaceDirection(const FVector2D& InputDirection);
+	void RotateToFaceDirection(const FVector2D& TargetDirection);
 	void MoveForward(float DeltaTime, bool bScurryActive);
 	void SimulateWaves(float DeltaTime, float WaveHeight, float WaveFrequency);
 	FVector GetWorldSpaceDirection(const FVector2D& InputDirection) const;
@@ -91,6 +91,8 @@ private:
 	UPROPERTY()
 	bool bShouldMove = false;
 
+	float DefaultZLocation;
+
 	UPROPERTY()
 	bool bScurryIsActive = false;
 
@@ -111,7 +113,7 @@ private:
 	FVector PredictedPosition;
 
 	// References
-	UPROPERTY()
+	//UPROPERTY()
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY()
