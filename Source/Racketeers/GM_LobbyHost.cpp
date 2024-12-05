@@ -96,6 +96,7 @@ void AGM_LobbyHost::RemovePlayer(APlayerController* PC)
 	if(ALobbySpawnPoint* SpawnPoint = Cast<ALobbySpawnPoint>(Cast<APC_Lobby>(PC)->SpawnPoint))
 	{
 		SpawnPoint->Server_RemovePlayer();
+		Cast<APS_Lobby>(PC->PlayerState)->LobbyInfo.bIsReady = false;
 		
 		UpdatePlayers();
 		UpdateIfTeamFull();
