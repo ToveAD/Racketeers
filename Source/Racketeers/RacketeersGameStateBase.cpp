@@ -124,6 +124,12 @@ FTeamGameStats ARacketeersGameStateBase::GetTeamStats(ETeams Team)
 
 void ARacketeersGameStateBase::UpdateTeamAlive()
 {
+	int32 RaccoonStat = GetTeamStats(ETeams::Team_Raccoon).TeamAlive;
+	int32 PandaStat = GetTeamStats(ETeams::Team_Panda).TeamAlive;
+	
+	RaccoonStat = 0;
+	PandaStat = 0;
+	
 	if(GetLocalRole() == ROLE_Authority)
 	{
 		for (APlayerState* PS : PlayerArray)
@@ -155,6 +161,7 @@ void ARacketeersGameStateBase::UpdateHealth()
 
 bool ARacketeersGameStateBase::CheckTeamAlive(ETeams Team)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Alive" + FString::FromInt(GetTeamStats(Team).TeamAlive));
 	if(GetTeamStats(Team).TeamAlive <= 0)
 	{
 		return false;
@@ -312,7 +319,7 @@ void ARacketeersGameStateBase::OnRep_PhaseChange()
 			WS->RemoveWidget("TeamResources");
 			break;
 	}
-	UpdateTeamAlive();
+	//UpdateTeamAlive();
 }
 
 void ARacketeersGameStateBase::SetRandomNumber(int Number)
