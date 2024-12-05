@@ -72,12 +72,7 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UFUNCTION(BlueprintCallable)
 	int32 GetTeamResources(ETeams Team, EResources Resource) const;
 	UFUNCTION(BlueprintCallable)
-	FTeamGameStats GetTeamStats(ETeams Team);
-
-	UFUNCTION(Blueprintable)
-	void UpdateTeamAlive();
-	UFUNCTION(BlueprintCallable)
-	void UpdateHealth();
+	FTeamGameStats GetTeamStats(ETeams Team) const;
 	
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void AddPart(ETeams Team, EPart Part);

@@ -218,14 +218,15 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 	{
 		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 		if(GS == nullptr) return false;
-		if(GS->GetTeamStats(ETeams::Team_Raccoon).TeamAlive > GS->GetTeamStats(ETeams::Team_Panda).TeamAlive)
+		if(GS->RaccoonsBoatHealth > GS->RedPandasBoatHealth)
 		{
 			GS->RacconsRoundsWon++;
+			
 			return true;
 		}
-		if(GS->GetTeamStats(ETeams::Team_Panda).TeamAlive > GS->GetTeamStats(ETeams::Team_Raccoon).TeamAlive)
+		if(GS->RedPandasBoatHealth > GS->RaccoonsBoatHealth)
 		{
-			GS->RedPandasRoundsWon++;
+			GS->RedPandasBoatHealth++;
 			return true;
 		}
 		

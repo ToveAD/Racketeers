@@ -61,15 +61,13 @@ public:
 
 	UFUNCTION(Server, Reliable, WithValidation,BlueprintCallable )
 	void DamagePlayerBoat(APlayerState* PS,int Amount);
-
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo", EditAnywhere)
 	float BoatHealth;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo", EditAnywhere)
 	float MaxBoatHealth;
-protected:
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
-
 
 	
 	
