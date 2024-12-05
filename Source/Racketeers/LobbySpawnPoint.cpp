@@ -87,12 +87,18 @@ void ALobbySpawnPoint::Server_RemovePlayer_Implementation()
 	{
 		Player->Destroy();
 		LobbyInfoWidget->SetVisibility(false);
+		PlayerController = nullptr;
 	}
 }
 
 void ALobbySpawnPoint::Multicast_ToggleReady_Implementation(bool bReady)
 {
 	ToggleReadyStatus(bReady);
+
+	if (UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject()))
+	{
+		LobbyInfo->SetReadyStatus(bReady);
+	}
 }
 
 
