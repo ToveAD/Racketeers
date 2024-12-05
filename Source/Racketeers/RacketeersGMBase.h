@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GM_Base.h"
+#include "LevelLoadingManager.h"
 #include "TimerInfo.h"
 #include "TransitionComponent.h"
 #include "WidgetSubsystem.h"
@@ -43,6 +44,9 @@ public:
 	ATimerInfo* TimerInfo = nullptr;
 
 	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
+	ALevelLoadingManager* LevelLoadingManager = nullptr;
+
+	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
 	UTransitionComponent* TransitionComponent = nullptr;
 	/*
 	 * When A Widget Need To Load
@@ -64,20 +68,14 @@ public:
 	*/
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnUnloadingMap OnUnloadingMap;
-	
+
+	UPROPERTY()
 	UWidgetSubsystem* WidgetSubsystem;
+	UPROPERTY()
+	int8 UnloadWidgetCount;
 	
 	UFUNCTION(BlueprintCallable)
 	void UnloadWidget();
-
-	int8 UnloadWidgetCount;
-	
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void Respawn();
-	
-	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable)
-	void SpawnTeams();
-
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 	virtual void BeginPlay() override;
@@ -102,16 +100,18 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void RespawnPlayer(APlayerController* PController);
+	void RespawnPlayer(APlayerState* PState);
 	UFUNCTION(BlueprintCallable)
 	void IncreaseTotalRounds();
 	UFUNCTION(BlueprintCallable)
 	void DecreaseTotalRounds();
 	UFUNCTION(BlueprintCallable)
 	void RoundCompletion();
+	
 	void BroadcastOnPlayerPressed(ETeams Team);
 	void IncrementPlayerCounter();
 	int8 GetTotalRounds();
+	TEnumAsByte<EPhaseState> SwitchIncomingState();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGameActive;
@@ -119,13 +119,13 @@ public:
 	UPhase* CurrentPhase;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TArray<UPhase*> Phases;
-
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 TotalRounds;
 
 private:
 
-	UPROPERTY(EditAnywhere)
-	int8 TotalRounds;
+
+	UPROPERTY()
 	float CurrentTime;
 
 	int GetNextPhaseNumber();

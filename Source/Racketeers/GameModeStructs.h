@@ -70,68 +70,82 @@ struct FWidgetClassAndName
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FName Name;
+	FName Name = "";
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UUserWidget*  Widget;
+	UUserWidget*  Widget = nullptr;
 };
 USTRUCT(BlueprintType)
 struct FTimer
 {
 	GENERATED_BODY();
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Minutes;
+	int Minutes = 0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int Seconds;
+	int Seconds = 0;
 	
 };
 
 UENUM()
-enum EGameStats
+enum EGameStats : uint8
 {
-	PUSHES = 0,
-	FALLS = 1,
-	PARTCONSTRUCTED = 2,
-	BOATDAMAGEDONE = 3,
-	MISSES = 4
+	ALIVE = 0,
+	PUSHES = 1,
+	FALLS = 2,
+	PARTCONSTRUCTED = 3,
+	BOATDAMAGEDONE = 4,
+	MISSES = 5
 };
 
 UENUM(BlueprintType)
 enum EPart
 {
+	Hull_0,
 	Hull_1,
 	Hull_2,
+	Cannon_0,
 	Cannon_1,
 	Cannon_2,
+	Sail_0,
 	Sail_1,
 	Sail_2,
+	NONE,
 };
 
 USTRUCT(BlueprintType)
 struct FParts
 {
 	GENERATED_BODY()
-	EPart Hull;
-	EPart Cannon;
-	EPart Sail;
+	EPart Hull = Hull_0;
+	EPart Cannon = Cannon_0;
+	EPart Sail = Sail_0;
 };
+
+USTRUCT(BlueprintType)
+struct FTeamGameStats
+{
+	GENERATED_BODY();
+	UPROPERTY(BlueprintReadWrite)
+	int32 TeamAlive = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Pushes = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Falls = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 PartConstructed = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 BoatDamageDone = 0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 Misses = 0;
+};
+
 
 USTRUCT(BlueprintType)
 struct FGameStats
 {
-	GENERATED_BODY();
+	GENERATED_BODY()
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Pushes;
+	FTeamGameStats Raccoons;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Falls;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 PartConstructed;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 BoatDamageDone;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 Misses;
+	FTeamGameStats Pandas;
 };
-
-
-
-
 

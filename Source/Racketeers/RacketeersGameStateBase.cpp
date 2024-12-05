@@ -21,12 +21,14 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconResource);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasResource);
+
+	DOREPLIFETIME(ARacketeersGameStateBase, TeamStats);
 	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsGameStats);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasGameStats);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconsRoundsWon);
-	DOREPLIFETIME(ARacketeersGameStateBase, RacconsBoatHealth);
-	DOREPLIFETIME(ARacketeersGameStateBase, RacconsMaxHealth);
+	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsBoatHealth);
+	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsMaxHealth);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasRoundsWon);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasBoatHealth);
@@ -34,9 +36,10 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 	DOREPLIFETIME(ARacketeersGameStateBase, GameWinner);
 	DOREPLIFETIME(ARacketeersGameStateBase, CurrentPhase);
+	DOREPLIFETIME(ARacketeersGameStateBase, IncomingPhase);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, Phase2RandomNumber);
-
+	DOREPLIFETIME(ARacketeersGameStateBase, Phase3RandomNumber);
 	
 	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsReady);
 	DOREPLIFETIME(ARacketeersGameStateBase, PandasReady);
@@ -47,27 +50,29 @@ void ARacketeersGameStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	AddPart(ETeams::Team_Raccoon, EPart::Cannon_0);
+	AddPart(ETeams::Team_Raccoon, EPart::Hull_0);
+	AddPart(ETeams::Team_Raccoon, EPart::Sail_0);
+	AddPart(ETeams::Team_Panda, EPart::Cannon_0);
+	AddPart(ETeams::Team_Panda, EPart::Hull_0);
+	AddPart(ETeams::Team_Panda, EPart::Sail_0);
 
-	/*
+
+	
 	UBaseGameInstance* GI = Cast<UBaseGameInstance>(GetGameInstance());
 	if (GI->CheckIfDataToTransfer())
 	{
 		FGameStatsPackage Package = GI->GetDataTransferPackage();
 
-		RacconsWood = Package.RacconsWood;
-		RacconsFiber = Package.RacconsFiber;
-		RacconsMetal = Package.RacconsMetal;
+		RacconResource = Package.RaccoonResources;
 		RacconsRoundsWon = Package.RacconsRoundsWon;
-		RacconsBoatHealth = Package.RacconsBoatHealth;
-		RedPandasWood = Package.RedPandasWood;
-		RedPandasFiber = Package.RedPandasFiber;
-		RedPandasMetal = Package.RedPandasMetal;
+		RaccoonsBoatHealth = Package.RacconsBoatHealth;
+		RedPandasResource = Package.PandaResources;
 		RedPandasRoundsWon = Package.RedPandasRoundsWon;
 		RedPandasBoatHealth = Package.RedPandasBoatHealth;
 		GameWinner = Package.WonTeam;
 		GI->ClearDataStatsPackage();
 	}
-	*/
 
 	if (HasAuthority())
 	{
@@ -78,58 +83,10 @@ void ARacketeersGameStateBase::BeginPlay()
 		AddResource(3, EResources::METAL, ETeams::Team_Raccoon);
 		AddResource(3, EResources::METAL, ETeams::Team_Panda);
 	}
-	RacconsBoatHealth = RacconsMaxHealth;
+	RaccoonsBoatHealth = RaccoonsMaxHealth;
 	RedPandasBoatHealth = RedPandasMaxHealth;
 
 }
-
-/*
-
-void ARacketeersGameStateBase::AddToWood(int Amount, ETeams Team)
-{
-	if (Team == ETeams::Team_Raccoon)
-	{
-		RacconsWood += Amount;
-		return;
-	}
-	RedPandasWood += Amount;
-}
-
-void ARacketeersGameStateBase::AddToFiber(int Amount, ETeams Team)
-{
-	if (Team == ETeams::Team_Raccoon)
-	{
-		RacconsFiber += Amount;
-		return;
-	}
-	RedPandasFiber += Amount;
-}
-
-void ARacketeersGameStateBase::AddToMetal(int Amount, ETeams Team)
-{
-	if (Team == ETeams::Team_Raccoon)
-	{
-		RacconsMetal += Amount;
-		return;
-	}
-	RedPandasMetal += Amount;
-}
-
-void ARacketeersGameStateBase::RemoveWood(int Amount, ETeams Team)
-{
-	AddToWood(-Amount, Team);
-}
-
-void ARacketeersGameStateBase::RemoveFiber(int Amount, ETeams Team)
-{
-	AddToFiber(-Amount, Team);
-}
-
-void ARacketeersGameStateBase::RemoveMetal(int Amount, ETeams Team)
-{
-	AddToMetal(-Amount, Team);
-}
-*/
 
 void ARacketeersGameStateBase::ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPhase)
 {
@@ -140,6 +97,8 @@ void ARacketeersGameStateBase::ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPh
 	}
 
 }
+
+
 
 int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resource) const
 {
@@ -154,6 +113,62 @@ int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resourc
 	int32* material = (int32*)((&RedPandasResource.Wood + Space));
 	int32 MaterialAmount = material[0];
 	return MaterialAmount;
+}
+
+FTeamGameStats ARacketeersGameStateBase::GetTeamStats(ETeams Team)
+{
+	int TeamSpace = (int)Team;
+	const FTeamGameStats* GameStats = (&TeamStats.Raccoons + TeamSpace); 
+	return GameStats[0];
+}
+
+void ARacketeersGameStateBase::UpdateTeamAlive()
+{
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		for (APlayerState* PS : PlayerArray)
+		{
+			if (PS == nullptr) return; 
+			APS_Base* PSBase = Cast<APS_Base>(PS);
+			if (PSBase == nullptr) return;
+
+			if(PSBase->PlayerInfo.Team == ETeams::Team_Raccoon)
+			{
+				AddToStats(1, EGameStats::ALIVE, ETeams::Team_Raccoon);
+				continue;
+			}
+			if(PSBase->PlayerInfo.Team == ETeams::Team_Panda)
+			{
+				AddToStats(1, EGameStats::ALIVE, ETeams::Team_Panda);
+				continue;
+			}
+		}
+	}
+}
+
+void ARacketeersGameStateBase::UpdateHealth()
+{
+	APS_Base* PSBase = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPlayerState<APS_Base>();
+	if(PSBase == nullptr) return;
+	PSBase->BoatHealth = PSBase->MaxBoatHealth;
+}
+
+bool ARacketeersGameStateBase::CheckTeamAlive(ETeams Team)
+{
+	if(GetTeamStats(Team).TeamAlive <= 0)
+	{
+		return false;
+	}
+	return true;
+}
+
+void ARacketeersGameStateBase::CheckRoundEnd(ETeams Team)
+{
+	if(!CheckTeamAlive(Team))
+	{
+		ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		GM->RoundCompletion();
+	}
 }
 
 void ARacketeersGameStateBase::AddPart_Implementation(ETeams Team, EPart Part)
@@ -179,7 +194,7 @@ void ARacketeersGameStateBase::SetMaxHealth_Implementation(ETeams Team, int32 Ma
 {
 	if(Team == ETeams::Team_Raccoon)
 	{
-		RacconsMaxHealth = MaxHealth;
+		RaccoonsMaxHealth = MaxHealth;
 		return;
 	}
 	RedPandasMaxHealth = MaxHealth;
@@ -189,26 +204,26 @@ void ARacketeersGameStateBase::SetMaxHealth_Implementation(ETeams Team, int32 Ma
 void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 {
 	ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
-	if (GM == nullptr)
+	if (GM == nullptr || RaccoonsBoatHealth <= 0  ||RedPandasBoatHealth <= 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ARacketeersGameStateBase::DamageBoat GM is equal to nullptr"));
+		//UE_LOG(LogTemp, Error, TEXT("ARacketeersGameStateBase::DamageBoat GM is equal to nullptr"));
 		return;
 	}
 	if(GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "IN STATE DAMAGE BOAT");
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "IN STATE DAMAGE BOAT");
 	}
 
 	if (Team == ETeams::Team_Raccoon)
 	{
-		RacconsBoatHealth -= Amount;
+		RaccoonsBoatHealth -= Amount;
 		CheckOnRepHealthChanged();
-		if (RacconsBoatHealth <= 0)
+		if (RaccoonsBoatHealth <= 0)
 		{
 			//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
-			RedPandasRoundsWon++;
+			//RedPandasRoundsWon++;
 			GM->RoundCompletion();
-	
+			GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "GAME FINISHED");
 		}
 		return;
 	}
@@ -217,8 +232,9 @@ void ARacketeersGameStateBase::DamageBoat(int Amount, ETeams Team)
 	if (RedPandasBoatHealth <= 0)
 	{
 		//call method in GameMode to set the victor and the score, either ending the game or go ti next phase based on what round the game is on
-		RacconsRoundsWon++;
+		//RacconsRoundsWon++;
 		GM->RoundCompletion();
+		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, "GAME FINISHED");
 		
 	}
 }
@@ -252,6 +268,22 @@ void ARacketeersGameStateBase::OnRep_PickUp()
 
 }
 
+void ARacketeersGameStateBase::OnRep_IncomingPhaseChange()
+{
+	switch (IncomingPhase)
+	{
+	case EPhaseState::Phase_1:
+		OnIncomingPhaseOneActive.Broadcast();
+		break;
+	case EPhaseState::Phase_2:
+		OnIncomingPhaseTwoActive.Broadcast();
+		break;
+	case EPhaseState::Phase_3:
+		OnIncomingPhaseThreeActive.Broadcast();
+		break;
+	}
+}
+
 void ARacketeersGameStateBase::OnRep_PhaseChange()
 {
 	if(GEngine)
@@ -265,16 +297,22 @@ void ARacketeersGameStateBase::OnRep_PhaseChange()
 	switch (CurrentPhase)
 	{
 		case EPhaseState::Phase_1:
+			OnPhaseOneActive.Broadcast();
 			WS->ActivateWidget("TeamResources");
-			WS->RemoveWidget("Health");
+			WS->RemoveWidget("TeamHealth");
 		break;
 		case EPhaseState::Phase_2:
+			OnPhaseTwoActive.Broadcast();
 			break;
 		case EPhaseState::Phase_3:
-			WS->ActivateWidget("Health");
+			UpdateHealth();
+			UpdateTeamAlive();
+			OnPhaseThreeActive.Broadcast();
+			WS->ActivateWidget("TeamHealth");
 			WS->RemoveWidget("TeamResources");
 			break;
 	}
+	UpdateTeamAlive();
 }
 
 void ARacketeersGameStateBase::SetRandomNumber(int Number)
@@ -282,7 +320,7 @@ void ARacketeersGameStateBase::SetRandomNumber(int Number)
 	Phase2RandomNumber = Number;
 }
 
-void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETeams Team)
+void ARacketeersGameStateBase::AddResource_Implementation(int Amount, EResources Resource, ETeams Team)
 {
 	if (Team == ETeams::Team_Raccoon)
 	{
@@ -318,28 +356,19 @@ void ARacketeersGameStateBase::AddResource(int Amount, EResources Resource, ETea
 	
 }
 
-void ARacketeersGameStateBase::AddToStats(int Amount, EGameStats Stat, ETeams Team)
+void ARacketeersGameStateBase::AddToStats_Implementation(int Amount, EGameStats Stat, ETeams Team)
 {
-	int Space = (int)Stat;
-	if (Team == ETeams::Team_Raccoon)
-	{
-		int32* Stats = (int32*)((&RaccoonsGameStats.Pushes + Space));
-		if(Stats == nullptr)
-		{
-			return;
-		}
-		Stats[0] += Amount;
-	}
-	int32* Stats = (int32*)((&RedPandasGameStats.Pushes + Space));
-	if(Stats == nullptr)
-	{
-		return;
-	}
+	int TeamSpace = (int)Team * sizeof(EGameStats);
+	int StatSpace = (int)Stat;
+	
+	FTeamGameStats* TeamGameStats = ((&TeamStats.Raccoons + TeamSpace));
+	int32* Stats = ((&TeamGameStats->TeamAlive + StatSpace));
+	if(Stats == nullptr) return; 
 	Stats[0] += Amount;
 }
 
 //Callas på clienten sen på servern
-void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, ETeams Team)
+void ARacketeersGameStateBase::RemoveResource_Implementation(int Amount, EResources Resource, ETeams Team)
 {
 	if (Team == ETeams::Team_Raccoon)
 	{
@@ -354,7 +383,7 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 		{
 			material[0] = 0;
 		}
-		if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole() == ENetRole::ROLE_Authority)
+		if(this->GetLocalRole() == ENetRole::ROLE_Authority)
 		{
 			OnRep_PickUp();
 		}
@@ -372,7 +401,7 @@ void ARacketeersGameStateBase::RemoveResource(int Amount, EResources Resource, E
 	{
 		material[0] = 0;
 	}
-	if(UGameplayStatics::GetPlayerController(GetWorld(),0)->GetLocalRole()  == ENetRole::ROLE_Authority)
+	if(this->GetLocalRole() == ENetRole::ROLE_Authority)
 	{
 		OnRep_PickUp();
 	}

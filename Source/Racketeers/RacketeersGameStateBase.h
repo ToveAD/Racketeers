@@ -6,11 +6,20 @@
 #include "GameModeStructs.h"
 #include "GS_Base.h"
 #include "Phase.h"
+#include "PS_Base.h"
 #include "RacketeersGameStateBase.generated.h"
 
 /**
  * 
  */
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseOneActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseTwoActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPhaseThreeActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseOneActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseTwoActive);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnIncomingPhaseThreeActive);
 
 
 UCLASS()
@@ -19,6 +28,20 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	GENERATED_BODY()
 
 	public:
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnPhaseOneActive OnPhaseOneActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnPhaseTwoActive OnPhaseTwoActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnPhaseThreeActive OnPhaseThreeActive;
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseOneActive OnIncomingPhaseOneActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseTwoActive OnIncomingPhaseTwoActive;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnIncomingPhaseThreeActive OnIncomingPhaseThreeActive;
 
 	void BeginPlay() override;
 	
@@ -35,34 +58,51 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	UFUNCTION(BlueprintCallable)
 	void OnRep_PhaseChange();
 	UFUNCTION(BlueprintCallable)
+	void OnRep_IncomingPhaseChange();
+	UFUNCTION(BlueprintCallable)
 	void OnRep_HealthChanged();
 	UFUNCTION(BlueprintCallable)
 	void SetRandomNumber(int Number);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void AddResource(int Amount, EResources Resource, ETeams Team);
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void RemoveResource(int Amount, EResources Resource, ETeams Team);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void AddToStats(int Amount, EGameStats Stat, ETeams Team);
 	UFUNCTION(BlueprintCallable)
-	void RemoveResource(int Amount, EResources Resource, ETeams Team);
-	UFUNCTION(BlueprintCallable)
 	int32 GetTeamResources(ETeams Team, EResources Resource) const;
+	UFUNCTION(BlueprintCallable)
+	FTeamGameStats GetTeamStats(ETeams Team);
+
+	UFUNCTION(Blueprintable)
+	void UpdateTeamAlive();
+	UFUNCTION(BlueprintCallable)
+	void UpdateHealth();
 	
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable)
 	void AddPart(ETeams Team, EPart Part);
 	UFUNCTION(NetMulticast, Reliable)
 	void RemovePart(ETeams Team, EPart Part);
-	
+
+	bool CheckTeamAlive(ETeams Team);
+	void CheckRoundEnd(ETeams Team);
+
 	UPROPERTY(ReplicatedUsing=OnRep_PickUp, BlueprintReadWrite)
 	FResources RacconResource;
 	UPROPERTY(ReplicatedUsing=OnRep_PickUp, BlueprintReadWrite)
 	FResources RedPandasResource;
 	UPROPERTY(ReplicatedUsing=OnRep_PhaseChange, BlueprintReadWrite)
 	TEnumAsByte<EPhaseState> CurrentPhase;
+	UPROPERTY(ReplicatedUsing=OnRep_IncomingPhaseChange, BlueprintReadWrite)
+	TEnumAsByte<EPhaseState> IncomingPhase;
 
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	FGameStats RaccoonsGameStats;
+	FTeamGameStats RaccoonsGameStats;
 	UPROPERTY(Replicated, BlueprintReadWrite)
-	FGameStats RedPandasGameStats;
+	FTeamGameStats RedPandasGameStats;
+
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	FGameStats TeamStats;
 
 	
 	UPROPERTY(BlueprintReadWrite)
@@ -75,9 +115,9 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	int32 RacconsRoundsWon;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, EditAnywhere)
-	float RacconsMaxHealth;
+	float RaccoonsMaxHealth;
 	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged, BlueprintReadWrite)
-	float RacconsBoatHealth;  // - repnotify
+	float RaccoonsBoatHealth;  // - repnotify
 	
 
 	UPROPERTY(ReplicatedUsing=OnRep_HealthChanged, BlueprintReadWrite)
@@ -99,49 +139,11 @@ class RACKETEERS_API ARacketeersGameStateBase : public AGS_Base
 	int32 PandasReady;
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	int32 RaccoonsReady;
-	
 
+	
+	UPROPERTY(Replicated, BlueprintReadWrite)
+	int32 Phase3RandomNumber;
 private:
 	void CheckOnRepHealthChanged();
-
-
-
-	/*
-	 *
-	*UFUNCTION(BlueprintCallable)
-	void AddToWood(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void AddToFiber(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void AddToMetal(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void RemoveWood(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void RemoveFiber(int Amount, ETeams Team);
-
-	UFUNCTION(BlueprintCallable)
-	void RemoveMetal(int Amount, ETeams Team);
-	
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RacconsWood;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RacconsFiber;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RacconsMetal;
-
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RedPandasWood;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RedPandasFiber;
-	UPROPERTY(Replicated, BlueprintReadWrite)
-	int32 RedPandasMetal;
-
-	*/
-
-	
 };
 

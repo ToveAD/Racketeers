@@ -10,6 +10,7 @@
 #include "RacketeersGameStateBase.h"
 #include "TransitionComponent.h"
 #include "WidgetSubsystem.h"
+#include "Engine/LevelStreamingDynamic.h"
 #include "GameFramework/GameStateBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
@@ -64,7 +65,7 @@ void ARacketeersGMBase::InitGame(const FString& MapName, const FString& Options,
 
 void ARacketeersGMBase::BeginPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::BeginPlay"));
+	//UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::BeginPlay"));
 	
 	//Set the GameState in GameMode
 	//GameState = Cast<AGS_Base>(UGameplayStatics::GetGameState(GetWorld()));
@@ -81,31 +82,40 @@ void ARacketeersGMBase::BeginPlay()
 	FVector* V = new FVector(0,0,0);
 	FRotator* RO = new FRotator(0,0,0);
 	
-	UE_LOG(LogTemp, Warning, TEXT("About To Spawn Timer Info"));
+	//UE_LOG(LogTemp, Warning, TEXT("About To Spawn Timer Info"));
 	TimerInfo = Cast<ATimerInfo>(UGameplayStatics::GetActorOfClass(GetWorld(), ATimerInfo::StaticClass()));
 	
 	if(TimerInfo == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("RacketeersGMBase::SpawnActor is nullptr"));
 	}
+	
+	LevelLoadingManager = Cast<ALevelLoadingManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ALevelLoadingManager::StaticClass()));
 
+	if(LevelLoadingManager == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ERROR: LevelLoadingManager Return nullptr, ARacketeersGMBase::BeginPlay"));
+	}
 
 	
 	//Declare the variables 
 	Phase_1->State = EPhaseState::Phase_1;
-	Phase_1->TimeLimit = 120.0f;
+	Phase_1->TimeLimit = 90.0f;
 	Phase_1->LevelToLoad = "Phase1_GamePlay";
 	Phase_1->StartPhaseName = "P1";
+	Phase_1->MainParentLevel = "Phase1Parent";
 	
 	Phase_2->State = EPhaseState::Phase_2;
 	Phase_2->TimeLimit = 120.0f;
 	Phase_2->LevelToLoad = "Phase2_GamePlay";
 	Phase_2->StartPhaseName = "P2";
+	Phase_2->MainParentLevel = "Phase2Parent";
 	
 	Phase_3->State = EPhaseState::Phase_3;
-	Phase_3->TimeLimit = 120.0f;
+	Phase_3->TimeLimit = 180.0f;
 	Phase_3->LevelToLoad = "Phase3_GamePlay";
 	Phase_3->StartPhaseName = "P3";
+	Phase_3->MainParentLevel = "Phase3Parent";
 
 	Phases.Push(Phase_1);
 	Phases.Push(Phase_2);
@@ -120,8 +130,8 @@ void ARacketeersGMBase::BeginPlay()
 	TotalRounds = 3;
 	if(TimerInfo != nullptr)
 	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Activate Time ");
+		//if(GEngine)
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Activate Time ");
 		ATimerInfo::SetTime(Phase_1->TimeLimit);
 		TimerInfo->SetIsActive(true);
 	}
@@ -172,40 +182,32 @@ void ARacketeersGMBase::Tick(float DeltaSeconds)
 		//CurrentTime += DeltaSeconds;
 	}
 }
-
 void ARacketeersGMBase::RoundCompletion()
 {
-	//CheckIfGameIsOver
-	//EndGame
-
-	//CheckWinnerOfRound
-	//LoadTransitionScreen (Eller en Level) - Show Scores, Everyone Press button to continue
-		
-	//Unload, Loads And Reset Players
-
 	CurrentTime = 0;
 
 	TimerInfo->SetIsActive(false);
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check If Game Is Over");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check If Game Is Over");
 	if(CheckIfGameIsOver())
 	{
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "End Game");
+		//if(GEngine)
+			//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "End Game");
 		EndGame();
 		return;
 	}
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check Winner of Round");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Check Winner of Round");
+	SwitchIncomingState();
 	CheckWinnerOfRound();
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Transition stats");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Transition stats");
 	LoadTransitionStats();
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Transition");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Transition");
 	Transition();
 }
 
@@ -216,14 +218,14 @@ bool ARacketeersGMBase::CheckWinnerOfRound()
 	{
 		ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
 		if(GS == nullptr) return false;
-		if(GS->RacconsBoatHealth > GS->RedPandasBoatHealth)
+		if(GS->GetTeamStats(ETeams::Team_Raccoon).TeamAlive > GS->GetTeamStats(ETeams::Team_Panda).TeamAlive)
 		{
 			GS->RacconsRoundsWon++;
 			return true;
 		}
-		if(GS->RedPandasBoatHealth > GS->RacconsBoatHealth)
+		if(GS->GetTeamStats(ETeams::Team_Panda).TeamAlive > GS->GetTeamStats(ETeams::Team_Raccoon).TeamAlive)
 		{
-			GS->RedPandasBoatHealth++;
+			GS->RedPandasRoundsWon++;
 			return true;
 		}
 		
@@ -252,6 +254,9 @@ void ARacketeersGMBase::SwitchState()
 void ARacketeersGMBase::Transition()
 {
 
+
+	//LoadLevel();
+	
 	OnUnloadingMap.Broadcast();
 	
 	FLatentActionInfo ActionInfo;
@@ -260,9 +265,10 @@ void ARacketeersGMBase::Transition()
 	ActionInfo.ExecutionFunction = TEXT("LoadLevel");
 	ActionInfo.UUID = GetUniqueID();	
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Unload Level");
+	//if(GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Unload Level");
 	UnloadLevel((TEXT("%s"), *CurrentPhase->LevelToLoad), ActionInfo);
+	
 }
 
 void ARacketeersGMBase::BroadcastOnPlayerPressed(ETeams Team)
@@ -276,12 +282,12 @@ void ARacketeersGMBase::BroadcastOnPlayerPressed(ETeams Team)
 
 void ARacketeersGMBase::IncrementPlayerCounter()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "IncrementPlayerReady" );
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "IncrementPlayerReady" );
 	if(TransitionComponent->bIsOn)
 	{
 		TransitionComponent->CountPlayersReady++;
 		AGameStateBase* GS = UGameplayStatics::GetGameState(GetWorld());
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "NUM: " + FString::FromInt(GS->PlayerArray.Num()) + " Current Player Count: " + FString::FromInt(TransitionComponent->CountPlayersReady) );
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "NUM: " + FString::FromInt(GS->PlayerArray.Num()) + " Current Player Count: " + FString::FromInt(TransitionComponent->CountPlayersReady) );
 		if(GS == nullptr) return;
 		
 		if(TransitionComponent->bIsFinished && TransitionComponent->CountPlayersReady == GS->PlayerArray.Num())
@@ -294,7 +300,7 @@ void ARacketeersGMBase::IncrementPlayerCounter()
 
 void ARacketeersGMBase::AllStagesFinished()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED" );
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED" );
 	SwitchState(); 
 	ATimerInfo::SetTime(CurrentPhase->TimeLimit);
 	ATimerInfo::SetIsActive(true);
@@ -303,7 +309,7 @@ void ARacketeersGMBase::AllStagesFinished()
 	{
 		GS->PandasReady = 0;
 		GS->RaccoonsReady = 0;
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED GAME STATE" );
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Purple, "ALL STAGES FINISHED GAME STATE" );
 		GS->ChangeCurrentPhase(CurrentPhase->State);
 	}
 
@@ -342,7 +348,7 @@ bool ARacketeersGMBase::CheckIfGameIsOver()
 	{
 		int AvailibleRounds = TotalRounds - (GS->RacconsRoundsWon + GS->RedPandasRoundsWon);
 		int8 RoundsPlayed = GS->RacconsRoundsWon + GS->RedPandasRoundsWon;
-		if(RoundsPlayed == GetTotalRounds())
+		if(RoundsPlayed >= GetTotalRounds())
 		{
 			return true; 
 		}
@@ -371,16 +377,12 @@ bool ARacketeersGMBase::EndGame()
 {
 
 	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
-	/*
+	
 	FGameStatsPackage Package{
-		GS->RacconsWood,
-		GS->RacconsFiber,
-		GS->RacconsMetal,
+		GS->RacconResource,
 		GS->RacconsRoundsWon,
-		GS->RacconsBoatHealth,
-		GS->RedPandasWood,
-		GS->RedPandasFiber,
-		GS->RedPandasMetal,
+		GS->RaccoonsBoatHealth,
+		GS->RedPandasResource,
 		GS->RedPandasRoundsWon,
 		GS->RedPandasBoatHealth
 	};
@@ -394,11 +396,10 @@ bool ARacketeersGMBase::EndGame()
 		Package.WonTeam = ETeams::Team_Raccoon;
 	}
 
-	Package.WonTeam = ETeams::Team_Raccoon;
+	Package.WonTeam = ETeams::NONE;
 
 	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
 	GI->SetDataToTransfer(Package);
-	*/
 	ProcessServerTravel("VictoryMap_GamePlay");
 
 	return true;
@@ -429,6 +430,23 @@ int8 ARacketeersGMBase::GetTotalRounds()
 	return TotalRounds;
 }
 
+TEnumAsByte<EPhaseState> ARacketeersGMBase::SwitchIncomingState()
+{
+	TEnumAsByte<EPhaseState> NewPhase = CurrentPhase->State;
+	if(NewPhase == EPhaseState::Phase_3)
+	{
+		NewPhase = EPhaseState::Phase_1;
+	}else
+	{
+		NewPhase = Phases[CurrentPhase->State+1]->State;
+	}
+	ARacketeersGameStateBase* GS = GetGameState<ARacketeersGameStateBase>();
+	GS->IncomingPhase = NewPhase;
+	GS->OnRep_IncomingPhaseChange();
+
+	return NewPhase;
+}
+
 void ARacketeersGMBase::UnloadLevel(FName name, FLatentActionInfo& ActionInfo)
 {
 	UGameplayStatics::UnloadStreamLevel(GetWorld(), name, ActionInfo, false);
@@ -444,9 +462,19 @@ void ARacketeersGMBase::LoadLevel()
 	LoadActionInfo.ExecutionFunction = TEXT("RespawnPlayers");
 	LoadActionInfo.UUID = GetUniqueID();
 
-	if(GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "Load Level");
-	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true , false, LoadActionInfo);
+	if(CurrentPhase->State == EPhaseState::Phase_2)
+	{
+		
+	}
+
+	bool bStreamingSucceded = false;
+	//LevelLoadingManager->MulticastLoadLevel(Phases[GetNextPhaseNumber()]);
+	//LevelLoadingManager->OnLoadingLevelCompleted.AddDynamic(this, &ARacketeersGMBase::RespawnPlayers);
+
+	
+	//ULevelStreamingDynamic::LoadLevelInstance(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, FVector::ZeroVector,FRotator::ZeroRotator,bStreamingSucceded);
+	//RespawnPlayers();
+	UGameplayStatics::LoadStreamLevel(GetWorld(), *Phases[GetNextPhaseNumber()]->LevelToLoad, true,false, LoadActionInfo);
 }
 
 void ARacketeersGMBase::RespawnPlayers()
@@ -473,6 +501,7 @@ void ARacketeersGMBase::RespawnPlayers()
 
 		UE_LOG(LogTemp, Warning, TEXT("Player Name: %s"), *TeamName);
 		PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
+		PS->GetPawn()->SetActorRotation(PlayerStart->GetActorRotation());
 	}
 	TransitionComponent->bIsFinished = true;
 	OnloadedMap.Broadcast();
@@ -481,9 +510,10 @@ void ARacketeersGMBase::RespawnPlayers()
 	
 }
 
-void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
+void ARacketeersGMBase::RespawnPlayer(APlayerState* PState)
 {
-	APS_Base* PS = PController->GetPlayerState<APS_Base>();
+	if(PState == nullptr) return;
+	APS_Base* PS = Cast<APS_Base>(PState);
 	FString TeamName;
 
 	if(PS->PlayerInfo.Team == ETeams::Team_Raccoon)
@@ -497,28 +527,8 @@ void ARacketeersGMBase::RespawnPlayer(APlayerController* PController)
 	TeamName.AppendInt(PS->PlayerInfo.TeamPlayerID);
 	
 	AActor* PlayerStart = FindPlayerStart(PS->GetPlayerController(),TeamName);
+	if(PlayerStart == nullptr || PS == nullptr || PS->GetPawn() == nullptr) return;
 	PS->GetPawn()->SetActorLocation(PlayerStart->GetActorLocation());
 	
 }
 
-
-void ARacketeersGMBase::Respawn_Implementation()
-{
-	//Respawn the player at valid spawn location
-}
-
-bool ARacketeersGMBase::Respawn_Validate()
-{
-	return true;
-}
-
-void ARacketeersGMBase::SpawnTeams_Implementation()
-{
-	RestartGame();
-	//Spawn the entier team at there valid locations
-}
-
-bool ARacketeersGMBase::SpawnTeams_Validate()
-{
-	return true;
-}

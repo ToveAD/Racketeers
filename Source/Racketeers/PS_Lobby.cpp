@@ -4,6 +4,34 @@
 #include "PS_Lobby.h"
 #include "Net/UnrealNetwork.h"
 
+
+APS_Lobby::APS_Lobby()
+{
+	bReplicates = true;
+}
+
+void APS_Lobby::CopyProperties(APlayerState* PlayerState)
+{
+	Super::CopyProperties(PlayerState);
+
+	if (HasAuthority())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Running on Server");
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Running on Client");
+	}
+	
+	if(APS_Base* PS_Base = Cast<APS_Base>(PlayerState))
+	{
+		PS_Base->PlayerInfo.Team = LobbyInfo.Team;
+		PS_Base->PlayerInfo.TeamPlayerID = LobbyInfo.TeamID;
+		PS_Base->PlayerInfo.PlayerName = FText::FromString(LobbyInfo.PlayerName);
+	}
+}
+
+
 void APS_Lobby::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

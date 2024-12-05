@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PS_Base.h"
 #include "GameModeStructs.h"
+#include "PC_Lobby.h"
 #include "PS_Lobby.generated.h"
 
 /**
@@ -35,7 +36,7 @@ struct FLobbyInfo
 
 	FLobbyInfo()
 	{
-		PlayerName = "";
+		PlayerName = "DEFAULT NAME";
 		Team = ETeams::NONE;
 		TeamID = -1;
 		bIsReady = false;
@@ -52,9 +53,12 @@ class RACKETEERS_API APS_Lobby : public APS_Base
 
 public:
 
+	APS_Lobby();
+
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "Lobby")
 	FLobbyInfo LobbyInfo = FLobbyInfo();
 
+	virtual void CopyProperties(APlayerState* PlayerState) override;
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

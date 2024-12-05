@@ -34,6 +34,14 @@ public:
 	FOnFinished OnFinished;
 	UPROPERTY(Blueprintable, BlueprintAssignable, BlueprintCallable)
 	FOnBeginTransition OnBeginTransition;
+	UPROPERTY(EditAnywhere, Blueprintable)
+	UUserWidget* WidgetToDisplay;
+	FName WidgetName;
+	bool bIsFinished;
+	bool bIsOn;
+	UPROPERTY()
+	ARacketeersGameStateBase* GameState;
+	int32 CountPlayersReady;
 
 private:
 	void CountPlayer(ETeams Team);
@@ -41,20 +49,6 @@ private:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-
-public:	
-	// Called every frame
-
-	UPROPERTY(EditAnywhere, Blueprintable)
-	UUserWidget* WidgetToDisplay;
-	FName WidgetName;
-	bool bIsFinished;
-	bool bIsOn;
-	ARacketeersGameStateBase* GameState;
-	int32 CountPlayersReady;
-private:
-
 };
 
 

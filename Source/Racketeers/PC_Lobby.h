@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameModeStructs.h"
-#include "LobbySpawnPoint.h"
 #include "GameFramework/PlayerController.h"
 #include "PC_Lobby.generated.h"
 
+class ALobbySpawnPoint;
 /**
  * 
  */
@@ -23,6 +23,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> LobbyWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UUserWidget* LobbyWidgetREF;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lobby")
 	ALobbySpawnPoint* SpawnPoint;
@@ -44,10 +47,6 @@ public:
 	void Client_ShowCosmeticWidget();
 
 	// --------------------------------------------------------------------------------------------
-	
-	// Update the player info in PlayerState on server
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_UpdateInfo(APlayerController* PC, FLobbyInfo LobbyInfo);
 
 	// Spawn the player on server
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -57,11 +56,9 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_ToggleReady();
 
+	UFUNCTION(Client, Reliable)
+	void Client_OnStartMatch();
 
-
-	
-
-
-
-	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnStartMatch();
 };

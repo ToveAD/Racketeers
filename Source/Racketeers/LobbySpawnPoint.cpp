@@ -33,88 +33,69 @@ ALobbySpawnPoint::ALobbySpawnPoint()
 
 
 // Spawn the player at the spawn point
-void ALobbySpawnPoint::SpawnPlayer(APlayerController* PC, ETeams Team)
+void ALobbySpawnPoint::Server_SpawnPlayer_Implementation()
 {
-	if (Team == ETeams::Team_Panda)
+	if(HasAuthority())
 	{
-		Player = GetWorld()->SpawnActor<AActor>(PandaPlayerClass, PlayerSpawnPoint->GetComponentLocation(),
-		                                        PlayerSpawnPoint->GetComponentRotation());
-		PlayerController = PC;
-	}
-	else if (Team == ETeams::Team_Raccoon)
-	{
-		Player = GetWorld()->SpawnActor<AActor>(RaccoonPlayerClass, PlayerSpawnPoint->GetComponentLocation(),
-		                                        PlayerSpawnPoint->GetComponentRotation());
-		PlayerController = PC;
-	}
+		// Set the player's spawn parameters
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	if (HasAuthority())
-	{
-		if (SpawnVFX)
+		// Spawn the player based on the team
+		const TSubclassOf<AActor> PlayerClass = (Team == ETeams::Team_Panda) ? PandaPlayerClass : RaccoonPlayerClass;
+
+		Player = GetWorld()->SpawnActor<AActor>(PlayerClass, PlayerSpawnPoint->GetComponentLocation(),PlayerSpawnPoint->GetComponentRotation(), SpawnParams);
+		Player->SetActorEnableCollision(false);
+		
+		// Attach the player to the root component of this actor
+		if (Player && GetRootComponent())
 		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-				GetWorld(),
-				SpawnVFX,
-				GetActorLocation(),
-				GetActorRotation()
-			);
+			Player->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
 		}
-		LobbyInfoWidget->SetVisibility(true);
-		bShowPlayerInfo = true;
+
+		Multicast_SpawnVFX();
 	}
 }
 
+void ALobbySpawnPoint::Multicast_SpawnVFX_Implementation()
+{
+	// Spawn the VFX for player spawning
+	if (SpawnVFX)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), SpawnVFX, GetActorLocation(), GetActorRotation());
+		LobbyInfoWidget->SetVisibility(true);
+	}
+}
+
+
+// Update the player's widget info for all clients
+void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(const FLobbyInfo& NewLobbyInfo, APlayerState* PS)
+{
+	if (LobbyInfoWidget)
+	{
+		if (UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject()))
+		{
+			LobbyInfo->UpdateLobbyInfo(NewLobbyInfo, PS);
+		}
+	}
+}
 
 // Remove the player from the spawn point
-void ALobbySpawnPoint::RemovePlayer()
+void ALobbySpawnPoint::Server_RemovePlayer_Implementation()
 {
-	if (HasAuthority())
+	if(Player && HasAuthority())
 	{
-		LobbyInfoWidget->SetVisibility(false);
-		bShowPlayerInfo = false;
-	}
-
-	PlayerController = nullptr;
-	Player->Destroy();
-}
-
-void ALobbySpawnPoint::Multicast_UpdateWidgetInfo_Implementation(APlayerState* PS)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("UpdateWidgetInfo"));
-		if (LobbyInfoWidget)
-		{
-			if (UWidgetLobbyInfo* LobbyInfo = Cast<UWidgetLobbyInfo>(LobbyInfoWidget->GetUserWidgetObject()))
-			{
-				LobbyInfo->UpdateLobbyInfo(PS);
-			}
-		}
-}
-
-void ALobbySpawnPoint::OnRep_bShowPlayerInfo()
-{
-	
-	if (bShowPlayerInfo)
-	{
-		LobbyInfoWidget->SetVisibility(true);
-		if (SpawnVFX)
-		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-				GetWorld(),
-				SpawnVFX,
-				GetActorLocation(),
-				GetActorRotation()
-			);
-		}
-	}
-	else
-	{
+		Player->Destroy();
 		LobbyInfoWidget->SetVisibility(false);
 	}
 }
+
 
 void ALobbySpawnPoint::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ALobbySpawnPoint, bShowPlayerInfo);
+	DOREPLIFETIME(ALobbySpawnPoint, Player);
+	DOREPLIFETIME(ALobbySpawnPoint, LobbyInfoWidget);
 }
+
+
+
