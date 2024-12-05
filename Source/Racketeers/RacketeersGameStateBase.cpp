@@ -21,6 +21,8 @@ void ARacketeersGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 	DOREPLIFETIME(ARacketeersGameStateBase, RacconResource);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasResource);
+
+	DOREPLIFETIME(ARacketeersGameStateBase, TeamStats);
 	DOREPLIFETIME(ARacketeersGameStateBase, RaccoonsGameStats);
 	DOREPLIFETIME(ARacketeersGameStateBase, RedPandasGameStats);
 	
@@ -96,6 +98,8 @@ void ARacketeersGameStateBase::ChangeCurrentPhase(TEnumAsByte<EPhaseState> NewPh
 
 }
 
+
+
 int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resource) const
 {
 	if(Team == ETeams::Team_Raccoon)
@@ -109,6 +113,69 @@ int32 ARacketeersGameStateBase::GetTeamResources(ETeams Team, EResources Resourc
 	int32* material = (int32*)((&RedPandasResource.Wood + Space));
 	int32 MaterialAmount = material[0];
 	return MaterialAmount;
+}
+
+FTeamGameStats ARacketeersGameStateBase::GetTeamStats(ETeams Team)
+{
+	int TeamSpace = (int)Team;
+	const FTeamGameStats* GameStats = (&TeamStats.Raccoons + TeamSpace); 
+	return GameStats[0];
+}
+
+void ARacketeersGameStateBase::UpdateTeamAlive()
+{
+	int32 RaccoonStat = GetTeamStats(ETeams::Team_Raccoon).TeamAlive;
+	int32 PandaStat = GetTeamStats(ETeams::Team_Panda).TeamAlive;
+	
+	RaccoonStat = 0;
+	PandaStat = 0;
+	
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		for (APlayerState* PS : PlayerArray)
+		{
+			if (PS == nullptr) return; 
+			APS_Base* PSBase = Cast<APS_Base>(PS);
+			if (PSBase == nullptr) return;
+
+			if(PSBase->PlayerInfo.Team == ETeams::Team_Raccoon)
+			{
+				AddToStats(1, EGameStats::ALIVE, ETeams::Team_Raccoon);
+				continue;
+			}
+			if(PSBase->PlayerInfo.Team == ETeams::Team_Panda)
+			{
+				AddToStats(1, EGameStats::ALIVE, ETeams::Team_Panda);
+				continue;
+			}
+		}
+	}
+}
+
+void ARacketeersGameStateBase::UpdateHealth()
+{
+	APS_Base* PSBase = UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetPlayerState<APS_Base>();
+	if(PSBase == nullptr) return;
+	PSBase->BoatHealth = PSBase->MaxBoatHealth;
+}
+
+bool ARacketeersGameStateBase::CheckTeamAlive(ETeams Team)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, "Alive" + FString::FromInt(GetTeamStats(Team).TeamAlive));
+	if(GetTeamStats(Team).TeamAlive <= 0)
+	{
+		return false;
+	}
+	return true;
+}
+
+void ARacketeersGameStateBase::CheckRoundEnd(ETeams Team)
+{
+	if(!CheckTeamAlive(Team))
+	{
+		ARacketeersGMBase* GM = Cast<ARacketeersGMBase>(UGameplayStatics::GetGameMode(GetWorld()));
+		GM->RoundCompletion();
+	}
 }
 
 void ARacketeersGameStateBase::AddPart_Implementation(ETeams Team, EPart Part)
@@ -239,17 +306,20 @@ void ARacketeersGameStateBase::OnRep_PhaseChange()
 		case EPhaseState::Phase_1:
 			OnPhaseOneActive.Broadcast();
 			WS->ActivateWidget("TeamResources");
-			WS->RemoveWidget("Health");
+			WS->RemoveWidget("TeamHealth");
 		break;
 		case EPhaseState::Phase_2:
 			OnPhaseTwoActive.Broadcast();
 			break;
 		case EPhaseState::Phase_3:
+			UpdateHealth();
+			UpdateTeamAlive();
 			OnPhaseThreeActive.Broadcast();
-			WS->ActivateWidget("Health");
+			WS->ActivateWidget("TeamHealth");
 			WS->RemoveWidget("TeamResources");
 			break;
 	}
+	//UpdateTeamAlive();
 }
 
 void ARacketeersGameStateBase::SetRandomNumber(int Number)
@@ -293,23 +363,14 @@ void ARacketeersGameStateBase::AddResource_Implementation(int Amount, EResources
 	
 }
 
-void ARacketeersGameStateBase::AddToStats(int Amount, EGameStats Stat, ETeams Team)
+void ARacketeersGameStateBase::AddToStats_Implementation(int Amount, EGameStats Stat, ETeams Team)
 {
-	int Space = (int)Stat;
-	if (Team == ETeams::Team_Raccoon)
-	{
-		int32* Stats = (int32*)((&RaccoonsGameStats.Pushes + Space));
-		if(Stats == nullptr)
-		{
-			return;
-		}
-		Stats[0] += Amount;
-	}
-	int32* Stats = (int32*)((&RedPandasGameStats.Pushes + Space));
-	if(Stats == nullptr)
-	{
-		return;
-	}
+	int TeamSpace = (int)Team * sizeof(EGameStats);
+	int StatSpace = (int)Stat;
+	
+	FTeamGameStats* TeamGameStats = ((&TeamStats.Raccoons + TeamSpace));
+	int32* Stats = ((&TeamGameStats->TeamAlive + StatSpace));
+	if(Stats == nullptr) return; 
 	Stats[0] += Amount;
 }
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GM_Base.h"
+#include "LevelLoadingManager.h"
 #include "TimerInfo.h"
 #include "TransitionComponent.h"
 #include "WidgetSubsystem.h"
@@ -41,6 +42,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
 	ATimerInfo* TimerInfo = nullptr;
+
+	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
+	ALevelLoadingManager* LevelLoadingManager = nullptr;
 
 	UPROPERTY(EditAnywhere, Blueprintable, BlueprintReadWrite)
 	UTransitionComponent* TransitionComponent = nullptr;

@@ -40,6 +40,7 @@ struct FPlayerInfo
 		Team = ETeams::NONE;
 		TeamPlayerID = -1;
 	}
+	
 };
 
 
@@ -50,14 +51,28 @@ class RACKETEERS_API APS_Base : public APlayerState
 
 public:
 
-	
+
 	APS_Base();
+
+	virtual void BeginPlay() override;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo")
 	FPlayerInfo PlayerInfo;
-	
+
+	UFUNCTION(Server, Reliable, WithValidation,BlueprintCallable )
+	void DamagePlayerBoat(APlayerState* PS,int Amount);
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo", EditAnywhere)
+	float BoatHealth;
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "PlayerInfo", EditAnywhere)
+	float MaxBoatHealth;
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+
+
+	
+	
 };
 
 
